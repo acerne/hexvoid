@@ -1,0 +1,6 @@
+.
+include
+lib/image/include
+3rdparty/opencv/include
+tests
+tests/include
