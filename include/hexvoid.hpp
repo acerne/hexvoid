@@ -5,6 +5,8 @@
 
 #include <SDL2/SDL.h>
 
+#include "drawing.hpp"
+
 namespace hexvoid
 {
     // Screen dimension constants

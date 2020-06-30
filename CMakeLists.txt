@@ -12,6 +12,7 @@ include_directories(include)
 include_directories(${SDL2_INCLUDE_DIRS})
 
 add_executable(hexvoid  src/main.cpp 
+                        src/drawing.cpp
                         src/hexvoid.cpp
                         )
 

@@ -29,31 +29,29 @@ int main(int argc, char* args[])
     // Update the surface
     SDL_UpdateWindowSurface(gWindow);
 
-    SDL_Delay(1000);
+    SDL_Delay(500);
 
     gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
 
-    SDL_Rect rect;
+    hexvoid::Hexagon hexagon;
+    hexagon.x = 20;
+    hexagon.y = 100;
+    hexagon.diagonal = 40;
+    hexagon.color = 1;
 
-    rect.x = 250;
-    rect.y = 150;
-    rect.w = 200;
-    rect.h = 200;
+    SDL_RenderClear(gRenderer);
 
-    for(int i = 0; i < 100; i++)
+    for(int i = 0; i < 10; i++)
     {
-        SDL_RenderClear(gRenderer);
-
-        SDL_SetRenderDrawColor(gRenderer, 0, 255, 127, 255);
-        SDL_RenderDrawRect(gRenderer, &rect);
-
-        SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
+        hexvoid::DrawHexagon(gRenderer, hexagon);
 
         SDL_RenderPresent(gRenderer);
         SDL_Delay(10);
 
-        rect.x++;
-        rect.y--;
+        hexagon.x += 10;
+        hexagon.y += 20;
+        hexagon.color++;
+        if(hexagon.color > 4) hexagon.color = 1;
     }
     // Wait two seconds
     SDL_Delay(2000);

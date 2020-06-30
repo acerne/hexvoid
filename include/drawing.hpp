@@ -4,6 +4,6 @@
 
 namespace hexvoid
 {
-    void DrawHexagon(SDL_Surface*& gSurface, const Hexagon& hexagon);
+    void DrawHexagon(SDL_Renderer*& gRenderer, const Hexagon& hexagon);
 
 } // namespace hexvoid
