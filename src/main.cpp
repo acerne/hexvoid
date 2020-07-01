@@ -21,22 +21,12 @@ int main(int argc, char* args[])
     // Start up SDL and create window
     hexvoid::Initialize(gWindow, gSurface);
 
-    // Load media
-    hexvoid::LoadMedia("image.bmp", gBackground);
-
-    // Apply the image
-    SDL_BlitSurface(gBackground, NULL, gSurface, NULL);
-    // Update the surface
-    SDL_UpdateWindowSurface(gWindow);
-
-    SDL_Delay(500);
-
     gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
 
     hexvoid::Hexagon hexagon;
-    hexagon.x = 20;
+    hexagon.x = 100;
     hexagon.y = 100;
-    hexagon.diagonal = 40;
+    hexagon.radius = 40;
     hexagon.color = 1;
 
     SDL_RenderClear(gRenderer);
@@ -48,8 +38,8 @@ int main(int argc, char* args[])
         SDL_RenderPresent(gRenderer);
         SDL_Delay(10);
 
-        hexagon.x += 10;
-        hexagon.y += 20;
+        hexagon.x += 30;
+        hexagon.y += 30;
         hexagon.color++;
         if(hexagon.color > 4) hexagon.color = 1;
     }

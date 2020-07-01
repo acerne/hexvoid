@@ -7,7 +7,7 @@ namespace hexvoid
     struct Hexagon
     {
         size_t x, y;
-        size_t diagonal;
+        size_t radius;
         int color;
     };
 } // namespace hexvoid
