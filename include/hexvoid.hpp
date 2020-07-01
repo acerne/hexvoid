@@ -6,6 +6,7 @@
 #include <SDL2/SDL.h>
 
 #include "drawing.hpp"
+#include "engine.hpp"
 
 namespace hexvoid
 {

@@ -8,8 +8,6 @@ void hexvoid::DrawHexagon(SDL_Renderer*& gRenderer, const Hexagon& hexagon)
 {
     Color color = GetColorFromTheme(hexvoid::PsychedelicPattern, hexagon.color);
 
-    printf("Color: %i %i %i\n", color.r, color.g, color.b);
-
     int16_t vx[6], vy[6];
 
     const double sin30 = std::sin(30.0 * M_PI / 180.0);

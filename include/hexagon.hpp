@@ -1,13 +1,15 @@
 #pragma once
 
 #include <cstddef>
+#include <stdint.h>
 
 namespace hexvoid
 {
     struct Hexagon
     {
-        size_t x, y;
-        size_t radius;
-        int color;
+        int16_t x;
+        int16_t y;
+        int16_t radius;
+        uint8_t color;
     };
 } // namespace hexvoid

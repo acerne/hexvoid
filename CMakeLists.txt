@@ -19,6 +19,7 @@ include_directories(${SDL2_GFX_INCLUDE_DIRS})
 
 add_executable(${PROJECT_NAME}  src/main.cpp 
                         src/drawing.cpp
+                        src/engine.cpp
                         src/hexvoid.cpp
                         )
 

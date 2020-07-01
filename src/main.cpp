@@ -1,16 +1,6 @@
 
 #include "hexvoid.hpp"
 
-/*
- * GLOBAL VARIABLES
- */
-
-// The window we'll be rendering to
-
-// The surface contained by the window
-
-// The image we will load and show on the screen
-
 int main(int argc, char* args[])
 {
     SDL_Window* gWindow = NULL;
@@ -23,28 +13,17 @@ int main(int argc, char* args[])
 
     gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
 
-    hexvoid::Hexagon hexagon;
-    hexagon.x = 100;
-    hexagon.y = 100;
-    hexagon.radius = 40;
-    hexagon.color = 1;
-
     SDL_RenderClear(gRenderer);
 
-    for(int i = 0; i < 10; i++)
-    {
-        hexvoid::DrawHexagon(gRenderer, hexagon);
+    std::vector<hexvoid::Hexagon> hexGrid = hexvoid::GenerateHexagonGrid(10, 15, 30, 3);
 
-        SDL_RenderPresent(gRenderer);
-        SDL_Delay(10);
+    for(auto hex : hexGrid)
+        hexvoid::DrawHexagon(gRenderer, hex);
 
-        hexagon.x += 30;
-        hexagon.y += 30;
-        hexagon.color++;
-        if(hexagon.color > 4) hexagon.color = 1;
-    }
+    SDL_RenderPresent(gRenderer);
+
     // Wait two seconds
-    SDL_Delay(2000);
+    SDL_Delay(5000);
 
     // Free resources and close SDL
 
