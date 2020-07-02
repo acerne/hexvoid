@@ -13,19 +13,47 @@ int main(int argc, char* args[])
 
     gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
 
-    SDL_RenderClear(gRenderer);
-
     std::vector<hexvoid::Hexagon> hexGrid = hexvoid::GenerateHexagonGrid(10, 15, 30, 3);
 
-    for(auto hex : hexGrid)
-        hexvoid::DrawHexagon(gRenderer, hex);
+    SDL_Event event;
+    bool quit = false;
+    hexvoid::Hexagon hover;
+    hexvoid::FPS frameRate;
 
-    SDL_RenderPresent(gRenderer);
+    while(!quit)
+    {
+        frameRate.Tick();
+        while(SDL_PollEvent(&event))
+        {
+            switch(event.type)
+            {
+                case SDL_KEYDOWN:
+                    if(event.key.keysym.sym == SDLK_ESCAPE) quit = true;
+                    break;
+                case SDL_KEYUP:
+                    break;
+                case SDL_MOUSEMOTION:
+                    hover = hexvoid::FindClosestHexagon(hexGrid, event.motion.x, event.motion.y);
+                    break;
+                case SDL_QUIT:
+                    quit = true;
+                    break;
+                default:
+                    break;
+            }
+        }
+        SDL_RenderClear(gRenderer);
 
-    // Wait two seconds
-    SDL_Delay(5000);
+        for(auto hex : hexGrid)
+            hexvoid::DrawHexagon(gRenderer, hex);
 
-    // Free resources and close SDL
+        hover.color = 0;
+        hexvoid::DrawHexagon(gRenderer, hover);
+
+        frameRate.Draw(gRenderer);
+
+        SDL_RenderPresent(gRenderer);
+    }
 
     SDL_FreeSurface(gSurface);
     gSurface = NULL;
@@ -33,6 +61,7 @@ int main(int argc, char* args[])
     SDL_DestroyWindow(gWindow);
     gWindow = NULL;
 
+    TTF_Quit();
     SDL_Quit();
 
     return 0;

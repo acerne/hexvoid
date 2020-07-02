@@ -3,11 +3,16 @@
 
 #include <stdexcept>
 
+#include <SDL2/SDL_ttf.h>
+
 void hexvoid::Initialize(SDL_Window*& gWindow, SDL_Surface*& gSurface)
 {
     // Initialize SDL
     if(SDL_Init(SDL_INIT_VIDEO) < 0)
         throw std::runtime_error("SDL could not initialize! SDL_Error: " + std::string(SDL_GetError()));
+
+    if(TTF_Init() < 0)
+        throw std::runtime_error("SDL_ttf could not initialize! TTF_Error: " + std::string(TTF_GetError()));
 
     // Create window
     gWindow = SDL_CreateWindow("HexVoid", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, hexvoid::WINDOW_WIDTH,

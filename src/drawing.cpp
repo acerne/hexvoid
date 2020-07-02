@@ -6,7 +6,7 @@
 
 void hexvoid::DrawHexagon(SDL_Renderer*& gRenderer, const Hexagon& hexagon)
 {
-    Color color = GetColorFromTheme(hexvoid::PsychedelicPattern, hexagon.color);
+    Color color = GetColorFromTheme(hexvoid::LuminousLines, hexagon.color);
 
     int16_t vx[6], vy[6];
 
