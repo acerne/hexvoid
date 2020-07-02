@@ -12,10 +12,12 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/lib/cmake/sdl2)
 
 find_package(SDL2 REQUIRED)
 find_package(SDL2_gfx REQUIRED)
+find_package(SDL2_ttf REQUIRED)
 
 include_directories(include)
 include_directories(${SDL2_INCLUDE_DIRS})
 include_directories(${SDL2_GFX_INCLUDE_DIRS})
+include_directories(${SDL2_TTF_INCLUDE_DIRS})
 
 add_executable(${PROJECT_NAME}  src/main.cpp 
                         src/drawing.cpp
@@ -23,5 +25,5 @@ add_executable(${PROJECT_NAME}  src/main.cpp
                         src/hexvoid.cpp
                         )
 
-target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} ${SDL2_GFX_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} ${SDL2_GFX_LIBRARIES} ${SDL2_TTF_LIBRARIES})
 
