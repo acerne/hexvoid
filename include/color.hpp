@@ -34,6 +34,12 @@ namespace hexvoid
     Theme NeonLights{Color(0x000000), Color(0xFFACFC), Color(0xF148FB), Color(0x7122FA), Color(0x560A86)};
     Theme PsychedelicPattern{Color(0x000000), Color(0x75D5FD), Color(0xB76CFD), Color(0xFF2281), Color(0x011FFD)};
     Theme LuminousLines{Color(0x000000), Color(0x01FFC3), Color(0x01FFFF), Color(0xFFB3FD), Color(0x9D72FF)};
+    Theme VividFerns{Color(0x000000), Color(0xFDC7D7), Color(0xFF9DE6), Color(0xA5D8F3), Color(0xE8E500)};
+    Theme AbstractWall{Color(0x000000), Color(0x00FECA), Color(0xFDF200), Color(0xFF85EA), Color(0x7B61F8)};
+    Theme ColorfulCottage{Color(0x000000), Color(0xFFD300), Color(0xDE38C8), Color(0x652EC7), Color(0x33135C)};
+    Theme CosmicDust{Color(0x000000), Color(0x3B27BA), Color(0xE847AE), Color(0x13CA91), Color(0xFF9472)};
+    Theme PopsOfPink{Color(0x000000), Color(0xFFDEF3), Color(0xFF61BE), Color(0x3B55CE), Color(0x35212A)};
+    Theme FlourescentFish{Color(0x000000), Color(0xFEC763), Color(0xEA55B1), Color(0xA992FA), Color(0x00207F)};
 
     Color GetColorFromTheme(const Theme& theme, int index)
     {
