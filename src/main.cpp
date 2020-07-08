@@ -13,7 +13,7 @@ int main(int argc, char* args[])
 
     gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
 
-    std::vector<hexvoid::Hexagon> hexGrid = hexvoid::GenerateHexagonGrid(10, 15, 30, 3);
+    std::vector<hexvoid::Hexagon> hexGrid = hexvoid::GenerateHexagonGrid(5, 30, 3);
 
     SDL_Event event;
     bool quit = false;
@@ -45,10 +45,10 @@ int main(int argc, char* args[])
         SDL_RenderClear(gRenderer);
 
         for(auto hex : hexGrid)
-            hexvoid::DrawHexagon(gRenderer, hex);
+            hexvoid::DrawVerticalHexagon(gRenderer, hex);
 
         hover.color = 0;
-        hexvoid::DrawHexagon(gRenderer, hover);
+        hexvoid::DrawVerticalHexagon(gRenderer, hover);
 
         frameRate.Draw(gRenderer);
 

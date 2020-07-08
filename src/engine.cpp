@@ -1,8 +1,11 @@
 #include "engine.hpp"
 
 #include <algorithm>
+#include <iostream> // REMOVE
 #include <random>
 #include <stdexcept>
+
+#include "hexvoid.hpp"
 
 namespace hexvoid
 {
@@ -50,7 +53,7 @@ namespace hexvoid
         return distribution(generator);
     }
 
-    std::vector<Hexagon> GenerateHexagonGrid(int16_t gridColumns, int16_t gridRows, int16_t hexRadius, int16_t spacing)
+    std::vector<Hexagon> GenerateGrid(int16_t gridColumns, int16_t gridRows, int16_t hexRadius, int16_t spacing)
     {
         std::vector<Hexagon> hexGrid;
         hexGrid.reserve(gridRows * gridColumns);
@@ -71,6 +74,45 @@ namespace hexvoid
             }
         }
 
+        return std::move(hexGrid);
+    }
+
+    std::vector<Hexagon> GenerateHexagonGrid(int16_t gridRadius, int16_t hexRadius, int16_t spacing)
+    {
+        std::vector<Hexagon> hexGrid;
+
+        int16_t gridSize = 2 * gridRadius - 1;
+        for(int i = 1; i < gridRadius; i++)
+            gridSize += 2 * (2 * gridRadius - 1 - i);
+
+        hexGrid.reserve(gridSize);
+
+        const double cos30 = std::cos(30.0 * M_PI / 180.0);
+
+        int16_t columnSpacing = 3 * hexRadius / 2 + spacing;
+        int16_t rowSpacing = cos30 * hexRadius + spacing;
+
+        int16_t screenCenterX = WINDOW_WIDTH / 2;
+        int16_t screenCenterY = WINDOW_HEIGHT / 2;
+
+        for(int r = -gridRadius + 1; r < gridRadius; r++)
+        {
+            int columns;
+            if(r < 0)
+                columns = 2 * gridRadius + r - 1;
+            else
+                columns = 2 * gridRadius - r - 1;
+
+            int columnStart = (2 * gridRadius - columns) / 2 - gridRadius + 1;
+
+            for(int c = columnStart; c < columnStart + columns; c++)
+            {
+                int16_t x = screenCenterX + (2 * c - abs(r) % 2) * rowSpacing;
+                int16_t y = screenCenterY + r * columnSpacing;
+                uint8_t colorIndex = Random(1, 4);
+                hexGrid.push_back(Hexagon{x, y, hexRadius, colorIndex});
+            }
+        }
         return std::move(hexGrid);
     }
 

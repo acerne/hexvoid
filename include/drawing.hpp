@@ -6,6 +6,7 @@
 
 namespace hexvoid
 {
-    void DrawHexagon(SDL_Renderer*& gRenderer, const Hexagon& hexagon);
+    void DrawHorizontalHexagon(SDL_Renderer*& gRenderer, const Hexagon& hexagon);
+    void DrawVerticalHexagon(SDL_Renderer*& gRenderer, const Hexagon& hexagon);
 
 } // namespace hexvoid
