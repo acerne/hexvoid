@@ -2,15 +2,11 @@
 
 #include <SDL2/SDL2_gfxPrimitives.h>
 
-#include "color.hpp"
-
 namespace hexvoid
 {
 
-    void DrawHorizontalHexagon(SDL_Renderer*& gRenderer, const Hexagon& hexagon)
+    void DrawHorizontalHexagon(SDL_Renderer*& gRenderer, const Hexagon& hexagon, uint8_t r, uint8_t g, uint8_t b)
     {
-        Color color = GetColorFromTheme(hexvoid::LuminousLines, hexagon.color);
-
         int16_t vx[6], vy[6];
 
         const double sin30 = std::sin(30.0 * M_PI / 180.0);
@@ -37,13 +33,11 @@ namespace hexvoid
         vx[5] = hexagon.x + xOffset;
         vy[5] = hexagon.y + yOffset;
 
-        filledPolygonRGBA(gRenderer, vx, vy, 6, color.r, color.g, color.b, 255);
+        filledPolygonRGBA(gRenderer, vx, vy, 6, r, g, b, 255);
     }
 
-    void DrawVerticalHexagon(SDL_Renderer*& gRenderer, const Hexagon& hexagon)
+    void DrawVerticalHexagon(SDL_Renderer*& gRenderer, const Hexagon& hexagon, uint8_t r, uint8_t g, uint8_t b)
     {
-        Color color = GetColorFromTheme(hexvoid::LuminousLines, hexagon.color);
-
         int16_t vx[6], vy[6];
 
         const double sin30 = std::sin(30.0 * M_PI / 180.0);
@@ -70,7 +64,7 @@ namespace hexvoid
         vx[5] = hexagon.x + xOffset;
         vy[5] = hexagon.y + yOffset;
 
-        filledPolygonRGBA(gRenderer, vx, vy, 6, color.r, color.g, color.b, 255);
+        filledPolygonRGBA(gRenderer, vx, vy, 6, r, g, b, 255);
     }
 
 } // namespace hexvoid

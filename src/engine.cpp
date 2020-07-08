@@ -69,8 +69,8 @@ namespace hexvoid
             {
                 int16_t x = columnSpacing + r * columnSpacing;
                 int16_t y = rowSpacing + (2 * c + r % 2) * rowSpacing;
-                uint8_t colorIndex = Random(1, 4);
-                hexGrid.push_back(Hexagon{x, y, hexRadius, colorIndex});
+                uint8_t family = Random(1, 4);
+                hexGrid.push_back(Hexagon{x, y, hexRadius, family});
             }
         }
 
@@ -109,8 +109,8 @@ namespace hexvoid
             {
                 int16_t x = screenCenterX + (2 * c - abs(r) % 2) * rowSpacing;
                 int16_t y = screenCenterY + r * columnSpacing;
-                uint8_t colorIndex = Random(1, 4);
-                hexGrid.push_back(Hexagon{x, y, hexRadius, colorIndex});
+                uint8_t family = Random(1, 4);
+                hexGrid.push_back(Hexagon{x, y, hexRadius, family});
             }
         }
         return std::move(hexGrid);

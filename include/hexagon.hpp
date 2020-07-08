@@ -10,6 +10,6 @@ namespace hexvoid
         int16_t x;
         int16_t y;
         int16_t radius;
-        uint8_t color;
+        uint8_t family;
     };
 } // namespace hexvoid

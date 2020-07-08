@@ -23,6 +23,7 @@ add_executable(${PROJECT_NAME}  src/main.cpp
                         src/drawing.cpp
                         src/engine.cpp
                         src/hexvoid.cpp
+                        src/palette.cpp
                         )
 
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} ${SDL2_GFX_LIBRARIES} ${SDL2_TTF_LIBRARIES})

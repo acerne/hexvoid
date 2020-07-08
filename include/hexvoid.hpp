@@ -8,6 +8,7 @@
 #include "drawing.hpp"
 #include "engine.hpp"
 #include "hexagon.hpp"
+#include "palette.hpp"
 
 namespace hexvoid
 {

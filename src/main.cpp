@@ -19,6 +19,7 @@ int main(int argc, char* args[])
     bool quit = false;
     hexvoid::Hexagon hover;
     hexvoid::FPS frameRate;
+    hexvoid::Palette palette;
 
     while(!quit)
     {
@@ -28,7 +29,20 @@ int main(int argc, char* args[])
             switch(event.type)
             {
                 case SDL_KEYDOWN:
-                    if(event.key.keysym.sym == SDLK_ESCAPE) quit = true;
+                    switch(event.key.keysym.sym)
+                    {
+                        case SDLK_ESCAPE:
+                            quit = true;
+                            break;
+                        case SDLK_UP:
+                            palette.NextTheme();
+                            break;
+                        case SDLK_DOWN:
+                            palette.PreviousTheme();
+                            break;
+                        default:
+                            break;
+                    }
                     break;
                 case SDL_KEYUP:
                     break;
@@ -45,10 +59,13 @@ int main(int argc, char* args[])
         SDL_RenderClear(gRenderer);
 
         for(auto hex : hexGrid)
-            hexvoid::DrawVerticalHexagon(gRenderer, hex);
+        {
+            hexvoid::Palette::Color color = palette.GetThemeColor(hex.family);
+            hexvoid::DrawVerticalHexagon(gRenderer, hex, color.r, color.g, color.b);
+        }
 
-        hover.color = 0;
-        hexvoid::DrawVerticalHexagon(gRenderer, hover);
+        hexvoid::Palette::Color blank = palette.GetThemeColor(0);
+        hexvoid::DrawVerticalHexagon(gRenderer, hover, blank.r, blank.g, blank.b);
 
         frameRate.Draw(gRenderer);
 
