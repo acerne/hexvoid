@@ -29,14 +29,15 @@ namespace hexvoid
         {
             std::string name;
             Color background;
+            Color foreground;
             Color A;
             Color B;
             Color C;
             Color D;
         };
 
-        Color GetThemeColor(int index);
-        std::string GetThemeName();
+        Color GetThemeColor(int index) const;
+        std::string GetThemeName() const;
 
         void NextTheme();
         void PreviousTheme();

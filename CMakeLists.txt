@@ -20,8 +20,9 @@ include_directories(${SDL2_GFX_INCLUDE_DIRS})
 include_directories(${SDL2_TTF_INCLUDE_DIRS})
 
 add_executable(${PROJECT_NAME}  src/main.cpp 
-                        src/drawing.cpp
-                        src/engine.cpp
+                        src/engine_cluster.cpp
+                        src/engine_framerate.cpp
+                        src/engine_hexagon.cpp
                         src/hexvoid.cpp
                         src/palette.cpp
                         )

@@ -13,17 +13,20 @@ int main(int argc, char* args[])
 
     gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
 
-    std::vector<hexvoid::Hexagon> hexGrid = hexvoid::GenerateHexagonGrid(5, 30, 3);
+    hexvoid::Cluster cluster(5, 30, 3);
 
     SDL_Event event;
     bool quit = false;
-    hexvoid::Hexagon hover;
-    hexvoid::FPS frameRate;
+    int hoverIndex = 0;
+    hexvoid::Framerate fps;
     hexvoid::Palette palette;
+    hexvoid::Palette::Color background = palette.GetThemeColor(0);
+    int16_t cursorX = 0;
+    int16_t cursorY = 0;
 
     while(!quit)
     {
-        frameRate.Tick();
+        fps.Tick();
         while(SDL_PollEvent(&event))
         {
             switch(event.type)
@@ -36,9 +39,11 @@ int main(int argc, char* args[])
                             break;
                         case SDLK_UP:
                             palette.NextTheme();
+                            background = palette.GetThemeColor(0);
                             break;
                         case SDLK_DOWN:
                             palette.PreviousTheme();
+                            background = palette.GetThemeColor(0);
                             break;
                         default:
                             break;
@@ -47,7 +52,8 @@ int main(int argc, char* args[])
                 case SDL_KEYUP:
                     break;
                 case SDL_MOUSEMOTION:
-                    hover = hexvoid::FindClosestHexagon(hexGrid, event.motion.x, event.motion.y);
+                    cursorX = event.motion.x;
+                    cursorY = event.motion.y;
                     break;
                 case SDL_QUIT:
                     quit = true;
@@ -56,18 +62,11 @@ int main(int argc, char* args[])
                     break;
             }
         }
+        SDL_SetRenderDrawColor(gRenderer, background.r, background.g, background.b, 255);
         SDL_RenderClear(gRenderer);
 
-        for(auto hex : hexGrid)
-        {
-            hexvoid::Palette::Color color = palette.GetThemeColor(hex.family);
-            hexvoid::DrawVerticalHexagon(gRenderer, hex, color.r, color.g, color.b);
-        }
-
-        hexvoid::Palette::Color blank = palette.GetThemeColor(0);
-        hexvoid::DrawVerticalHexagon(gRenderer, hover, blank.r, blank.g, blank.b);
-
-        frameRate.Draw(gRenderer);
+        cluster.Draw(gRenderer, palette, cursorX, cursorY);
+        fps.Draw(gRenderer);
 
         SDL_RenderPresent(gRenderer);
     }
