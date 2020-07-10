@@ -55,6 +55,19 @@ int main(int argc, char* args[])
                     cursorX = event.motion.x;
                     cursorY = event.motion.y;
                     break;
+                case SDL_MOUSEBUTTONDOWN:
+                    switch(event.button.button)
+                    {
+                        case SDL_BUTTON_LEFT:
+                            cluster.RotateClockwise(event.motion.x, event.motion.y);
+                            break;
+                        case SDL_BUTTON_RIGHT:
+                            cluster.RotateCounterClockwise(event.motion.x, event.motion.y);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
                 case SDL_QUIT:
                     quit = true;
                     break;

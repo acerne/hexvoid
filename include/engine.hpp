@@ -37,16 +37,20 @@ namespace hexvoid
         Cluster(int16_t radius, int16_t hexRadius, int16_t spacing);
 
         void Randomize();
+        void RotateClockwise(int16_t cursorX, int16_t cursorY);
+        void RotateCounterClockwise(int16_t cursorX, int16_t cursorY);
+
         void Draw(SDL_Renderer*& gRenderer, const Palette& palette, int16_t cursorX, int16_t cursorY);
 
     private:
-        std::vector<Hexagon> elements_;
+        std::vector<std::vector<Hexagon>> elements_;
+        std::vector<uint8_t> rowOffset_;
         uint16_t clusterSize_;
         int16_t clusterRadius_;
         int16_t hexRadius_;
         int16_t clusterSpacing_;
 
-        uint16_t FindClosestElement(int16_t x, int16_t y);
+        void FindClosestInnerElement(int16_t x, int16_t y, int16_t& row, int16_t& column);
     };
 
     class Framerate
