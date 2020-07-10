@@ -4,6 +4,9 @@
 #include <stdint.h>
 #include <vector>
 
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+
 namespace hexvoid
 {
     class Palette
@@ -42,9 +45,12 @@ namespace hexvoid
         void NextTheme();
         void PreviousTheme();
 
+        void DrawInfo(SDL_Renderer*& gRenderer);
+
     private:
         uint8_t selectedTheme_;
         std::vector<Theme> themeList_;
+        TTF_Font* font_;
     };
 
 } // namespace hexvoid

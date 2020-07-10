@@ -66,7 +66,8 @@ int main(int argc, char* args[])
         SDL_RenderClear(gRenderer);
 
         cluster.Draw(gRenderer, palette, cursorX, cursorY);
-        fps.Draw(gRenderer);
+        fps.Draw(gRenderer, palette);
+        palette.DrawInfo(gRenderer);
 
         SDL_RenderPresent(gRenderer);
     }

@@ -56,14 +56,13 @@ namespace hexvoid
         ~Framerate();
 
         void Tick();
-        void Draw(SDL_Renderer*& gRenderer);
+        void Draw(SDL_Renderer*& gRenderer, const Palette& palette);
 
     private:
         uint16_t frameCount_;
         uint32_t lastSecond_;
         uint16_t fps_;
         TTF_Font* font_;
-        SDL_Color textColor_;
     };
 
 } // namespace hexvoid

@@ -21,12 +21,15 @@ namespace hexvoid
                        Color(0xFF85EA), Color(0x7B61F8)},
                       {"ColorfulCottage", Color(0x000000), Color(0xFFFFFF), Color(0xFFD300), Color(0xDE38C8),
                        Color(0x652EC7), Color(0x33135C)},
-                      {"CosmicDust", Color(0x000000), Color(0xFFFFFF), Color(0x3B27BA), Color(0xE847AE),
+                      {"CosmicDust", Color(0x202020), Color(0x808080), Color(0x3B27BA), Color(0xE847AE),
                        Color(0x13CA91), Color(0xFF9472)},
                       {"PopsOfPink", Color(0x000000), Color(0xFFFFFF), Color(0xFFDEF3), Color(0xFF61BE),
                        Color(0x3B55CE), Color(0x35212A)},
                       {"FlourescentFish", Color(0x000000), Color(0xFFFFFF), Color(0xFEC763), Color(0xEA55B1),
                        Color(0xA992FA), Color(0x00207F)}};
+
+        font_ = TTF_OpenFont("/usr/share/fonts/truetype/freefont/FreeMono.ttf", 12); // select and move font
+        if(!font_) throw std::runtime_error("Font not found! TTF_Error: " + std::string(TTF_GetError()));
     }
 
     Palette::Color Palette::GetThemeColor(int index) const
@@ -64,5 +67,17 @@ namespace hexvoid
     {
         if(selectedTheme_ > 0) selectedTheme_--;
     }
+
+    void Palette::DrawInfo(SDL_Renderer*& gRenderer)
+    {
+        std::string name = GetThemeName();
+        char const* paletteText = name.c_str();
+        int stringLenth = name.length();
+        Palette::Color color = GetThemeColor(1);
+        SDL_Surface* textSurface = TTF_RenderText_Solid(font_, paletteText, {color.r, color.g, color.b});
+        SDL_Rect textLocation = {200, 5, stringLenth * 20, 30};
+        SDL_Texture* Message = SDL_CreateTextureFromSurface(gRenderer, textSurface);
+        SDL_RenderCopy(gRenderer, Message, NULL, &textLocation);
+    };
 
 } // namespace hexvoid
