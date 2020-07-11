@@ -41,14 +41,16 @@ namespace hexvoid
         vy[5] = y_ + yOffset;
 
         Palette::Color color = palette.GetThemeColor(family_);
+        Palette::Color background = palette.GetThemeColor(0);
         filledPolygonRGBA(gRenderer, vx, vy, 6, color.r, color.g, color.b, 255);
+        polygonRGBA(gRenderer, vx, vy, 6, background.r, background.g, background.b, 255);
     }
 
-    void Hexagon::DrawBackground(SDL_Renderer*& gRenderer, const Palette& palette) const
+    void Hexagon::DrawHighlight(SDL_Renderer*& gRenderer, const Palette& palette) const
     {
         int16_t vx[6], vy[6];
 
-        int16_t overdraw = radius_ + 5; // fix to be dynamic
+        int16_t overdraw = radius_ * 1.2;
 
         const double sin30 = std::sin(30.0 * M_PI / 180.0);
         const double cos30 = std::cos(30.0 * M_PI / 180.0);

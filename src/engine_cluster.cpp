@@ -19,45 +19,33 @@ namespace hexvoid
         return distribution(generator);
     }
 
-    Cluster::Cluster(int16_t radius, int16_t hexRadius, int16_t spacing)
+    Cluster::Cluster(int16_t radius, int16_t hexRadius, size_t canvasWidth, size_t canvasHeight)
     {
         clusterRadius_ = radius;
         hexRadius_ = hexRadius;
-        clusterSpacing_ = spacing;
-        clusterSize_ = 2 * radius - 1;
-        for(int i = 1; i < radius; i++)
-            clusterSize_ += 2 * (2 * radius - 1 - i);
 
         elements_.clear();
 
-        const double cos30 = std::cos(30.0 * M_PI / 180.0);
+        screenCenter_.first = canvasWidth / 2;
+        screenCenter_.second = canvasHeight / 2;
 
-        int16_t columnSpacing = 3 * hexRadius / 2 + spacing;
-        int16_t rowSpacing = cos30 * hexRadius + spacing;
-
-        int16_t screenCenterX = WINDOW_WIDTH / 2;
-        int16_t screenCenterY = WINDOW_HEIGHT / 2;
-
-        for(int16_t r = -radius + 1; r < radius; r++)
+        for(int16_t q = -radius + 1; q < radius; q++)
         {
-            int16_t columns;
-            if(r < 0)
-                columns = 2 * radius + r - 1;
-            else
-                columns = 2 * radius - r - 1;
-
-            int16_t columnStart = (2 * radius - columns) / 2 - radius + 1;
-
-            for(int16_t c = columnStart; c < columnStart + columns; c++)
+            for(int16_t r = -radius + 1; r < radius; r++)
             {
-                int16_t x = screenCenterX + (2 * c - abs(r) % 2) * rowSpacing;
-                int16_t y = screenCenterY + r * columnSpacing;
-                uint8_t family = Random(2, 5);
-                std::pair<int16_t, int16_t> location{r, c};
-                elements_.emplace(location, Hexagon{x, y, hexRadius, family});
+                for(int16_t s = -radius + 1; s < radius; s++)
+                {
+                    if(q + r + s == 0)
+                    {
+                        uint8_t family = Random(2, 5);
+                        Index index{q, r, s};
+                        Pixel pixel = IndexToPixel(index);
+                        elements_.emplace(index, Hexagon{pixel.first, pixel.second, hexRadius, family});
+                    }
+                }
             }
         }
-    } // namespace hexvoid
+    }
 
     void Cluster::Randomize()
     {
@@ -68,7 +56,7 @@ namespace hexvoid
     void Cluster::RotateClockwise(int16_t cursorX, int16_t cursorY)
     {
         int16_t r, c;
-        auto selected = Match(cursorX, cursorY);
+        // auto selected = Match(cursorX, cursorY);
 
         // uint8_t swap = elements_.at(r).at(c + 1).family_;
         // elements_.at(r).at(c + 1).family_ = elements_.at(r - 1).at(c).family_;
@@ -82,7 +70,7 @@ namespace hexvoid
     void Cluster::RotateCounterClockwise(int16_t cursorX, int16_t cursorY)
     {
         int16_t r, c;
-        auto selected = Match(cursorX, cursorY);
+        // auto selected = Match(cursorX, cursorY);
 
         // uint8_t swap = elements_.at(r).at(c + 1).family_;
         // elements_.at(r).at(c + 1).family_ = elements_.at(r + 1).at(c).family_;
@@ -95,46 +83,86 @@ namespace hexvoid
 
     void Cluster::Draw(SDL_Renderer*& gRenderer, const Palette& palette, int16_t cursorX, int16_t cursorY) const
     {
-        int16_t closestRow, closestColumn;
-        auto selected = Match(cursorX, cursorY);
+        Index selected = PixelToIndex({cursorX, cursorY});
+
+        std::vector<Index> topmost;
+        topmost.reserve(6);
 
         for(const auto& [index, hexagon] : elements_)
         {
-            if(UnitDistance(index, selected) <= 2)
+            if(IndexDistance(index, selected) == 1)
             {
-                hexagon.DrawBackground(gRenderer, palette);
-                hexagon.Draw(gRenderer, palette);
+                topmost.push_back(index);
             }
             else
             {
                 hexagon.Draw(gRenderer, palette);
             }
         }
+        for(auto& index : topmost)
+        {
+            elements_.at(index).DrawHighlight(gRenderer, palette);
+        }
+        for(auto& index : topmost)
+        {
+            elements_.at(index).Draw(gRenderer, palette);
+        }
     }
 
-    std::pair<int16_t, int16_t> Cluster::Match(int16_t x, int16_t y) const
+    Cluster::Index Cluster::PixelToIndex(const Cluster::Pixel& pixel) const
     {
-        double minDistance = std::numeric_limits<double>::infinity();
-        std::pair<int16_t, int16_t> best{0, 0};
+        int16_t x = pixel.first - screenCenter_.first;
+        int16_t y = pixel.second - screenCenter_.second;
 
-        int16_t rowStart = -clusterRadius_ + 2;
-        int16_t rowEnd = clusterRadius_ - 2;
-        for(int16_t r = rowStart; r <= rowEnd; r++)
-        {
-            int16_t columnStart = -clusterRadius_ + 2 + ceil(abs(r) / 2.0);
-            int16_t columnEnd = clusterRadius_ - 2 - floor(abs(r) / 2.0);
-            for(int16_t c = columnStart; c <= columnEnd; c++)
-            {
-                double distance = elements_.at({r, c}).Distance(x, y);
-                if(distance < minDistance)
-                {
-                    minDistance = distance;
-                    best.first = r;
-                    best.second = c;
-                }
-            }
-        }
-        return std::move(best);
+        double q = (sqrt(3.0) / 3.0 * x - 1.0 / 3.0 * y) / hexRadius_;
+        double r = (2.0 / 3.0 * y) / hexRadius_;
+
+        return Round(q, r, -q - r);
+    }
+
+    Cluster::Pixel Cluster::IndexToPixel(const Cluster::Index& index) const
+    {
+        int16_t q = std::get<0>(index);
+        int16_t r = std::get<1>(index);
+        int16_t s = std::get<2>(index);
+
+        int16_t x = screenCenter_.first + (q * sqrt(3.0) + r * sqrt(3.0) / 2.0) * hexRadius_;
+        int16_t y = screenCenter_.second + (3.0 / 2.0 * r) * hexRadius_;
+
+        return {x, y};
+    }
+
+    Cluster::Index Cluster::Round(double q, double r, double s) const
+    {
+        int16_t rq = round(q);
+        int16_t rr = round(r);
+        int16_t rs = round(s);
+
+        double dq = abs(rq - q);
+        double dr = abs(rr - r);
+        double ds = abs(rs - s);
+
+        if(dq > dr && dq > ds)
+            rq = -rr - rs;
+        else if(dr > ds)
+            rr = -rq - rs;
+        else
+            rs = -rq - rr;
+
+        return {rq, rr, rs};
+    }
+
+    int16_t Cluster::IndexDistance(const Index& A, const Index& B) const
+    {
+        int16_t qA = std::get<0>(A);
+        int16_t rA = std::get<1>(A);
+        int16_t sA = std::get<2>(A);
+
+        int16_t qB = std::get<0>(B);
+        int16_t rB = std::get<1>(B);
+        int16_t sB = std::get<2>(B);
+
+        return (abs(qA - qB) + abs(rA - rB) + abs(sA - sB)) / 2;
     }
 
 } // namespace hexvoid

@@ -19,13 +19,11 @@ namespace hexvoid
     public:
         Hexagon(int16_t x, int16_t y, int16_t radius, uint8_t family) : x_(x), y_(y), radius_(radius), family_(family)
         {}
-        // Hexagon(const Hexagon&);
-        // Hexagon(Hexagon&&);
 
         double Distance(int16_t x, int16_t y) const;
 
         void Draw(SDL_Renderer*& gRenderer, const Palette& palette) const;
-        void DrawBackground(SDL_Renderer*& gRenderer, const Palette& palette) const;
+        void DrawHighlight(SDL_Renderer*& gRenderer, const Palette& palette) const;
 
         int16_t x_;
         int16_t y_;
@@ -36,7 +34,7 @@ namespace hexvoid
     class Cluster
     {
     public:
-        Cluster(int16_t radius, int16_t hexRadius, int16_t spacing);
+        Cluster(int16_t radius, int16_t hexRadius, size_t canvasWidth, size_t canvasHeight);
 
         void Randomize();
         void RotateClockwise(int16_t cursorX, int16_t cursorY);
@@ -45,16 +43,19 @@ namespace hexvoid
         void Draw(SDL_Renderer*& gRenderer, const Palette& palette, int16_t cursorX, int16_t cursorY) const;
 
     private:
-        typedef std::pair<int16_t, int16_t> Index;
+        typedef std::tuple<int16_t, int16_t, int16_t> Index;
+        typedef std::pair<int16_t, int16_t> Pixel;
 
         std::map<Index, Hexagon> elements_;
-        uint16_t clusterSize_;
+        Pixel screenCenter_;
         int16_t clusterRadius_;
         int16_t hexRadius_;
         int16_t clusterSpacing_;
 
-        Index Match(int16_t x, int16_t y) const;
-        int16_t UnitDistance(const Index& A, const Index& B) const;
+        Index PixelToIndex(const Pixel& pixel) const;
+        Pixel IndexToPixel(const Index& index) const;
+        Index Round(double q, double r, double s) const;
+        int16_t IndexDistance(const Index& A, const Index& B) const;
     };
 
     class Framerate
