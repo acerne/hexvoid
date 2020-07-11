@@ -52,6 +52,8 @@ namespace hexvoid
         int16_t hexRadius_;
         int16_t clusterSpacing_;
 
+        bool CheckSolution(Index index);
+
         Index PixelToIndex(const Pixel& pixel) const;
         Pixel IndexToPixel(const Index& index) const;
         Index Round(double q, double r, double s) const;

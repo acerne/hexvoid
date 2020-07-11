@@ -54,17 +54,22 @@ namespace hexvoid
 
         if(inside)
         {
-            int16_t q = std::get<0>(selected);
-            int16_t r = std::get<1>(selected);
-            int16_t s = std::get<2>(selected);
+            if(CheckSolution(selected))
+                printf("HIT!\n");
+            else
+            {
+                int16_t q = std::get<0>(selected);
+                int16_t r = std::get<1>(selected);
+                int16_t s = std::get<2>(selected);
 
-            uint8_t swap = elements_.at({q + 1, r - 1, s}).family_;
-            elements_.at({q + 1, r - 1, s}).family_ = elements_.at({q, r - 1, s + 1}).family_;
-            elements_.at({q, r - 1, s + 1}).family_ = elements_.at({q - 1, r, s + 1}).family_;
-            elements_.at({q - 1, r, s + 1}).family_ = elements_.at({q - 1, r + 1, s}).family_;
-            elements_.at({q - 1, r + 1, s}).family_ = elements_.at({q, r + 1, s - 1}).family_;
-            elements_.at({q, r + 1, s - 1}).family_ = elements_.at({q + 1, r, s - 1}).family_;
-            elements_.at({q + 1, r, s - 1}).family_ = swap;
+                uint8_t swap = elements_.at({q + 1, r - 1, s}).family_;
+                elements_.at({q + 1, r - 1, s}).family_ = elements_.at({q, r - 1, s + 1}).family_;
+                elements_.at({q, r - 1, s + 1}).family_ = elements_.at({q - 1, r, s + 1}).family_;
+                elements_.at({q - 1, r, s + 1}).family_ = elements_.at({q - 1, r + 1, s}).family_;
+                elements_.at({q - 1, r + 1, s}).family_ = elements_.at({q, r + 1, s - 1}).family_;
+                elements_.at({q, r + 1, s - 1}).family_ = elements_.at({q + 1, r, s - 1}).family_;
+                elements_.at({q + 1, r, s - 1}).family_ = swap;
+            }
         }
     }
 
@@ -75,17 +80,22 @@ namespace hexvoid
 
         if(inside)
         {
-            int16_t q = std::get<0>(selected);
-            int16_t r = std::get<1>(selected);
-            int16_t s = std::get<2>(selected);
+            if(CheckSolution(selected))
+                printf("HIT!\n");
+            else
+            {
+                int16_t q = std::get<0>(selected);
+                int16_t r = std::get<1>(selected);
+                int16_t s = std::get<2>(selected);
 
-            uint8_t swap = elements_.at({q + 1, r - 1, s}).family_;
-            elements_.at({q + 1, r - 1, s}).family_ = elements_.at({q + 1, r, s - 1}).family_;
-            elements_.at({q + 1, r, s - 1}).family_ = elements_.at({q, r + 1, s - 1}).family_;
-            elements_.at({q, r + 1, s - 1}).family_ = elements_.at({q - 1, r + 1, s}).family_;
-            elements_.at({q - 1, r + 1, s}).family_ = elements_.at({q - 1, r, s + 1}).family_;
-            elements_.at({q - 1, r, s + 1}).family_ = elements_.at({q, r - 1, s + 1}).family_;
-            elements_.at({q, r - 1, s + 1}).family_ = swap;
+                uint8_t swap = elements_.at({q + 1, r - 1, s}).family_;
+                elements_.at({q + 1, r - 1, s}).family_ = elements_.at({q + 1, r, s - 1}).family_;
+                elements_.at({q + 1, r, s - 1}).family_ = elements_.at({q, r + 1, s - 1}).family_;
+                elements_.at({q, r + 1, s - 1}).family_ = elements_.at({q - 1, r + 1, s}).family_;
+                elements_.at({q - 1, r + 1, s}).family_ = elements_.at({q - 1, r, s + 1}).family_;
+                elements_.at({q - 1, r, s + 1}).family_ = elements_.at({q, r - 1, s + 1}).family_;
+                elements_.at({q, r - 1, s + 1}).family_ = swap;
+            }
         }
     }
 
@@ -126,45 +136,23 @@ namespace hexvoid
         }
     }
 
-    Cluster::Index Cluster::GetClosestSelection(const Cluster::Pixel& pixel) const
+    bool Cluster::CheckSolution(Cluster::Index index)
     {
-        Index hover = PixelToIndex(pixel);
+        int16_t q = std::get<0>(index);
+        int16_t r = std::get<1>(index);
+        int16_t s = std::get<2>(index);
 
-        while(IndexDistance({0, 0, 0}, hover) >= clusterRadius_ - 1)
-        {
-            int16_t q = std::get<0>(hover);
-            int16_t r = std::get<1>(hover);
-            int16_t s = std::get<2>(hover);
+        uint8_t reference = elements_.at(index).family_;
 
-            if(abs(q) > abs(r) && abs(q) > abs(s))
-            {
-                (q < 0) ? q++ : q--;
-                if(abs(r) > abs(s))
-                    (r < 0) ? r++ : r--;
-                else
-                    (s < 0) ? s++ : s--;
-            }
-            else if(abs(r) > abs(s))
-            {
-                (r < 0) ? r++ : r--;
-                if(abs(q) > abs(s))
-                    (q < 0) ? q++ : q--;
-                else
-                    (s < 0) ? s++ : s--;
-            }
-            else
-            {
-                (s < 0) ? s++ : s--;
-                if(abs(q) > abs(r))
-                    (q < 0) ? q++ : q--;
-                else
-                    (r < 0) ? r++ : r--;
-            }
-            std::get<0>(hover) = q;
-            std::get<1>(hover) = r;
-            std::get<2>(hover) = s;
-        }
-        return hover;
+        bool hit = true;
+        hit &= reference == elements_.at({q + 1, r - 1, s}).family_;
+        hit &= reference == elements_.at({q, r - 1, s + 1}).family_;
+        hit &= reference == elements_.at({q - 1, r, s + 1}).family_;
+        hit &= reference == elements_.at({q - 1, r + 1, s}).family_;
+        hit &= reference == elements_.at({q, r + 1, s - 1}).family_;
+        hit &= reference == elements_.at({q + 1, r, s - 1}).family_;
+
+        return hit;
     }
 
     Cluster::Index Cluster::PixelToIndex(const Cluster::Pixel& pixel) const
@@ -221,6 +209,47 @@ namespace hexvoid
         int16_t sB = std::get<2>(B);
 
         return (abs(qA - qB) + abs(rA - rB) + abs(sA - sB)) / 2;
+    }
+
+    Cluster::Index Cluster::GetClosestSelection(const Cluster::Pixel& pixel) const
+    {
+        Index hover = PixelToIndex(pixel);
+
+        while(IndexDistance({0, 0, 0}, hover) >= clusterRadius_ - 1)
+        {
+            int16_t q = std::get<0>(hover);
+            int16_t r = std::get<1>(hover);
+            int16_t s = std::get<2>(hover);
+
+            if(abs(q) > abs(r) && abs(q) > abs(s))
+            {
+                (q < 0) ? q++ : q--;
+                if(abs(r) > abs(s))
+                    (r < 0) ? r++ : r--;
+                else
+                    (s < 0) ? s++ : s--;
+            }
+            else if(abs(r) > abs(s))
+            {
+                (r < 0) ? r++ : r--;
+                if(abs(q) > abs(s))
+                    (q < 0) ? q++ : q--;
+                else
+                    (s < 0) ? s++ : s--;
+            }
+            else
+            {
+                (s < 0) ? s++ : s--;
+                if(abs(q) > abs(r))
+                    (q < 0) ? q++ : q--;
+                else
+                    (r < 0) ? r++ : r--;
+            }
+            std::get<0>(hover) = q;
+            std::get<1>(hover) = r;
+            std::get<2>(hover) = s;
+        }
+        return hover;
     }
 
 } // namespace hexvoid
