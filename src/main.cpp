@@ -13,7 +13,7 @@ int main(int argc, char* args[])
 
     gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
 
-    hexvoid::Cluster cluster(5, 40, hexvoid::WINDOW_WIDTH, hexvoid::WINDOW_HEIGHT);
+    hexvoid::Cluster cluster(4, 50, hexvoid::WINDOW_WIDTH, hexvoid::WINDOW_HEIGHT);
 
     SDL_Event event;
     bool quit = false;

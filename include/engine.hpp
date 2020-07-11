@@ -53,6 +53,7 @@ namespace hexvoid
         int16_t clusterSpacing_;
 
         bool CheckSolution(Index index);
+        void ShuffleSolution(Index index);
 
         Index PixelToIndex(const Pixel& pixel) const;
         Pixel IndexToPixel(const Index& index) const;

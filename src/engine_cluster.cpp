@@ -55,7 +55,10 @@ namespace hexvoid
         if(inside)
         {
             if(CheckSolution(selected))
+            {
                 printf("HIT!\n");
+                ShuffleSolution(selected);
+            }
             else
             {
                 int16_t q = std::get<0>(selected);
@@ -81,7 +84,10 @@ namespace hexvoid
         if(inside)
         {
             if(CheckSolution(selected))
+            {
                 printf("HIT!\n");
+                ShuffleSolution(selected);
+            }
             else
             {
                 int16_t q = std::get<0>(selected);
@@ -153,6 +159,21 @@ namespace hexvoid
         hit &= reference == elements_.at({q + 1, r, s - 1}).family_;
 
         return hit;
+    }
+
+    void Cluster::ShuffleSolution(Cluster::Index index)
+    {
+        int16_t q = std::get<0>(index);
+        int16_t r = std::get<1>(index);
+        int16_t s = std::get<2>(index);
+
+        elements_.at(index).family_ = Random(2, 5);
+        elements_.at({q + 1, r - 1, s}).family_ = Random(2, 5);
+        elements_.at({q, r - 1, s + 1}).family_ = Random(2, 5);
+        elements_.at({q - 1, r, s + 1}).family_ = Random(2, 5);
+        elements_.at({q - 1, r + 1, s}).family_ = Random(2, 5);
+        elements_.at({q, r + 1, s - 1}).family_ = Random(2, 5);
+        elements_.at({q + 1, r, s - 1}).family_ = Random(2, 5);
     }
 
     Cluster::Index Cluster::PixelToIndex(const Cluster::Pixel& pixel) const
