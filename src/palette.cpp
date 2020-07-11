@@ -28,8 +28,8 @@ namespace hexvoid
                       {"FlourescentFish", Color(0x000000), Color(0xFFFFFF), Color(0xFEC763), Color(0xEA55B1),
                        Color(0xA992FA), Color(0x00207F)}};
 
-        font_ = TTF_OpenFont("/usr/share/fonts/truetype/freefont/FreeMono.ttf", 12); // select and move font
-        if(!font_) throw std::runtime_error("Font not found! TTF_Error: " + std::string(TTF_GetError()));
+        text_.Apply(GetThemeName());
+        text_.Position(5, 570);
     }
 
     Palette::Color Palette::GetThemeColor(int index) const
@@ -60,24 +60,25 @@ namespace hexvoid
 
     void Palette::NextTheme()
     {
-        if(selectedTheme_ < themeList_.size() - 1) selectedTheme_++;
+        if(selectedTheme_ < themeList_.size() - 1)
+        {
+            selectedTheme_++;
+            text_.Apply(GetThemeName());
+        }
     }
 
     void Palette::PreviousTheme()
     {
-        if(selectedTheme_ > 0) selectedTheme_--;
+        if(selectedTheme_ > 0)
+        {
+            selectedTheme_--;
+            text_.Apply(GetThemeName());
+        }
     }
 
     void Palette::DrawInfo(SDL_Renderer*& gRenderer)
     {
-        std::string name = GetThemeName();
-        char const* paletteText = name.c_str();
-        int stringLenth = name.length();
-        Palette::Color color = GetThemeColor(1);
-        SDL_Surface* textSurface = TTF_RenderText_Solid(font_, paletteText, {color.r, color.g, color.b});
-        SDL_Rect textLocation = {200, 5, stringLenth * 20, 30};
-        SDL_Texture* Message = SDL_CreateTextureFromSurface(gRenderer, textSurface);
-        SDL_RenderCopy(gRenderer, Message, NULL, &textLocation);
+        text_.Draw(gRenderer);
     };
 
 } // namespace hexvoid

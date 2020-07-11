@@ -5,7 +5,8 @@
 #include <vector>
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
+
+#include "menu.hpp"
 
 namespace hexvoid
 {
@@ -50,7 +51,7 @@ namespace hexvoid
     private:
         uint8_t selectedTheme_;
         std::vector<Theme> themeList_;
-        TTF_Font* font_;
+        Text text_ = Text(26);
     };
 
 } // namespace hexvoid

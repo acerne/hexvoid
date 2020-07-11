@@ -9,13 +9,7 @@ namespace hexvoid
         frameCount_ = 0;
         lastSecond_ = SDL_GetTicks();
         fps_ = 0;
-        font_ = TTF_OpenFont("/usr/share/fonts/truetype/freefont/FreeMono.ttf", 12); // select and move font
-        if(!font_) throw std::runtime_error("Font not found! TTF_Error: " + std::string(TTF_GetError()));
-    }
-
-    Framerate::~Framerate()
-    {
-        TTF_CloseFont(font_);
+        text_.Position(5, 5);
     }
 
     void Framerate::Tick()
@@ -32,12 +26,8 @@ namespace hexvoid
 
     void Framerate::Draw(SDL_Renderer*& gRenderer, const Palette& palette)
     {
-        char const* fpsText = std::to_string(fps_).c_str();
-        Palette::Color color = palette.GetThemeColor(1);
-        SDL_Surface* textSurface = TTF_RenderText_Solid(font_, fpsText, {color.r, color.g, color.b});
-        SDL_Rect textLocation = {5, 5, 30, 20};
-        SDL_Texture* Message = SDL_CreateTextureFromSurface(gRenderer, textSurface);
-        SDL_RenderCopy(gRenderer, Message, NULL, &textLocation);
+        text_.Apply(std::to_string(fps_));
+        text_.Draw(gRenderer);
     };
 
 } // namespace hexvoid

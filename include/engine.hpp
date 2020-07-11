@@ -4,12 +4,11 @@
 #include <map>
 #include <stdint.h>
 #include <string>
-#include <utility>
 #include <vector>
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
 
+#include "menu.hpp"
 #include "palette.hpp"
 
 namespace hexvoid
@@ -66,7 +65,6 @@ namespace hexvoid
     {
     public:
         Framerate();
-        ~Framerate();
 
         void Tick();
         void Draw(SDL_Renderer*& gRenderer, const Palette& palette);
@@ -75,7 +73,7 @@ namespace hexvoid
         uint16_t frameCount_;
         uint32_t lastSecond_;
         uint16_t fps_;
-        TTF_Font* font_;
+        Text text_ = Text(16);
     };
 
 } // namespace hexvoid

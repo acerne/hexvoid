@@ -24,6 +24,7 @@ add_executable(${PROJECT_NAME}  src/main.cpp
                         src/engine_framerate.cpp
                         src/engine_hexagon.cpp
                         src/hexvoid.cpp
+                        src/menu.cpp
                         src/palette.cpp
                         )
 
