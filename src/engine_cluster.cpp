@@ -31,18 +31,13 @@ namespace hexvoid
 
         for(int16_t q = -radius + 1; q < radius; q++)
         {
-            for(int16_t r = -radius + 1; r < radius; r++)
+            for(int16_t r = std::max(-radius + 1, -q - radius + 1); r <= std::min(radius - 1, -q + radius - 1); r++)
             {
-                for(int16_t s = -radius + 1; s < radius; s++)
-                {
-                    if(q + r + s == 0)
-                    {
-                        uint8_t family = Random(2, 5);
-                        Index index{q, r, s};
-                        Pixel pixel = IndexToPixel(index);
-                        elements_.emplace(index, Hexagon{pixel.first, pixel.second, hexRadius, family});
-                    }
-                }
+                int16_t s = -q - r;
+                uint8_t family = Random(2, 5);
+                Index index{q, r, s};
+                Pixel pixel = IndexToPixel(index);
+                elements_.emplace(index, Hexagon{pixel.first, pixel.second, hexRadius, family});
             }
         }
     }
@@ -69,28 +64,25 @@ namespace hexvoid
 
     void Cluster::RotateCounterClockwise(int16_t cursorX, int16_t cursorY)
     {
-        int16_t r, c;
-        // auto selected = Match(cursorX, cursorY);
-
-        // uint8_t swap = elements_.at(r).at(c + 1).family_;
-        // elements_.at(r).at(c + 1).family_ = elements_.at(r + 1).at(c).family_;
-        // elements_.at(r + 1).at(c).family_ = elements_.at(r + 1).at(c - 1).family_;
-        // elements_.at(r + 1).at(c - 1).family_ = elements_.at(r).at(c - 1).family_;
-        // elements_.at(r).at(c - 1).family_ = elements_.at(r - 1).at(c - 1).family_;
-        // elements_.at(r - 1).at(c - 1).family_ = elements_.at(r - 1).at(c).family_;
-        // elements_.at(r - 1).at(c).family_ = swap;
+        Index selected = PixelToIndex({cursorX, cursorY});
     }
 
     void Cluster::Draw(SDL_Renderer*& gRenderer, const Palette& palette, int16_t cursorX, int16_t cursorY) const
     {
         Index selected = PixelToIndex({cursorX, cursorY});
+        bool inside = IndexDistance({0, 0, 0}, selected) < clusterRadius_ - 1;
+
+        int16_t q = std::get<0>(selected);
+        int16_t r = std::get<1>(selected);
+        int16_t s = std::get<2>(selected);
+        printf("(%i,%i,%i)\n", q, r, s);
 
         std::vector<Index> topmost;
         topmost.reserve(6);
 
         for(const auto& [index, hexagon] : elements_)
         {
-            if(IndexDistance(index, selected) == 1)
+            if(inside && IndexDistance(index, selected) == 1)
             {
                 topmost.push_back(index);
             }
@@ -99,14 +91,59 @@ namespace hexvoid
                 hexagon.Draw(gRenderer, palette);
             }
         }
-        for(auto& index : topmost)
+
+        if(inside)
         {
-            elements_.at(index).DrawHighlight(gRenderer, palette);
+            for(auto& index : topmost)
+            {
+                elements_.at(index).DrawHighlight(gRenderer, palette);
+            }
+            for(auto& index : topmost)
+            {
+                elements_.at(index).Draw(gRenderer, palette);
+            }
         }
-        for(auto& index : topmost)
+    }
+
+    Cluster::Index Cluster::GetClosestSelection(const Cluster::Pixel& pixel) const
+    {
+        Index hover = PixelToIndex(pixel);
+
+        while(IndexDistance({0, 0, 0}, hover) >= clusterRadius_ - 1)
         {
-            elements_.at(index).Draw(gRenderer, palette);
+            int16_t q = std::get<0>(hover);
+            int16_t r = std::get<1>(hover);
+            int16_t s = std::get<2>(hover);
+
+            if(abs(q) > abs(r) && abs(q) > abs(s))
+            {
+                (q < 0) ? q++ : q--;
+                if(abs(r) > abs(s))
+                    (r < 0) ? r++ : r--;
+                else
+                    (s < 0) ? s++ : s--;
+            }
+            else if(abs(r) > abs(s))
+            {
+                (r < 0) ? r++ : r--;
+                if(abs(q) > abs(s))
+                    (q < 0) ? q++ : q--;
+                else
+                    (s < 0) ? s++ : s--;
+            }
+            else
+            {
+                (s < 0) ? s++ : s--;
+                if(abs(q) > abs(r))
+                    (q < 0) ? q++ : q--;
+                else
+                    (r < 0) ? r++ : r--;
+            }
+            std::get<0>(hover) = q;
+            std::get<1>(hover) = r;
+            std::get<2>(hover) = s;
         }
+        return hover;
     }
 
     Cluster::Index Cluster::PixelToIndex(const Cluster::Pixel& pixel) const

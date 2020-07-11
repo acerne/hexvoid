@@ -56,6 +56,7 @@ namespace hexvoid
         Pixel IndexToPixel(const Index& index) const;
         Index Round(double q, double r, double s) const;
         int16_t IndexDistance(const Index& A, const Index& B) const;
+        Index GetClosestSelection(const Pixel& pixel) const;
     };
 
     class Framerate
