@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <iostream> // DELETE
 #include <random>
 #include <stdexcept>
 
@@ -50,21 +49,44 @@ namespace hexvoid
 
     void Cluster::RotateClockwise(int16_t cursorX, int16_t cursorY)
     {
-        int16_t r, c;
-        // auto selected = Match(cursorX, cursorY);
+        Index selected = PixelToIndex({cursorX, cursorY});
+        bool inside = IndexDistance({0, 0, 0}, selected) < clusterRadius_ - 1;
 
-        // uint8_t swap = elements_.at(r).at(c + 1).family_;
-        // elements_.at(r).at(c + 1).family_ = elements_.at(r - 1).at(c).family_;
-        // elements_.at(r - 1).at(c).family_ = elements_.at(r - 1).at(c - 1).family_;
-        // elements_.at(r - 1).at(c - 1).family_ = elements_.at(r).at(c - 1).family_;
-        // elements_.at(r).at(c - 1).family_ = elements_.at(r + 1).at(c - 1).family_;
-        // elements_.at(r + 1).at(c - 1).family_ = elements_.at(r + 1).at(c).family_;
-        // elements_.at(r + 1).at(c).family_ = swap;
+        if(inside)
+        {
+            int16_t q = std::get<0>(selected);
+            int16_t r = std::get<1>(selected);
+            int16_t s = std::get<2>(selected);
+
+            uint8_t swap = elements_.at({q + 1, r - 1, s}).family_;
+            elements_.at({q + 1, r - 1, s}).family_ = elements_.at({q, r - 1, s + 1}).family_;
+            elements_.at({q, r - 1, s + 1}).family_ = elements_.at({q - 1, r, s + 1}).family_;
+            elements_.at({q - 1, r, s + 1}).family_ = elements_.at({q - 1, r + 1, s}).family_;
+            elements_.at({q - 1, r + 1, s}).family_ = elements_.at({q, r + 1, s - 1}).family_;
+            elements_.at({q, r + 1, s - 1}).family_ = elements_.at({q + 1, r, s - 1}).family_;
+            elements_.at({q + 1, r, s - 1}).family_ = swap;
+        }
     }
 
     void Cluster::RotateCounterClockwise(int16_t cursorX, int16_t cursorY)
     {
         Index selected = PixelToIndex({cursorX, cursorY});
+        bool inside = IndexDistance({0, 0, 0}, selected) < clusterRadius_ - 1;
+
+        if(inside)
+        {
+            int16_t q = std::get<0>(selected);
+            int16_t r = std::get<1>(selected);
+            int16_t s = std::get<2>(selected);
+
+            uint8_t swap = elements_.at({q + 1, r - 1, s}).family_;
+            elements_.at({q + 1, r - 1, s}).family_ = elements_.at({q + 1, r, s - 1}).family_;
+            elements_.at({q + 1, r, s - 1}).family_ = elements_.at({q, r + 1, s - 1}).family_;
+            elements_.at({q, r + 1, s - 1}).family_ = elements_.at({q - 1, r + 1, s}).family_;
+            elements_.at({q - 1, r + 1, s}).family_ = elements_.at({q - 1, r, s + 1}).family_;
+            elements_.at({q - 1, r, s + 1}).family_ = elements_.at({q, r - 1, s + 1}).family_;
+            elements_.at({q, r - 1, s + 1}).family_ = swap;
+        }
     }
 
     void Cluster::Draw(SDL_Renderer*& gRenderer, const Palette& palette, int16_t cursorX, int16_t cursorY) const
@@ -75,7 +97,6 @@ namespace hexvoid
         int16_t q = std::get<0>(selected);
         int16_t r = std::get<1>(selected);
         int16_t s = std::get<2>(selected);
-        printf("(%i,%i,%i)\n", q, r, s);
 
         std::vector<Index> topmost;
         topmost.reserve(6);
