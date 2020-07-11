@@ -1,8 +1,10 @@
 #pragma once
 
 #include <cstddef>
+#include <map>
 #include <stdint.h>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include <SDL2/SDL.h>
@@ -17,13 +19,13 @@ namespace hexvoid
     public:
         Hexagon(int16_t x, int16_t y, int16_t radius, uint8_t family) : x_(x), y_(y), radius_(radius), family_(family)
         {}
+        // Hexagon(const Hexagon&);
+        // Hexagon(Hexagon&&);
 
-        double Distance(int16_t x, int16_t y);
+        double Distance(int16_t x, int16_t y) const;
 
-        // void DrawHorizontal(SDL_Renderer*& gRenderer, uint8_t r, uint8_t g,
-        // uint8_t b);
-        void Draw(SDL_Renderer*& gRenderer, const Palette& palette);
-        void DrawBackground(SDL_Renderer*& gRenderer, const Palette& palette);
+        void Draw(SDL_Renderer*& gRenderer, const Palette& palette) const;
+        void DrawBackground(SDL_Renderer*& gRenderer, const Palette& palette) const;
 
         int16_t x_;
         int16_t y_;
@@ -40,17 +42,19 @@ namespace hexvoid
         void RotateClockwise(int16_t cursorX, int16_t cursorY);
         void RotateCounterClockwise(int16_t cursorX, int16_t cursorY);
 
-        void Draw(SDL_Renderer*& gRenderer, const Palette& palette, int16_t cursorX, int16_t cursorY);
+        void Draw(SDL_Renderer*& gRenderer, const Palette& palette, int16_t cursorX, int16_t cursorY) const;
 
     private:
-        std::vector<std::vector<Hexagon>> elements_;
-        std::vector<uint8_t> rowOffset_;
+        typedef std::pair<int16_t, int16_t> Index;
+
+        std::map<Index, Hexagon> elements_;
         uint16_t clusterSize_;
         int16_t clusterRadius_;
         int16_t hexRadius_;
         int16_t clusterSpacing_;
 
-        void FindClosestInnerElement(int16_t x, int16_t y, int16_t& row, int16_t& column);
+        Index Match(int16_t x, int16_t y) const;
+        int16_t UnitDistance(const Index& A, const Index& B) const;
     };
 
     class Framerate

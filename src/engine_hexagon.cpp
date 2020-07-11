@@ -7,44 +7,12 @@
 
 namespace hexvoid
 {
-
-    // void Hexagon::DrawHorizontal(SDL_Renderer*& gRenderer, uint8_t r, uint8_t g, uint8_t b)
-    // {
-    //     int16_t vx[6], vy[6];
-
-    //     const double sin30 = std::sin(30.0 * M_PI / 180.0);
-    //     const double cos30 = std::cos(30.0 * M_PI / 180.0);
-
-    //     int16_t xOffset = sin30 * radius;
-    //     int16_t yOffset = cos30 * radius;
-
-    //     vx[0] = x_ + radius;
-    //     vy[0] = y;
-
-    //     vx[1] = x_ + xOffset;
-    //     vy[1] = y_ - yOffset;
-
-    //     vx[2] = x_ - xOffset;
-    //     vy[2] = y_ - yOffset;
-
-    //     vx[3] = x_ - radius;
-    //     vy[3] = y;
-
-    //     vx[4] = x_ - xOffset;
-    //     vy[4] = y_ + yOffset;
-
-    //     vx[5] = x_ + xOffset;
-    //     vy[5] = y_ + yOffset;
-
-    //     filledPolygonRGBA(gRenderer, vx, vy, 6, r, g, b, 255);
-    // }
-
-    double Hexagon::Distance(int16_t x, int16_t y)
+    double Hexagon::Distance(int16_t x, int16_t y) const
     {
         return std::sqrt(std::pow(x_ - x, 2) + std::pow(y_ - y, 2));
     }
 
-    void Hexagon::Draw(SDL_Renderer*& gRenderer, const Palette& palette)
+    void Hexagon::Draw(SDL_Renderer*& gRenderer, const Palette& palette) const
     {
         int16_t vx[6], vy[6];
 
@@ -76,7 +44,7 @@ namespace hexvoid
         filledPolygonRGBA(gRenderer, vx, vy, 6, color.r, color.g, color.b, 255);
     }
 
-    void Hexagon::DrawBackground(SDL_Renderer*& gRenderer, const Palette& palette)
+    void Hexagon::DrawBackground(SDL_Renderer*& gRenderer, const Palette& palette) const
     {
         int16_t vx[6], vy[6];
 

@@ -38,113 +38,103 @@ namespace hexvoid
         int16_t screenCenterX = WINDOW_WIDTH / 2;
         int16_t screenCenterY = WINDOW_HEIGHT / 2;
 
-        for(int r = -radius + 1; r < radius; r++)
+        for(int16_t r = -radius + 1; r < radius; r++)
         {
-            int columns;
+            int16_t columns;
             if(r < 0)
                 columns = 2 * radius + r - 1;
             else
                 columns = 2 * radius - r - 1;
 
-            std::vector<Hexagon> row;
-            row.reserve(columns);
+            int16_t columnStart = (2 * radius - columns) / 2 - radius + 1;
 
-            int columnStart = (2 * radius - columns) / 2 - radius + 1;
-
-            for(int c = columnStart; c < columnStart + columns; c++)
+            for(int16_t c = columnStart; c < columnStart + columns; c++)
             {
                 int16_t x = screenCenterX + (2 * c - abs(r) % 2) * rowSpacing;
                 int16_t y = screenCenterY + r * columnSpacing;
                 uint8_t family = Random(2, 5);
-                row.emplace_back(x, y, hexRadius, family);
+                std::pair<int16_t, int16_t> location{r, c};
+                elements_.emplace(location, Hexagon{x, y, hexRadius, family});
             }
-            elements_.push_back(std::move(row));
-            rowOffset_.push_back(columnStart + radius - 1);
         }
-    }
+    } // namespace hexvoid
 
     void Cluster::Randomize()
     {
-        for(auto& row : elements_)
-            for(auto& hex : row)
-                hex.family_ = Random(2, 5);
+        for(auto& [index, hexagon] : elements_)
+            hexagon.family_ = Random(2, 5);
     }
 
     void Cluster::RotateClockwise(int16_t cursorX, int16_t cursorY)
     {
         int16_t r, c;
-        FindClosestInnerElement(cursorX, cursorY, r, c);
+        auto selected = Match(cursorX, cursorY);
 
-        uint8_t swap = elements_.at(r).at(c + 1).family_;
-        elements_.at(r).at(c + 1).family_ = elements_.at(r - 1).at(c).family_;
-        elements_.at(r - 1).at(c).family_ = elements_.at(r - 1).at(c - 1).family_;
-        elements_.at(r - 1).at(c - 1).family_ = elements_.at(r).at(c - 1).family_;
-        elements_.at(r).at(c - 1).family_ = elements_.at(r + 1).at(c - 1).family_;
-        elements_.at(r + 1).at(c - 1).family_ = elements_.at(r + 1).at(c).family_;
-        elements_.at(r + 1).at(c).family_ = swap;
+        // uint8_t swap = elements_.at(r).at(c + 1).family_;
+        // elements_.at(r).at(c + 1).family_ = elements_.at(r - 1).at(c).family_;
+        // elements_.at(r - 1).at(c).family_ = elements_.at(r - 1).at(c - 1).family_;
+        // elements_.at(r - 1).at(c - 1).family_ = elements_.at(r).at(c - 1).family_;
+        // elements_.at(r).at(c - 1).family_ = elements_.at(r + 1).at(c - 1).family_;
+        // elements_.at(r + 1).at(c - 1).family_ = elements_.at(r + 1).at(c).family_;
+        // elements_.at(r + 1).at(c).family_ = swap;
     }
 
     void Cluster::RotateCounterClockwise(int16_t cursorX, int16_t cursorY)
     {
         int16_t r, c;
-        FindClosestInnerElement(cursorX, cursorY, r, c);
+        auto selected = Match(cursorX, cursorY);
 
-        uint8_t swap = elements_.at(r).at(c + 1).family_;
-        elements_.at(r).at(c + 1).family_ = elements_.at(r + 1).at(c).family_;
-        elements_.at(r + 1).at(c).family_ = elements_.at(r + 1).at(c - 1).family_;
-        elements_.at(r + 1).at(c - 1).family_ = elements_.at(r).at(c - 1).family_;
-        elements_.at(r).at(c - 1).family_ = elements_.at(r - 1).at(c - 1).family_;
-        elements_.at(r - 1).at(c - 1).family_ = elements_.at(r - 1).at(c).family_;
-        elements_.at(r - 1).at(c).family_ = swap;
+        // uint8_t swap = elements_.at(r).at(c + 1).family_;
+        // elements_.at(r).at(c + 1).family_ = elements_.at(r + 1).at(c).family_;
+        // elements_.at(r + 1).at(c).family_ = elements_.at(r + 1).at(c - 1).family_;
+        // elements_.at(r + 1).at(c - 1).family_ = elements_.at(r).at(c - 1).family_;
+        // elements_.at(r).at(c - 1).family_ = elements_.at(r - 1).at(c - 1).family_;
+        // elements_.at(r - 1).at(c - 1).family_ = elements_.at(r - 1).at(c).family_;
+        // elements_.at(r - 1).at(c).family_ = swap;
     }
 
-    void Cluster::Draw(SDL_Renderer*& gRenderer, const Palette& palette, int16_t cursorX, int16_t cursorY)
+    void Cluster::Draw(SDL_Renderer*& gRenderer, const Palette& palette, int16_t cursorX, int16_t cursorY) const
     {
         int16_t closestRow, closestColumn;
-        FindClosestInnerElement(cursorX, cursorY, closestRow, closestColumn);
+        auto selected = Match(cursorX, cursorY);
 
-        for(int r = 0; r < elements_.size(); r++)
+        for(const auto& [index, hexagon] : elements_)
         {
-            for(int c = 0; c < elements_.at(r).size(); c++)
+            if(UnitDistance(index, selected) <= 2)
             {
-                if(r == closestRow && c == closestColumn)
-                {
-                    elements_.at(r).at(c).DrawBackground(gRenderer, palette);
-                    elements_.at(r).at(c).Draw(gRenderer, palette);
-                }
-                else if(elements_.at(r).at(c).Distance(elements_.at(closestRow).at(closestColumn).x_,
-                                                       elements_.at(closestRow).at(closestColumn).y_)
-                        < 2 * elements_.at(closestRow).at(closestColumn).radius_)
-                {
-                    elements_.at(r).at(c).DrawBackground(gRenderer, palette);
-                    elements_.at(r).at(c).Draw(gRenderer, palette);
-                }
-                else
-                {
-                    elements_.at(r).at(c).Draw(gRenderer, palette);
-                }
+                hexagon.DrawBackground(gRenderer, palette);
+                hexagon.Draw(gRenderer, palette);
+            }
+            else
+            {
+                hexagon.Draw(gRenderer, palette);
             }
         }
     }
 
-    void Cluster::FindClosestInnerElement(int16_t x, int16_t y, int16_t& row, int16_t& column)
+    std::pair<int16_t, int16_t> Cluster::Match(int16_t x, int16_t y) const
     {
         double minDistance = std::numeric_limits<double>::infinity();
-        row = -1;
-        column = -1;
-        for(int r = 1; r < elements_.size() - 1; r++)
+        std::pair<int16_t, int16_t> best{0, 0};
+
+        int16_t rowStart = -clusterRadius_ + 2;
+        int16_t rowEnd = clusterRadius_ - 2;
+        for(int16_t r = rowStart; r <= rowEnd; r++)
         {
-            for(int c = 1; c < elements_.at(r).size() - 1; c++)
+            int16_t columnStart = -clusterRadius_ + 2 + ceil(abs(r) / 2.0);
+            int16_t columnEnd = clusterRadius_ - 2 - floor(abs(r) / 2.0);
+            for(int16_t c = columnStart; c <= columnEnd; c++)
             {
-                double distance = elements_.at(r).at(c).Distance(x, y);
+                double distance = elements_.at({r, c}).Distance(x, y);
                 if(distance < minDistance)
                 {
                     minDistance = distance;
-                    row = r;
-                    column = c;
+                    best.first = r;
+                    best.second = c;
                 }
             }
         }
+        return std::move(best);
     }
 
 } // namespace hexvoid
