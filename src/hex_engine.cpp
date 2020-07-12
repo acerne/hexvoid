@@ -48,11 +48,15 @@ namespace hex
         SDL_FreeSurface(gSurface_);
         gSurface_ = NULL;
 
-        if(debug_) printf("Terminating TTF...\n");
+        SDL_FreeSurface(gBackground_);
+        gBackground_ = NULL;
+
+        SDL_DestroyRenderer(gRenderer_);
+        gRenderer_ = NULL;
+
         SDL_DestroyWindow(gWindow_);
         gWindow_ = NULL;
 
-        if(debug_) printf("Quitting...\n");
         TTF_Quit();
         SDL_Quit();
     }

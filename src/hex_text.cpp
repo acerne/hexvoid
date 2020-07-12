@@ -51,6 +51,8 @@ namespace hex
             SDL_Rect textLocation = {x_, y_ + i * h, w, h};
             SDL_Texture* Message = SDL_CreateTextureFromSurface(Engine::gRenderer_, textSurface);
             SDL_RenderCopy(Engine::gRenderer_, Message, NULL, &textLocation);
+            SDL_DestroyTexture(Message);
+            SDL_FreeSurface(textSurface);
         }
     }
 
