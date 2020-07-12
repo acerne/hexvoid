@@ -4,11 +4,9 @@
 
 #include <SDL2/SDL2_gfxPrimitives.h>
 
-#include "engine.hpp"
-#include "hexvoid.hpp"
-#include "palette.hpp"
+#include "hex.hpp"
 
-namespace hexvoid
+namespace hex
 {
 
     uint8_t Random(uint8_t min, uint8_t max)
@@ -18,19 +16,22 @@ namespace hexvoid
         return distribution(generator);
     }
 
-    Cluster::Cluster(int16_t radius, int16_t hexRadius, size_t canvasWidth, size_t canvasHeight)
+    Grid::Grid(int16_t gridRadius, int16_t hexRadius)
     {
-        clusterRadius_ = radius;
+        if(debug_) printf("Creating Grid class...\n");
+
+        gridRadius_ = gridRadius;
         hexRadius_ = hexRadius;
 
         elements_.clear();
 
-        screenCenter_.first = canvasWidth / 2;
-        screenCenter_.second = canvasHeight / 2;
+        screenCenter_.first = Engine::windowWidth_ / 2; // TODO center as argument
+        screenCenter_.second = Engine::windowHeight_ / 2;
 
-        for(int16_t q = -radius + 1; q < radius; q++)
+        for(int16_t q = -gridRadius + 1; q < gridRadius; q++)
         {
-            for(int16_t r = std::max(-radius + 1, -q - radius + 1); r <= std::min(radius - 1, -q + radius - 1); r++)
+            for(int16_t r = std::max(-gridRadius + 1, -q - gridRadius + 1);
+                r <= std::min(gridRadius - 1, -q + gridRadius - 1); r++)
             {
                 int16_t s = -q - r;
                 uint8_t family = Random(2, 5);
@@ -41,16 +42,16 @@ namespace hexvoid
         }
     }
 
-    void Cluster::Randomize()
+    void Grid::Randomize()
     {
         for(auto& [index, hexagon] : elements_)
             hexagon.family_ = Random(2, 5);
     }
 
-    void Cluster::RotateClockwise(int16_t cursorX, int16_t cursorY)
+    void Grid::RotateClockwise(int16_t cursorX, int16_t cursorY)
     {
         Index selected = PixelToIndex({cursorX, cursorY});
-        bool inside = IndexDistance({0, 0, 0}, selected) < clusterRadius_ - 1;
+        bool inside = IndexDistance({0, 0, 0}, selected) < gridRadius_ - 1;
 
         if(inside)
         {
@@ -59,8 +60,8 @@ namespace hexvoid
                 printf("HIT!\n");
                 ShuffleSolution(selected);
 
-                score_.AddScore(100);
-                score_.AddMoves(10);
+                // score_.AddScore(100);
+                // score_.AddMoves(10);
             }
             else
             {
@@ -76,15 +77,15 @@ namespace hexvoid
                 elements_.at({q, r + 1, s - 1}).family_ = elements_.at({q + 1, r, s - 1}).family_;
                 elements_.at({q + 1, r, s - 1}).family_ = swap;
 
-                score_.Move();
+                // score_.Move();
             }
         }
     }
 
-    void Cluster::RotateCounterClockwise(int16_t cursorX, int16_t cursorY)
+    void Grid::RotateCounterClockwise(int16_t cursorX, int16_t cursorY)
     {
         Index selected = PixelToIndex({cursorX, cursorY});
-        bool inside = IndexDistance({0, 0, 0}, selected) < clusterRadius_ - 1;
+        bool inside = IndexDistance({0, 0, 0}, selected) < gridRadius_ - 1;
 
         if(inside)
         {
@@ -93,8 +94,8 @@ namespace hexvoid
                 printf("HIT!\n");
                 ShuffleSolution(selected);
 
-                score_.AddScore(100);
-                score_.AddMoves(10);
+                // score_.AddScore(100);
+                // score_.AddMoves(10);
             }
             else
             {
@@ -110,15 +111,15 @@ namespace hexvoid
                 elements_.at({q - 1, r, s + 1}).family_ = elements_.at({q, r - 1, s + 1}).family_;
                 elements_.at({q, r - 1, s + 1}).family_ = swap;
 
-                score_.Move();
+                // score_.Move();
             }
         }
     }
 
-    void Cluster::Draw(SDL_Renderer*& gRenderer, const Palette& palette, int16_t cursorX, int16_t cursorY) const
+    void Grid::Draw(const Palette& palette, int16_t cursorX, int16_t cursorY) const
     {
         Index selected = PixelToIndex({cursorX, cursorY});
-        bool inside = IndexDistance({0, 0, 0}, selected) < clusterRadius_ - 1;
+        bool inside = IndexDistance({0, 0, 0}, selected) < gridRadius_ - 1;
 
         int16_t q = std::get<0>(selected);
         int16_t r = std::get<1>(selected);
@@ -135,7 +136,7 @@ namespace hexvoid
             }
             else
             {
-                hexagon.Draw(gRenderer, palette);
+                hexagon.Draw(palette);
             }
         }
 
@@ -143,17 +144,17 @@ namespace hexvoid
         {
             for(auto& index : topmost)
             {
-                elements_.at(index).DrawHighlight(gRenderer, palette);
+                elements_.at(index).DrawHighlight(palette);
             }
             for(auto& index : topmost)
             {
-                elements_.at(index).Draw(gRenderer, palette);
+                elements_.at(index).Draw(palette);
             }
         }
-        score_.Draw(gRenderer);
+        // score_.Draw(gRenderer);
     }
 
-    bool Cluster::CheckSolution(Cluster::Index index)
+    bool Grid::CheckSolution(Grid::Index index)
     {
         int16_t q = std::get<0>(index);
         int16_t r = std::get<1>(index);
@@ -172,7 +173,7 @@ namespace hexvoid
         return hit;
     }
 
-    void Cluster::ShuffleSolution(Cluster::Index index)
+    void Grid::ShuffleSolution(Grid::Index index)
     {
         int16_t q = std::get<0>(index);
         int16_t r = std::get<1>(index);
@@ -187,7 +188,7 @@ namespace hexvoid
         elements_.at({q + 1, r, s - 1}).family_ = Random(2, 5);
     }
 
-    Cluster::Index Cluster::PixelToIndex(const Cluster::Pixel& pixel) const
+    Grid::Index Grid::PixelToIndex(const Grid::Pixel& pixel) const
     {
         int16_t x = pixel.first - screenCenter_.first;
         int16_t y = pixel.second - screenCenter_.second;
@@ -198,7 +199,7 @@ namespace hexvoid
         return Round(q, r, -q - r);
     }
 
-    Cluster::Pixel Cluster::IndexToPixel(const Cluster::Index& index) const
+    Grid::Pixel Grid::IndexToPixel(const Grid::Index& index) const
     {
         int16_t q = std::get<0>(index);
         int16_t r = std::get<1>(index);
@@ -210,7 +211,7 @@ namespace hexvoid
         return {x, y};
     }
 
-    Cluster::Index Cluster::Round(double q, double r, double s) const
+    Grid::Index Grid::Round(double q, double r, double s) const
     {
         int16_t rq = round(q);
         int16_t rr = round(r);
@@ -230,7 +231,7 @@ namespace hexvoid
         return {rq, rr, rs};
     }
 
-    int16_t Cluster::IndexDistance(const Index& A, const Index& B) const
+    int16_t Grid::IndexDistance(const Index& A, const Index& B) const
     {
         int16_t qA = std::get<0>(A);
         int16_t rA = std::get<1>(A);
@@ -243,11 +244,11 @@ namespace hexvoid
         return (abs(qA - qB) + abs(rA - rB) + abs(sA - sB)) / 2;
     }
 
-    Cluster::Index Cluster::GetClosestSelection(const Cluster::Pixel& pixel) const
+    Grid::Index Grid::GetClosestSelection(const Grid::Pixel& pixel) const
     {
         Index hover = PixelToIndex(pixel);
 
-        while(IndexDistance({0, 0, 0}, hover) >= clusterRadius_ - 1)
+        while(IndexDistance({0, 0, 0}, hover) >= gridRadius_ - 1)
         {
             int16_t q = std::get<0>(hover);
             int16_t r = std::get<1>(hover);
@@ -284,4 +285,4 @@ namespace hexvoid
         return hover;
     }
 
-} // namespace hexvoid
+} // namespace hex

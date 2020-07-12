@@ -2,17 +2,22 @@
 
 #include <SDL2/SDL2_gfxPrimitives.h>
 
-#include "engine.hpp"
-#include "hexvoid.hpp"
+#include "hex.hpp"
 
-namespace hexvoid
+namespace hex
 {
+    Hexagon::Hexagon(int16_t x, int16_t y, int16_t radius, uint8_t family) :
+        x_(x), y_(y), radius_(radius), family_(family)
+    {
+        if(debug_) printf("Creating Hexagon class...\n");
+    }
+
     double Hexagon::Distance(int16_t x, int16_t y) const
     {
         return std::sqrt(std::pow(x_ - x, 2) + std::pow(y_ - y, 2));
     }
 
-    void Hexagon::Draw(SDL_Renderer*& gRenderer, const Palette& palette) const
+    void Hexagon::Draw(const Palette& palette) const
     {
         int16_t vx[6], vy[6];
 
@@ -42,11 +47,11 @@ namespace hexvoid
 
         Palette::Color color = palette.GetThemeColor(family_);
         Palette::Color background = palette.GetThemeColor(0);
-        filledPolygonRGBA(gRenderer, vx, vy, 6, color.r, color.g, color.b, 255);
-        polygonRGBA(gRenderer, vx, vy, 6, background.r, background.g, background.b, 255);
+        filledPolygonRGBA(Engine::gRenderer_, vx, vy, 6, color.r, color.g, color.b, 255);
+        polygonRGBA(Engine::gRenderer_, vx, vy, 6, background.r, background.g, background.b, 255);
     }
 
-    void Hexagon::DrawHighlight(SDL_Renderer*& gRenderer, const Palette& palette) const
+    void Hexagon::DrawHighlight(const Palette& palette) const
     {
         int16_t vx[6], vy[6];
 
@@ -77,7 +82,7 @@ namespace hexvoid
         vy[5] = y_ + yOffset;
 
         Palette::Color color = palette.GetThemeColor(1);
-        filledPolygonRGBA(gRenderer, vx, vy, 6, color.r, color.g, color.b, 255);
+        filledPolygonRGBA(Engine::gRenderer_, vx, vy, 6, color.r, color.g, color.b, 255);
     }
 
-} // namespace hexvoid
+} // namespace hex

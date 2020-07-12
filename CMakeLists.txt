@@ -19,14 +19,14 @@ include_directories(${SDL2_INCLUDE_DIRS})
 include_directories(${SDL2_GFX_INCLUDE_DIRS})
 include_directories(${SDL2_TTF_INCLUDE_DIRS})
 
-add_executable(${PROJECT_NAME}  src/main.cpp 
-                        src/engine_cluster.cpp
-                        src/engine_framerate.cpp
-                        src/engine_hexagon.cpp
-                        src/hexvoid.cpp
-                        src/menu.cpp
-                        src/palette.cpp
-                        )
+add_executable(${PROJECT_NAME}      src/main.cpp 
+                                    src/hex_engine.cpp
+                                    src/hex_framerate.cpp
+                                    src/hex_grid.cpp
+                                    src/hex_hexagon.cpp
+                                    src/hex_palette.cpp
+                                    src/hex_text.cpp
+                                    )
 
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} ${SDL2_GFX_LIBRARIES} ${SDL2_TTF_LIBRARIES})
 

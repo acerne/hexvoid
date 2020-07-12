@@ -1,26 +1,19 @@
 
-#include "hexvoid.hpp"
+#include "hex.hpp"
 
 int main(int argc, char* args[])
 {
-    SDL_Window* gWindow = NULL;
-    SDL_Surface* gSurface = NULL;
-    SDL_Surface* gBackground = NULL;
-    SDL_Renderer* gRenderer = NULL;
+    // hex::Engine::EnableDebug();
 
-    // Start up SDL and create window
-    hexvoid::Initialize(gWindow, gSurface);
+    hex::Engine::Initialize("Hexvoid", 800, 600);
 
-    gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
-
-    hexvoid::Cluster cluster(4, 50, hexvoid::WINDOW_WIDTH, hexvoid::WINDOW_HEIGHT);
+    hex::Grid grid(4, 50);
 
     SDL_Event event;
     bool quit = false;
     int hoverIndex = 0;
-    hexvoid::Framerate fps;
-    hexvoid::Palette palette;
-    hexvoid::Palette::Color background = palette.GetThemeColor(0);
+    hex::Framerate fps;
+    hex::Palette palette;
     int16_t cursorX = 0;
     int16_t cursorY = 0;
 
@@ -39,11 +32,9 @@ int main(int argc, char* args[])
                             break;
                         case SDLK_UP:
                             palette.NextTheme();
-                            background = palette.GetThemeColor(0);
                             break;
                         case SDLK_DOWN:
                             palette.PreviousTheme();
-                            background = palette.GetThemeColor(0);
                             break;
                         default:
                             break;
@@ -59,10 +50,10 @@ int main(int argc, char* args[])
                     switch(event.button.button)
                     {
                         case SDL_BUTTON_LEFT:
-                            cluster.RotateClockwise(event.motion.x, event.motion.y);
+                            grid.RotateClockwise(event.motion.x, event.motion.y);
                             break;
                         case SDL_BUTTON_RIGHT:
-                            cluster.RotateCounterClockwise(event.motion.x, event.motion.y);
+                            grid.RotateCounterClockwise(event.motion.x, event.motion.y);
                             break;
                         default:
                             break;
@@ -75,24 +66,15 @@ int main(int argc, char* args[])
                     break;
             }
         }
-        SDL_SetRenderDrawColor(gRenderer, background.r, background.g, background.b, 255);
-        SDL_RenderClear(gRenderer);
 
-        cluster.Draw(gRenderer, palette, cursorX, cursorY);
-        fps.Draw(gRenderer, palette);
-        palette.DrawInfo(gRenderer);
-
-        SDL_RenderPresent(gRenderer);
+        hex::Engine::Clear();
+        grid.Draw(palette, cursorX, cursorY);
+        fps.Draw(palette);
+        palette.DrawInfo();
+        hex::Engine::Display();
     }
 
-    SDL_FreeSurface(gSurface);
-    gSurface = NULL;
-
-    SDL_DestroyWindow(gWindow);
-    gWindow = NULL;
-
-    TTF_Quit();
-    SDL_Quit();
+    hex::Engine::Terminate();
 
     return 0;
 }

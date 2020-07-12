@@ -1,11 +1,12 @@
-#include <stdexcept>
 
-#include "engine.hpp"
+#include "hex.hpp"
 
-namespace hexvoid
+namespace hex
 {
     Framerate::Framerate()
     {
+        if(debug_) printf("Creating Framerate class...\n");
+
         frameCount_ = 0;
         lastSecond_ = SDL_GetTicks();
         fps_ = 0;
@@ -24,10 +25,10 @@ namespace hexvoid
         }
     };
 
-    void Framerate::Draw(SDL_Renderer*& gRenderer, const Palette& palette)
+    void Framerate::Draw(const Palette& palette)
     {
         text_.Apply(std::to_string(fps_));
-        text_.Draw(gRenderer);
+        text_.Draw();
     };
 
-} // namespace hexvoid
+} // namespace hex

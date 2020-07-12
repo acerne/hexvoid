@@ -1,9 +1,11 @@
-#include "palette.hpp"
+#include "hex.hpp"
 
-namespace hexvoid
+namespace hex
 {
     Palette::Palette()
     {
+        if(debug_) printf("Creating Palette class...\n");
+
         selectedTheme_ = 0;
 
         // source: https://www.shutterstock.com/blog/neon-color-palettes
@@ -76,9 +78,9 @@ namespace hexvoid
         }
     }
 
-    void Palette::DrawInfo(SDL_Renderer*& gRenderer)
+    void Palette::DrawInfo()
     {
-        text_.Draw(gRenderer);
+        text_.Draw();
     };
 
-} // namespace hexvoid
+} // namespace hex
