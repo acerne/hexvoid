@@ -96,6 +96,18 @@ namespace hex
         Text text_ = Text(26);
     };
 
+    class Randomizer : public Engine
+    {
+    public:
+        typedef std::pair<uint8_t, uint8_t> ValueAndWeight;
+
+        static uint8_t Random(uint8_t min, uint8_t max);
+        static uint8_t WeightedRandom(const std::vector<ValueAndWeight>& candidates);
+
+    private:
+        Randomizer() {}
+    };
+
     class Hexagon : public Engine
     {
     public:

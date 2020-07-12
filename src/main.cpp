@@ -1,3 +1,4 @@
+#include <iostream>
 
 #include "hex.hpp"
 
@@ -17,6 +18,18 @@ int main(int argc, char* args[])
     hex::Palette palette;
     int16_t cursorX = 0;
     int16_t cursorY = 0;
+
+    std::vector<hex::Randomizer::ValueAndWeight> candidates{{0, 5}, {1, 2}, {2, 1}};
+
+    size_t arr[] = {0, 0, 0};
+
+    for(size_t i = 0; i < 1000; i++)
+    {
+        arr[hex::Randomizer::WeightedRandom(candidates)]++;
+    }
+
+    std::cout << std::to_string(arr[0]) << " + " << std::to_string(arr[1]) << " + " << std::to_string(arr[2]) << " =  "
+              << std::to_string(arr[0] + arr[1] + arr[2]) << std::endl;
 
     while(!quit)
     {
