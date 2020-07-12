@@ -10,7 +10,7 @@ namespace hex
         frameCount_ = 0;
         lastSecond_ = SDL_GetTicks();
         fps_ = 0;
-        text_.Position(5, 5);
+        text_.Place(5, 5);
     }
 
     void Framerate::Tick()
@@ -25,9 +25,9 @@ namespace hex
         }
     };
 
-    void Framerate::Draw(const Palette& palette)
+    void Framerate::Draw()
     {
-        text_.Apply(std::to_string(fps_));
+        text_.Set(std::to_string(fps_));
         text_.Draw();
     };
 

@@ -9,29 +9,29 @@ namespace hex
         selectedTheme_ = 0;
 
         // source: https://www.shutterstock.com/blog/neon-color-palettes
-        themeList_ = {{"GeometricGlow", Color(0x000000), Color(0xFFFFFF), Color(0x08F7FE), Color(0x09FBBB),
+        themeList_ = {{"Geometric Glow", Color(0x000000), Color(0xFFFFFF), Color(0x08F7FE), Color(0x09FBBB),
                        Color(0xFE53BB), Color(0xF5D300)},
-                      {"NeonLights", Color(0x000000), Color(0xFFFFFF), Color(0xFFACFC), Color(0xF148FB),
+                      {"Neon Lights", Color(0x000000), Color(0xFFFFFF), Color(0xFFACFC), Color(0xF148FB),
                        Color(0x7122FA), Color(0x560A86)},
-                      {"PsychedelicPattern", Color(0x000000), Color(0xFFFFFF), Color(0x75D5FD), Color(0xB76CFD),
+                      {"Psychedelic Pattern", Color(0x000000), Color(0xFFFFFF), Color(0x75D5FD), Color(0xB76CFD),
                        Color(0xFF2281), Color(0x011FFD)},
-                      {"LuminousLines", Color(0x000000), Color(0xFFFFFF), Color(0x01FFC3), Color(0x01FFFF),
+                      {"Luminous Lines", Color(0x000000), Color(0xFFFFFF), Color(0x01FFC3), Color(0x01FFFF),
                        Color(0xFFB3FD), Color(0x9D72FF)},
-                      {"VividFerns", Color(0x000000), Color(0xFFFFFF), Color(0xFDC7D7), Color(0xFF9DE6),
+                      {"Vivid Ferns", Color(0x000000), Color(0xFFFFFF), Color(0xFDC7D7), Color(0xFF9DE6),
                        Color(0xA5D8F3), Color(0xE8E500)},
-                      {"AbstractWall", Color(0x000000), Color(0xFFFFFF), Color(0x00FECA), Color(0xFDF200),
+                      {"Abstract Wall", Color(0x000000), Color(0xFFFFFF), Color(0x00FECA), Color(0xFDF200),
                        Color(0xFF85EA), Color(0x7B61F8)},
-                      {"ColorfulCottage", Color(0x000000), Color(0xFFFFFF), Color(0xFFD300), Color(0xDE38C8),
+                      {"Colorful Cottage", Color(0x000000), Color(0xFFFFFF), Color(0xFFD300), Color(0xDE38C8),
                        Color(0x652EC7), Color(0x33135C)},
-                      {"CosmicDust", Color(0x202020), Color(0x808080), Color(0x3B27BA), Color(0xE847AE),
+                      {"Cosmic Dust", Color(0x202020), Color(0x808080), Color(0x3B27BA), Color(0xE847AE),
                        Color(0x13CA91), Color(0xFF9472)},
-                      {"PopsOfPink", Color(0x000000), Color(0xFFFFFF), Color(0xFFDEF3), Color(0xFF61BE),
+                      {"Pops Of Pink", Color(0x000000), Color(0xFFFFFF), Color(0xFFDEF3), Color(0xFF61BE),
                        Color(0x3B55CE), Color(0x35212A)},
-                      {"FlourescentFish", Color(0x000000), Color(0xFFFFFF), Color(0xFEC763), Color(0xEA55B1),
+                      {"Flourescent Fish", Color(0x000000), Color(0xFFFFFF), Color(0xFEC763), Color(0xEA55B1),
                        Color(0xA992FA), Color(0x00207F)}};
 
-        text_.Apply(GetThemeName());
-        text_.Position(5, 570);
+        text_.Set(GetThemeName());
+        text_.Place(5, 570);
     }
 
     Palette::Color Palette::GetThemeColor(int index) const
@@ -65,7 +65,7 @@ namespace hex
         if(selectedTheme_ < themeList_.size() - 1)
         {
             selectedTheme_++;
-            text_.Apply(GetThemeName());
+            text_.Set(GetThemeName());
         }
     }
 
@@ -74,7 +74,7 @@ namespace hex
         if(selectedTheme_ > 0)
         {
             selectedTheme_--;
-            text_.Apply(GetThemeName());
+            text_.Set(GetThemeName());
         }
     }
 

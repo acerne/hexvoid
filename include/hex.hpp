@@ -36,17 +36,18 @@ namespace hex
     class Text : public Engine
     {
     public:
-        Text(int fontSize);
+        Text(int fontSize, uint8_t lines = 1);
         ~Text();
 
-        void Position(int16_t x, int16_t y);
-        void Apply(const std::string& text);
+        void Place(int16_t x, int16_t y);
+        void Set(const std::string& text, uint8_t line = 0);
 
         void Draw() const;
 
     private:
         TTF_Font* font_;
-        std::string text_;
+        std::vector<std::string> text_;
+        uint8_t lines_;
         int16_t x_;
         int16_t y_;
     };
@@ -148,13 +149,24 @@ namespace hex
         Framerate();
 
         void Tick();
-        void Draw(const Palette& palette);
+        void Draw();
 
     private:
         uint16_t frameCount_;
         uint32_t lastSecond_;
         uint16_t fps_;
         Text text_ = Text(16);
+    };
+
+    class SystemInfo : public Engine
+    {
+    public:
+        SystemInfo();
+
+        void Draw();
+
+    private:
+        Text textInfo_ = Text(12, 8);
     };
 
 } // namespace hex

@@ -13,6 +13,7 @@ int main(int argc, char* args[])
     bool quit = false;
     int hoverIndex = 0;
     hex::Framerate fps;
+    hex::SystemInfo info;
     hex::Palette palette;
     int16_t cursorX = 0;
     int16_t cursorY = 0;
@@ -69,7 +70,8 @@ int main(int argc, char* args[])
 
         hex::Engine::Clear();
         grid.Draw(palette, cursorX, cursorY);
-        fps.Draw(palette);
+        fps.Draw();
+        info.Draw();
         palette.DrawInfo();
         hex::Engine::Display();
     }
