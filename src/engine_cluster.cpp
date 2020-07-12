@@ -58,6 +58,9 @@ namespace hexvoid
             {
                 printf("HIT!\n");
                 ShuffleSolution(selected);
+
+                score_.AddScore(100);
+                score_.AddMoves(10);
             }
             else
             {
@@ -72,6 +75,8 @@ namespace hexvoid
                 elements_.at({q - 1, r + 1, s}).family_ = elements_.at({q, r + 1, s - 1}).family_;
                 elements_.at({q, r + 1, s - 1}).family_ = elements_.at({q + 1, r, s - 1}).family_;
                 elements_.at({q + 1, r, s - 1}).family_ = swap;
+
+                score_.Move();
             }
         }
     }
@@ -87,6 +92,9 @@ namespace hexvoid
             {
                 printf("HIT!\n");
                 ShuffleSolution(selected);
+
+                score_.AddScore(100);
+                score_.AddMoves(10);
             }
             else
             {
@@ -101,6 +109,8 @@ namespace hexvoid
                 elements_.at({q - 1, r + 1, s}).family_ = elements_.at({q - 1, r, s + 1}).family_;
                 elements_.at({q - 1, r, s + 1}).family_ = elements_.at({q, r - 1, s + 1}).family_;
                 elements_.at({q, r - 1, s + 1}).family_ = swap;
+
+                score_.Move();
             }
         }
     }
@@ -140,6 +150,7 @@ namespace hexvoid
                 elements_.at(index).Draw(gRenderer, palette);
             }
         }
+        score_.Draw(gRenderer);
     }
 
     bool Cluster::CheckSolution(Cluster::Index index)

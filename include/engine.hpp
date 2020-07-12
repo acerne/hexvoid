@@ -46,6 +46,7 @@ namespace hexvoid
         typedef std::pair<int16_t, int16_t> Pixel;
 
         std::map<Index, Hexagon> elements_;
+        Score score_{};
         Pixel screenCenter_;
         int16_t clusterRadius_;
         int16_t hexRadius_;
