@@ -52,6 +52,31 @@ namespace hex
         int16_t y_;
     };
 
+    class Menu : public Engine
+    {
+    public:
+        Menu(uint8_t items, uint16_t spacing, int fontSize);
+        ~Menu();
+
+        void AddItem(const std::string& title, uint8_t index);
+
+        void Draw(int16_t cursorX, int16_t cursorY) const;
+
+    private:
+        struct MenuItem
+        {
+            std::string title;
+            uint8_t index;
+            SDL_Rect box;
+        };
+        TTF_Font* font_;
+        std::map<std::string, MenuItem> items_;
+        uint16_t spacing_;
+
+        bool IsMouseInside(int16_t cursorX, int16_t cursorY, const SDL_Rect& box) const;
+        uint8_t MouseOver(int16_t cursorX, int16_t cursorY) const;
+    };
+
     class Palette : public Engine
     {
     public:

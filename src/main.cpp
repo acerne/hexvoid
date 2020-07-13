@@ -8,6 +8,11 @@ int main(int argc, char* args[])
 
     hex::Engine::Initialize("Hexvoid", 800, 600);
 
+    hex::Menu mainMenu(3, 60, 40);
+    mainMenu.AddItem("New game", 0);
+    mainMenu.AddItem("Options", 1);
+    mainMenu.AddItem("Exit", 2);
+
     hex::Grid grid(4, 50);
 
     SDL_Event event;
@@ -18,18 +23,6 @@ int main(int argc, char* args[])
     hex::Palette palette;
     int16_t cursorX = 0;
     int16_t cursorY = 0;
-
-    std::vector<hex::Randomizer::ValueAndWeight> candidates{{0, 5}, {1, 2}, {2, 1}};
-
-    size_t arr[] = {0, 0, 0};
-
-    for(size_t i = 0; i < 1000; i++)
-    {
-        arr[hex::Randomizer::WeightedRandom(candidates)]++;
-    }
-
-    std::cout << std::to_string(arr[0]) << " + " << std::to_string(arr[1]) << " + " << std::to_string(arr[2]) << " =  "
-              << std::to_string(arr[0] + arr[1] + arr[2]) << std::endl;
 
     while(!quit)
     {
@@ -82,10 +75,11 @@ int main(int argc, char* args[])
         }
 
         hex::Engine::Clear();
-        grid.Draw(palette, cursorX, cursorY);
+        mainMenu.Draw(cursorX, cursorY);
+        // grid.Draw(palette, cursorX, cursorY);
         fps.Draw();
         info.Draw();
-        palette.DrawInfo();
+        // palette.DrawInfo();
         hex::Engine::Display();
     }
 

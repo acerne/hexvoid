@@ -4,6 +4,7 @@
 
 namespace hexvoid
 {
+
     class Score
     {
     public:

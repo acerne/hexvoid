@@ -5,6 +5,7 @@
 
 namespace hexvoid
 {
+
     // Score::Score()
     // {
     //     score_ = 0;
