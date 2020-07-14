@@ -55,26 +55,39 @@ namespace hex
     class Menu : public Engine
     {
     public:
-        Menu(uint8_t items, uint16_t spacing, int fontSize);
+        Menu(uint16_t spacing, int fontSize);
         ~Menu();
 
         void AddItem(const std::string& title, uint8_t index);
+        void AddOption(const std::string& title, uint8_t index, const std::vector<std::string>& valueNames);
 
+        int8_t Click(int16_t cursorX, int16_t cursorY);
         void Draw(int16_t cursorX, int16_t cursorY) const;
 
     private:
+        enum class MenuItemType
+        {
+            Item,
+            Option
+        };
         struct MenuItem
         {
+            MenuItemType type;
             std::string title;
             uint8_t index;
             SDL_Rect box;
+            std::vector<std::string> options;
+            u_int8_t selected;
         };
+
         TTF_Font* font_;
         std::map<std::string, MenuItem> items_;
         uint16_t spacing_;
 
+        int8_t MouseOverItemIndex(int16_t cursorX, int16_t cursorY) const;
+        std::string MouseOverItemName(int16_t cursorX, int16_t cursorY) const;
         bool IsMouseInside(int16_t cursorX, int16_t cursorY, const SDL_Rect& box) const;
-        uint8_t MouseOver(int16_t cursorX, int16_t cursorY) const;
+        void NextOption(const std::string& itemName);
     };
 
     class Palette : public Engine
@@ -192,7 +205,7 @@ namespace hex
         uint16_t frameCount_;
         uint32_t lastSecond_;
         uint16_t fps_;
-        Text text_ = Text(16);
+        Text text_ = Text(10);
     };
 
     class SystemInfo : public Engine
@@ -203,7 +216,7 @@ namespace hex
         void Draw();
 
     private:
-        Text textInfo_ = Text(12, 8);
+        Text textInfo_ = Text(8, 8);
     };
 
 } // namespace hex
