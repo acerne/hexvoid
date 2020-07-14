@@ -25,19 +25,20 @@ int main(int argc, char* args[])
     mainMenu.AddItem("Exit", 2);
 
     hex::Menu newGameMenu(60, 40);
-    newGameMenu.AddOption("Grid size:", 1, {"7", "9", "11", "13"});
+    newGameMenu.AddOption("Grid size:", 1, {"7", "9", "11"});
     newGameMenu.AddOption("Difficulty:", 2, {"Easy", "Medium", "Hard"});
     newGameMenu.AddItem("Start", 4);
     newGameMenu.AddItem("Back", 6);
 
     hex::Menu optionsMenu(60, 40);
-    optionsMenu.AddOption("Resolution:", 0, {"800x600", "1920x1080"});
+    optionsMenu.AddOption("Resolution:", 0, {"800x600", "1280x720", "1600x900", "1920x1080"});
     optionsMenu.AddOption("Color style:", 1, {"A", "B", "C"});
+    optionsMenu.AddItem("Apply", 4);
     optionsMenu.AddItem("Back", 6);
 
     GameState state = GameState::MainMenu;
 
-    hex::Grid grid(4, 50);
+    hex::Grid grid(3);
 
     SDL_Event event;
     bool quit = false;
@@ -104,6 +105,8 @@ int main(int argc, char* args[])
                                         case 1:
                                             state = GameState::OptionsMenu;
                                             break;
+                                        case 2:
+                                            quit = true;
                                         default:
                                             break;
                                     }
@@ -121,7 +124,7 @@ int main(int argc, char* args[])
                                     {
                                         case 4: {
                                             std::string gridSize = newGameMenu.GetSelection("Grid size:");
-                                            grid = hex::Grid((std::stoi(gridSize) - 1) / 2, 30);
+                                            grid = hex::Grid(std::stoi(gridSize));
                                             state = GameState::Game;
                                             break;
                                         }
@@ -143,6 +146,18 @@ int main(int argc, char* args[])
                                 case SDL_BUTTON_LEFT: {
                                     switch(optionsMenu.Click(event.motion.x, event.motion.y))
                                     {
+                                        case 4: {
+                                            std::string resolution = optionsMenu.GetSelection("Resolution:");
+                                            int x = resolution.find("x");
+                                            std::string resolutionX = resolution.substr(0, x);
+                                            std::string resolutionY =
+                                                resolution.substr(x + 1, resolution.length() - x - 1);
+                                            std::cout << resolution << " " << resolutionX << " " << resolutionY
+                                                      << std::endl;
+                                            hex::Engine::ChangeResolution(std::stoi(resolutionX),
+                                                                          std::stoi(resolutionY));
+                                            break;
+                                        }
                                         case 6:
                                             state = GameState::MainMenu;
                                             break;

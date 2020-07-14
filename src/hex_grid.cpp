@@ -16,11 +16,14 @@ namespace hex
         return distribution(generator);
     }
 
-    Grid::Grid(int16_t gridRadius, int16_t hexRadius)
+    Grid::Grid(int16_t size, int16_t hexRadius)
     {
         if(debug_) printf("Creating Grid class...\n");
 
-        gridRadius_ = gridRadius;
+        if(!(size % 2)) throw std::runtime_error("Grid size must be an odd nubmer");
+
+        gridSize_ = size;
+        int16_t gridRadius = (size - 1) / 2;
         hexRadius_ = hexRadius;
 
         elements_.clear();
@@ -51,7 +54,7 @@ namespace hex
     void Grid::RotateClockwise(int16_t cursorX, int16_t cursorY)
     {
         Index selected = PixelToIndex({cursorX, cursorY});
-        bool inside = IndexDistance({0, 0, 0}, selected) < gridRadius_ - 1;
+        bool inside = IndexDistance({0, 0, 0}, selected) < (gridSize_ - 1) / 2 - 1;
 
         if(inside)
         {
@@ -85,7 +88,7 @@ namespace hex
     void Grid::RotateCounterClockwise(int16_t cursorX, int16_t cursorY)
     {
         Index selected = PixelToIndex({cursorX, cursorY});
-        bool inside = IndexDistance({0, 0, 0}, selected) < gridRadius_ - 1;
+        bool inside = IndexDistance({0, 0, 0}, selected) < (gridSize_ - 1) / 2 - 1;
 
         if(inside)
         {
@@ -119,7 +122,7 @@ namespace hex
     void Grid::Draw(const Palette& palette, int16_t cursorX, int16_t cursorY) const
     {
         Index selected = PixelToIndex({cursorX, cursorY});
-        bool inside = IndexDistance({0, 0, 0}, selected) < gridRadius_ - 1;
+        bool inside = IndexDistance({0, 0, 0}, selected) < (gridSize_ - 1) / 2 - 1;
 
         int16_t q = std::get<0>(selected);
         int16_t r = std::get<1>(selected);
@@ -248,7 +251,7 @@ namespace hex
     {
         Index hover = PixelToIndex(pixel);
 
-        while(IndexDistance({0, 0, 0}, hover) >= gridRadius_ - 1)
+        while(IndexDistance({0, 0, 0}, hover) >= (gridSize_ - 1) / 2 - 1)
         {
             int16_t q = std::get<0>(hover);
             int16_t r = std::get<1>(hover);

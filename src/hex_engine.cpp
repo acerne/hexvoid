@@ -61,6 +61,22 @@ namespace hex
         SDL_Quit();
     }
 
+    void Engine::ChangeResolution(uint16_t windowWidth, uint16_t windowHeight)
+    {
+        if(debug_) printf("Changing window size...\n");
+
+        int16_t xOffset = (windowWidth - windowWidth_) / 2;
+        int16_t yOffset = (windowHeight - windowHeight_) / 2;
+
+        windowWidth_ = windowWidth;
+        windowHeight_ = windowHeight;
+
+        int x, y;
+        SDL_GetWindowPosition(gWindow_, &x, &y);
+        SDL_SetWindowPosition(gWindow_, x - xOffset, y - yOffset);
+        SDL_SetWindowSize(gWindow_, windowWidth, windowHeight_);
+    }
+
     void Engine::Clear()
     {
         // hex::Palette::Color background = palette_.GetThemeColor(0);

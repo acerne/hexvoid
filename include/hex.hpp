@@ -19,6 +19,8 @@ namespace hex
         static void Initialize(const std::string& title, uint16_t windowWidth, uint16_t windowHeight);
         static void Terminate();
 
+        static void ChangeResolution(uint16_t windowWidth, uint16_t windowHeight);
+
         static void Clear();
         static void Display();
 
@@ -166,7 +168,8 @@ namespace hex
     class Grid : public Engine
     {
     public:
-        Grid(int16_t radius, int16_t hexRadius);
+        Grid(int16_t size, int16_t hexRadius);
+        Grid(int16_t size) : Grid(size, Engine::windowHeight_ / size / 1.5) {}
 
         void Randomize();
         void RotateClockwise(int16_t cursorX, int16_t cursorY);
@@ -180,7 +183,7 @@ namespace hex
 
         std::map<Index, Hexagon> elements_;
         Pixel screenCenter_;
-        int16_t gridRadius_;
+        int16_t gridSize_;
         int16_t hexRadius_;
         int16_t gridSpacing_;
 
