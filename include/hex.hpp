@@ -62,6 +62,7 @@ namespace hex
         void AddOption(const std::string& title, uint8_t index, const std::vector<std::string>& valueNames);
 
         int8_t Click(int16_t cursorX, int16_t cursorY);
+        std::string GetSelection(const std::string& item) const;
         void Draw(int16_t cursorX, int16_t cursorY) const;
 
     private:

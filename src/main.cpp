@@ -119,9 +119,12 @@ int main(int argc, char* args[])
                                 case SDL_BUTTON_LEFT: {
                                     switch(newGameMenu.Click(event.motion.x, event.motion.y))
                                     {
-                                        case 4:
+                                        case 4: {
+                                            std::string gridSize = newGameMenu.GetSelection("Grid size:");
+                                            grid = hex::Grid((std::stoi(gridSize) - 1) / 2, 30);
                                             state = GameState::Game;
                                             break;
+                                        }
                                         case 6:
                                             state = GameState::MainMenu;
                                             break;

@@ -66,8 +66,8 @@ namespace hex
 
     void Menu::NextOption(const std::string& itemName)
     {
-        items_[itemName].selected++;
-        if(items_[itemName].selected >= items_[itemName].options.size()) items_[itemName].selected = 0;
+        items_.at(itemName).selected++;
+        if(items_.at(itemName).selected >= items_.at(itemName).options.size()) items_.at(itemName).selected = 0;
     }
 
     int8_t Menu::Click(int16_t cursorX, int16_t cursorY)
@@ -75,7 +75,7 @@ namespace hex
         std::string selected = MouseOverItemName(cursorX, cursorY);
         if(selected.length() > 0)
         {
-            switch(items_[selected].type)
+            switch(items_.at(selected).type)
             {
                 case MenuItemType::Item: {
                     return items_[selected].index;
@@ -90,6 +90,11 @@ namespace hex
             }
         }
         return -1;
+    }
+
+    std::string Menu::GetSelection(const std::string& item) const
+    {
+        return items_.at(item).options.at(items_.at(item).selected);
     }
 
     void Menu::Draw(int16_t cursorX, int16_t cursorY) const
