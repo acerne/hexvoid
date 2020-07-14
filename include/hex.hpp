@@ -33,6 +33,7 @@ namespace hex
         static SDL_Renderer* gRenderer_;
         static uint16_t windowWidth_;
         static uint16_t windowHeight_;
+        static const char* fontPath_;
     };
 
     class Text : public Engine
@@ -209,7 +210,7 @@ namespace hex
         uint16_t frameCount_;
         uint32_t lastSecond_;
         uint16_t fps_;
-        Text text_ = Text(10);
+        Text text_ = Text(12);
     };
 
     class SystemInfo : public Engine
@@ -220,7 +221,7 @@ namespace hex
         void Draw();
 
     private:
-        Text textInfo_ = Text(8, 8);
+        Text textInfo_ = Text(10, 8);
     };
 
 } // namespace hex

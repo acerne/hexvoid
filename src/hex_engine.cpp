@@ -12,6 +12,7 @@ namespace hex
     uint16_t Engine::windowWidth_ = 0;
     uint16_t Engine::windowHeight_ = 0;
     bool Engine::debug_ = false;
+    const char* Engine::fontPath_ = "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf";
 
     void Engine::EnableDebug()
     {

@@ -8,7 +8,7 @@ namespace hex
     {
         if(debug_) printf("Creating Menu class...\n");
 
-        font_ = TTF_OpenFont("/usr/share/fonts/truetype/freefont/FreeMono.ttf", fontSize); // select and move font
+        font_ = TTF_OpenFont(Engine::fontPath_, fontSize); // select and move font
         if(!font_) throw std::runtime_error("Font not found! TTF_Error: " + std::string(TTF_GetError()));
 
         items_.clear();
