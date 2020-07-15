@@ -17,18 +17,18 @@ int main(int argc, char* args[])
 
     hex::Engine::Initialize("Hexvoid", 800, 600);
 
-    hex::Menu mainMenu(60, 40);
-    mainMenu.AddItem("New game", 0);
-    mainMenu.AddItem("Options", 1);
-    mainMenu.AddItem("Exit", 2);
+    hex::Menu mainMenu(60, 35);
+    mainMenu.AddItem("New game", 1);
+    mainMenu.AddItem("Options", 2);
+    mainMenu.AddItem("Exit", 3);
 
-    hex::Menu newGameMenu(60, 40);
+    hex::Menu newGameMenu(60, 35);
     newGameMenu.AddOption("Grid size:", 1, {"7", "9", "11"});
     newGameMenu.AddOption("Difficulty:", 2, {"Easy", "Medium", "Hard"});
     newGameMenu.AddItem("Start", 4);
     newGameMenu.AddItem("Back", 6);
 
-    hex::Menu optionsMenu(60, 40);
+    hex::Menu optionsMenu(60, 35);
     optionsMenu.AddOption("Resolution:", 0, {"800x600", "1280x720", "1600x900", "1920x1080"});
     optionsMenu.AddOption("Color theme:", 1, hex::Palette::GetThemeNames());
     optionsMenu.AddItem("Apply", 4);
@@ -95,13 +95,13 @@ int main(int argc, char* args[])
                                 case SDL_BUTTON_LEFT: {
                                     switch(mainMenu.Click(event.motion.x, event.motion.y))
                                     {
-                                        case 0:
+                                        case 1:
                                             state = GameState::NewGameMenu;
                                             break;
-                                        case 1:
+                                        case 2:
                                             state = GameState::OptionsMenu;
                                             break;
-                                        case 2:
+                                        case 3:
                                             quit = true;
                                         default:
                                             break;
