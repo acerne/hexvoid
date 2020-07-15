@@ -58,10 +58,14 @@ namespace hex
         {
             if(CheckSolution(selected))
             {
+                Score::AddScore(100);
+                Score::AddMoves(10);
                 ShuffleSolution(selected);
             }
             else
             {
+                Score::TakeScore(1);
+
                 int16_t q = std::get<0>(selected);
                 int16_t r = std::get<1>(selected);
                 int16_t s = std::get<2>(selected);
@@ -73,9 +77,8 @@ namespace hex
                 elements_.at({q - 1, r + 1, s}).family_ = elements_.at({q, r + 1, s - 1}).family_;
                 elements_.at({q, r + 1, s - 1}).family_ = elements_.at({q + 1, r, s - 1}).family_;
                 elements_.at({q + 1, r, s - 1}).family_ = swap;
-
-                // score_.Move();
             }
+            Score::RegisterMove();
         }
     }
 
@@ -88,10 +91,14 @@ namespace hex
         {
             if(CheckSolution(selected))
             {
+                Score::AddScore(100);
+                Score::AddMoves(10);
                 ShuffleSolution(selected);
             }
             else
             {
+                Score::TakeScore(1);
+
                 int16_t q = std::get<0>(selected);
                 int16_t r = std::get<1>(selected);
                 int16_t s = std::get<2>(selected);
@@ -105,6 +112,7 @@ namespace hex
                 elements_.at({q, r - 1, s + 1}).family_ = swap;
             }
         }
+        Score::RegisterMove();
     }
 
     void Grid::Draw(int16_t cursorX, int16_t cursorY) const

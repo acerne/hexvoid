@@ -18,11 +18,9 @@ namespace hex
         windowWidth_ = windowWidth;
         windowHeight_ = windowHeight;
 
-        if(SDL_Init(SDL_INIT_VIDEO) < 0)
-            throw std::runtime_error("SDL could not initialize! SDL_Error: " + std::string(SDL_GetError()));
+        Err(SDL_Init(SDL_INIT_VIDEO));
 
-        if(TTF_Init() < 0)
-            throw std::runtime_error("SDL_ttf could not initialize! TTF_Error: " + std::string(TTF_GetError()));
+        Err(TTF_Init());
 
         gWindow_ = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth,
                                     windowHeight, SDL_WINDOW_SHOWN);
@@ -68,13 +66,18 @@ namespace hex
     void Engine::Clear()
     {
         Palette::Color c = Palette::GetColor(Palette::Element::Background);
-        SDL_SetRenderDrawColor(gRenderer_, c.r, c.g, c.b, 255);
-        SDL_RenderClear(gRenderer_);
+        Err(SDL_SetRenderDrawColor(gRenderer_, c.r, c.g, c.b, 255));
+        Err(SDL_RenderClear(gRenderer_));
     }
 
     void Engine::Display()
     {
         SDL_RenderPresent(gRenderer_);
+    }
+
+    void Engine::Err(int error)
+    {
+        if(error < 0) throw std::runtime_error("SDL failed: " + std::string(SDL_GetError()));
     }
 
 } // namespace hex

@@ -41,8 +41,8 @@ namespace hex
 
         Palette::Color c = GetHexagonColor();
         Palette::Color b = Palette::GetColor(Palette::Element::Background);
-        filledPolygonRGBA(Engine::gRenderer_, vx, vy, 6, c.r, c.g, c.b, 255);
-        polygonRGBA(Engine::gRenderer_, vx, vy, 6, b.r, b.g, b.b, 255);
+        Err(filledPolygonRGBA(Engine::gRenderer_, vx, vy, 6, c.r, c.g, c.b, 255));
+        Err(polygonRGBA(Engine::gRenderer_, vx, vy, 6, b.r, b.g, b.b, 255));
     }
 
     void Hexagon::DrawHighlight() const
@@ -76,7 +76,7 @@ namespace hex
         vy[5] = y_ + yOffset;
 
         Palette::Color f = Palette::GetColor(Palette::Element::Foreground);
-        filledPolygonRGBA(Engine::gRenderer_, vx, vy, 6, f.r, f.g, f.b, 255);
+        Err(filledPolygonRGBA(Engine::gRenderer_, vx, vy, 6, f.r, f.g, f.b, 255));
     }
 
     Palette::Color Hexagon::GetHexagonColor() const

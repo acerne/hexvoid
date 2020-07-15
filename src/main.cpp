@@ -121,6 +121,7 @@ int main(int argc, char* args[])
                                         case 4: {
                                             std::string gridSize = newGameMenu.GetSelection("Grid size:");
                                             grid = hex::Grid(std::stoi(gridSize));
+                                            hex::Score::Start();
                                             state = GameState::Game;
                                             break;
                                         }
@@ -192,6 +193,7 @@ int main(int argc, char* args[])
         {
             case GameState::Game:
                 grid.Draw(cursorX, cursorY);
+                hex::Score::Draw();
                 break;
             case GameState::MainMenu:
                 mainMenu.Draw(cursorX, cursorY);

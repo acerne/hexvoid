@@ -33,12 +33,16 @@ namespace hex
         static uint16_t windowWidth_;
         static uint16_t windowHeight_;
         static const char* fontPath_;
+
+        static void Err(int error);
     };
 
     class Text : public Engine
     {
     public:
-        Text(int fontSize, uint8_t lines = 1);
+        Text() {} // Remove this, fix text in static Score
+        Text(int fontSize, int16_t x, int16_t y, uint8_t lines = 1);
+        Text(int fontSize, uint8_t lines = 1) : Text(fontSize, 0, 0, lines){};
         ~Text();
 
         void Place(int16_t x, int16_t y);
@@ -47,6 +51,7 @@ namespace hex
         void Draw() const;
 
     private:
+        bool initialized_ = false;
         TTF_Font* font_;
         std::vector<std::string> text_;
         uint8_t lines_;
@@ -204,6 +209,27 @@ namespace hex
         Index Round(double q, double r, double s) const;
         int16_t IndexDistance(const Index& A, const Index& B) const;
         Index GetClosestSelection(const Pixel& pixel) const;
+    };
+
+    class Score : public Engine
+    {
+    public:
+        static void Start();
+
+        static void AddScore(uint16_t points);
+        static void TakeScore(uint16_t points);
+        static void AddMoves(uint16_t moves);
+        static void TakeMoves(uint16_t moves);
+        static void RegisterMove();
+
+        static void Draw();
+
+    private:
+        Score();
+        static size_t score_;
+        static size_t moves_;
+        static uint16_t movesLeft_;
+        static Text text_;
     };
 
     class Framerate : public Engine

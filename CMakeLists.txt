@@ -27,6 +27,7 @@ add_executable(${PROJECT_NAME}      src/main.cpp
                                     src/hex_menu.cpp
                                     src/hex_palette.cpp
                                     src/hex_randomizer.cpp
+                                    src/hex_score.cpp
                                     src/hex_systeminfo.cpp
                                     src/hex_text.cpp
                                     )
