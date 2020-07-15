@@ -6,18 +6,12 @@
 
 namespace hex
 {
-    Hexagon::Hexagon(int16_t x, int16_t y, int16_t radius, uint8_t family) :
-        x_(x), y_(y), radius_(radius), family_(family)
-    {
-        if(debug_) printf("Creating Hexagon class...\n");
-    }
-
     double Hexagon::Distance(int16_t x, int16_t y) const
     {
         return std::sqrt(std::pow(x_ - x, 2) + std::pow(y_ - y, 2));
     }
 
-    void Hexagon::Draw(const Palette& palette) const
+    void Hexagon::Draw() const
     {
         int16_t vx[6], vy[6];
 
@@ -45,13 +39,13 @@ namespace hex
         vx[5] = x_ + xOffset;
         vy[5] = y_ + yOffset;
 
-        Palette::Color color = palette.GetThemeColor(family_);
-        Palette::Color background = palette.GetThemeColor(0);
-        filledPolygonRGBA(Engine::gRenderer_, vx, vy, 6, color.r, color.g, color.b, 255);
-        polygonRGBA(Engine::gRenderer_, vx, vy, 6, background.r, background.g, background.b, 255);
+        Palette::Color c = GetHexagonColor();
+        Palette::Color b = Palette::GetColor(Palette::Element::Background);
+        filledPolygonRGBA(Engine::gRenderer_, vx, vy, 6, c.r, c.g, c.b, 255);
+        polygonRGBA(Engine::gRenderer_, vx, vy, 6, b.r, b.g, b.b, 255);
     }
 
-    void Hexagon::DrawHighlight(const Palette& palette) const
+    void Hexagon::DrawHighlight() const
     {
         int16_t vx[6], vy[6];
 
@@ -81,8 +75,26 @@ namespace hex
         vx[5] = x_ + xOffset;
         vy[5] = y_ + yOffset;
 
-        Palette::Color color = palette.GetThemeColor(1);
-        filledPolygonRGBA(Engine::gRenderer_, vx, vy, 6, color.r, color.g, color.b, 255);
+        Palette::Color f = Palette::GetColor(Palette::Element::Foreground);
+        filledPolygonRGBA(Engine::gRenderer_, vx, vy, 6, f.r, f.g, f.b, 255);
+    }
+
+    Palette::Color Hexagon::GetHexagonColor() const
+    {
+        switch(family_)
+        {
+            case 2:
+                return Palette::GetColor(Palette::Element::A);
+            case 3:
+                return Palette::GetColor(Palette::Element::B);
+            case 4:
+                return Palette::GetColor(Palette::Element::C);
+            case 5:
+                return Palette::GetColor(Palette::Element::D);
+            default:
+                break;
+        }
+        throw std::runtime_error("Hexagon color not specified");
     }
 
 } // namespace hex

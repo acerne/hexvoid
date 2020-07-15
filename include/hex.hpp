@@ -26,7 +26,6 @@ namespace hex
 
     protected:
         Engine() {}
-        static bool debug_;
         static SDL_Window* gWindow_;
         static SDL_Surface* gSurface_;
         static SDL_Surface* gBackground_;
@@ -97,7 +96,15 @@ namespace hex
     class Palette : public Engine
     {
     public:
-        Palette();
+        enum class Element
+        {
+            Background,
+            Foreground,
+            A,
+            B,
+            C,
+            D
+        };
 
         struct Color
         {
@@ -115,7 +122,6 @@ namespace hex
 
         struct Theme
         {
-            std::string name;
             Color background;
             Color foreground;
             Color A;
@@ -124,18 +130,16 @@ namespace hex
             Color D;
         };
 
-        Color GetThemeColor(int index) const;
-        std::string GetThemeName() const;
-
-        void NextTheme();
-        void PreviousTheme();
-
-        void DrawInfo();
+        static void ChangeTheme(const std::string& themeName);
+        static Color GetColor(Element id);
+        static std::string GetThemeName();
+        static std::vector<std::string> GetThemeNames();
 
     private:
-        uint8_t selectedTheme_;
-        std::vector<Theme> themeList_;
-        Text text_ = Text(26);
+        Palette();
+
+        static std::string selectedTheme_;
+        static const std::map<std::string, Theme> themes_;
     };
 
     class Randomizer : public Engine
@@ -153,17 +157,21 @@ namespace hex
     class Hexagon : public Engine
     {
     public:
-        Hexagon(int16_t x, int16_t y, int16_t radius, uint8_t family);
+        Hexagon(int16_t x, int16_t y, int16_t radius, uint8_t family) : x_(x), y_(y), radius_(radius), family_(family)
+        {}
 
         double Distance(int16_t x, int16_t y) const;
 
-        void Draw(const Palette& palette) const;
-        void DrawHighlight(const Palette& palette) const;
+        void Draw() const;
+        void DrawHighlight() const;
 
         int16_t x_;
         int16_t y_;
         int16_t radius_;
         uint8_t family_;
+
+    private:
+        Palette::Color GetHexagonColor() const;
     };
 
     class Grid : public Engine
@@ -176,7 +184,7 @@ namespace hex
         void RotateClockwise(int16_t cursorX, int16_t cursorY);
         void RotateCounterClockwise(int16_t cursorX, int16_t cursorY);
 
-        void Draw(const Palette& palette, int16_t cursorX, int16_t cursorY) const;
+        void Draw(int16_t cursorX, int16_t cursorY) const;
 
     private:
         typedef std::tuple<int16_t, int16_t, int16_t> Index;

@@ -17,8 +17,6 @@ int main(int argc, char* args[])
 
     hex::Engine::Initialize("Hexvoid", 800, 600);
 
-    hex::Palette palette;
-
     hex::Menu mainMenu(60, 40);
     mainMenu.AddItem("New game", 0);
     mainMenu.AddItem("Options", 1);
@@ -32,7 +30,7 @@ int main(int argc, char* args[])
 
     hex::Menu optionsMenu(60, 40);
     optionsMenu.AddOption("Resolution:", 0, {"800x600", "1280x720", "1600x900", "1920x1080"});
-    optionsMenu.AddOption("Color style:", 1, {"A", "B", "C"});
+    optionsMenu.AddOption("Color theme:", 1, hex::Palette::GetThemeNames());
     optionsMenu.AddItem("Apply", 4);
     optionsMenu.AddItem("Back", 6);
 
@@ -62,10 +60,8 @@ int main(int argc, char* args[])
                             state = GameState::MainMenu;
                             break;
                         case SDLK_UP:
-                            palette.NextTheme();
                             break;
                         case SDLK_DOWN:
-                            palette.PreviousTheme();
                             break;
                         default:
                             break;
@@ -146,6 +142,11 @@ int main(int argc, char* args[])
                                 case SDL_BUTTON_LEFT: {
                                     switch(optionsMenu.Click(event.motion.x, event.motion.y))
                                     {
+                                        case 1: {
+                                            std::string theme = optionsMenu.GetSelection("Color theme:");
+                                            hex::Palette::ChangeTheme(theme);
+                                            break;
+                                        }
                                         case 4: {
                                             std::string resolution = optionsMenu.GetSelection("Resolution:");
                                             int x = resolution.find("x");
@@ -190,7 +191,7 @@ int main(int argc, char* args[])
         switch(state)
         {
             case GameState::Game:
-                grid.Draw(palette, cursorX, cursorY);
+                grid.Draw(cursorX, cursorY);
                 break;
             case GameState::MainMenu:
                 mainMenu.Draw(cursorX, cursorY);
@@ -209,7 +210,6 @@ int main(int argc, char* args[])
         }
         fps.Draw();
         info.Draw();
-        // palette.DrawInfo();
         hex::Engine::Display();
     }
 

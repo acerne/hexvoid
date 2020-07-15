@@ -66,8 +66,6 @@ namespace hex
 
     SystemInfo::SystemInfo()
     {
-        if(debug_) printf("Creating SystemInfo class...\n");
-
         textInfo_.Place(5, 30);
     }
 

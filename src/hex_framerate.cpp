@@ -5,8 +5,6 @@ namespace hex
 {
     Framerate::Framerate()
     {
-        if(debug_) printf("Creating Framerate class...\n");
-
         frameCount_ = 0;
         lastSecond_ = SDL_GetTicks();
         fps_ = 0;

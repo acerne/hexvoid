@@ -6,8 +6,6 @@ namespace hex
 {
     Text::Text(int fontSize, uint8_t lines)
     {
-        if(debug_) printf("Creating Text class...\n");
-
         font_ = TTF_OpenFont(Engine::fontPath_, fontSize); // select and move font
         if(!font_) throw std::runtime_error("Font not found! TTF_Error: " + std::string(TTF_GetError()));
 
@@ -41,10 +39,12 @@ namespace hex
 
     void Text::Draw() const
     {
+        Palette::Color f = Palette::GetColor(Palette::Element::Foreground);
+
         for(uint8_t i = 0; i < lines_; i++)
         {
             const char* text_c = text_.at(i).c_str();
-            SDL_Surface* textSurface = TTF_RenderText_Solid(font_, text_c, {255, 255, 255});
+            SDL_Surface* textSurface = TTF_RenderText_Solid(font_, text_c, {f.r, f.g, f.b});
             int w, h;
             TTF_SizeText(font_, text_c, &w, &h);
             SDL_Rect textLocation = {x_, y_ + i * h, w, h};

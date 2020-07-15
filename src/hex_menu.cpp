@@ -6,8 +6,6 @@ namespace hex
 {
     Menu::Menu(uint16_t spacing, int fontSize)
     {
-        if(debug_) printf("Creating Menu class...\n");
-
         font_ = TTF_OpenFont(Engine::fontPath_, fontSize); // select and move font
         if(!font_) throw std::runtime_error("Font not found! TTF_Error: " + std::string(TTF_GetError()));
 
@@ -83,6 +81,7 @@ namespace hex
                 }
                 case MenuItemType::Option: {
                     NextOption(selected);
+                    return items_[selected].index;
                     break;
                 }
                 default:
@@ -99,11 +98,14 @@ namespace hex
 
     void Menu::Draw(int16_t cursorX, int16_t cursorY) const
     {
+        Palette::Color f = Palette::GetColor(Palette::Element::Foreground);
+        Palette::Color c = Palette::GetColor(Palette::Element::A);
+
         uint8_t hover = MouseOverItemIndex(cursorX, cursorY);
         for(const auto& item : items_)
         {
-            SDL_Color color = {255, 255, 255};
-            if(item.second.index == hover) color = {255, 127, 0};
+            SDL_Color color = {f.r, f.g, f.b};
+            if(item.second.index == hover) color = {c.r, c.g, c.b};
             switch(item.second.type)
             {
                 case MenuItemType::Item: {
@@ -117,7 +119,7 @@ namespace hex
                 }
                 case MenuItemType::Option: {
                     const char* itemText_c = item.second.title.c_str();
-                    SDL_Surface* itemSurface = TTF_RenderText_Solid(font_, itemText_c, {255, 255, 255});
+                    SDL_Surface* itemSurface = TTF_RenderText_Solid(font_, itemText_c, {f.r, f.g, f.b});
 
                     const char* optionText_c = item.second.options.at(item.second.selected).c_str();
                     int w, h;

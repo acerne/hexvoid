@@ -18,8 +18,6 @@ namespace hex
 
     Grid::Grid(int16_t size, int16_t hexRadius)
     {
-        if(debug_) printf("Creating Grid class...\n");
-
         if(!(size % 2)) throw std::runtime_error("Grid size must be an odd nubmer");
 
         gridSize_ = size;
@@ -60,11 +58,7 @@ namespace hex
         {
             if(CheckSolution(selected))
             {
-                printf("HIT!\n");
                 ShuffleSolution(selected);
-
-                // score_.AddScore(100);
-                // score_.AddMoves(10);
             }
             else
             {
@@ -94,11 +88,7 @@ namespace hex
         {
             if(CheckSolution(selected))
             {
-                printf("HIT!\n");
                 ShuffleSolution(selected);
-
-                // score_.AddScore(100);
-                // score_.AddMoves(10);
             }
             else
             {
@@ -113,13 +103,11 @@ namespace hex
                 elements_.at({q - 1, r + 1, s}).family_ = elements_.at({q - 1, r, s + 1}).family_;
                 elements_.at({q - 1, r, s + 1}).family_ = elements_.at({q, r - 1, s + 1}).family_;
                 elements_.at({q, r - 1, s + 1}).family_ = swap;
-
-                // score_.Move();
             }
         }
     }
 
-    void Grid::Draw(const Palette& palette, int16_t cursorX, int16_t cursorY) const
+    void Grid::Draw(int16_t cursorX, int16_t cursorY) const
     {
         Index selected = PixelToIndex({cursorX, cursorY});
         bool inside = IndexDistance({0, 0, 0}, selected) < (gridSize_ - 1) / 2 - 1;
@@ -134,27 +122,22 @@ namespace hex
         for(const auto& [index, hexagon] : elements_)
         {
             if(inside && IndexDistance(index, selected) == 1)
-            {
                 topmost.push_back(index);
-            }
             else
-            {
-                hexagon.Draw(palette);
-            }
+                hexagon.Draw();
         }
 
         if(inside)
         {
             for(auto& index : topmost)
             {
-                elements_.at(index).DrawHighlight(palette);
+                elements_.at(index).DrawHighlight();
             }
             for(auto& index : topmost)
             {
-                elements_.at(index).Draw(palette);
+                elements_.at(index).Draw();
             }
         }
-        // score_.Draw(gRenderer);
     }
 
     bool Grid::CheckSolution(Grid::Index index)
