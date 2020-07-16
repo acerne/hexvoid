@@ -17,18 +17,18 @@ int main(int argc, char* args[])
 
     hex::Engine::Initialize("Hexvoid", 800, 600);
 
-    hex::Menu mainMenu(60, 35);
+    hex::Menu mainMenu(60);
     mainMenu.AddItem("New game", 1);
     mainMenu.AddItem("Options", 2);
     mainMenu.AddItem("Exit", 3);
 
-    hex::Menu newGameMenu(60, 35);
+    hex::Menu newGameMenu(60);
     newGameMenu.AddOption("Grid size:", 1, {"7", "9", "11"});
     newGameMenu.AddOption("Difficulty:", 2, {"Easy", "Medium", "Hard"});
     newGameMenu.AddItem("Start", 4);
     newGameMenu.AddItem("Back", 6);
 
-    hex::Menu optionsMenu(60, 35);
+    hex::Menu optionsMenu(60);
     optionsMenu.AddOption("Resolution:", 0, {"800x600", "1280x720", "1600x900", "1920x1080"});
     optionsMenu.AddOption("Color theme:", 1, hex::Palette::GetThemeNames());
     optionsMenu.AddItem("Apply", 4);

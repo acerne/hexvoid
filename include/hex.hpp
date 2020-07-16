@@ -46,8 +46,7 @@ namespace hex
     class Menu : public Core
     {
     public:
-        Menu(uint16_t spacing, int fontSize);
-        ~Menu();
+        Menu(uint16_t spacing);
 
         void AddItem(const std::string& title, uint8_t index);
         void AddOption(const std::string& title, uint8_t index, const std::vector<std::string>& valueNames);
@@ -72,7 +71,6 @@ namespace hex
             u_int8_t selected;
         };
 
-        TTF_Font* font_;
         std::map<std::string, MenuItem> items_;
         uint16_t spacing_;
 

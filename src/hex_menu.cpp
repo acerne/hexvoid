@@ -4,39 +4,25 @@
 
 namespace hex
 {
-    Menu::Menu(uint16_t spacing, int fontSize)
+    Menu::Menu(uint16_t spacing)
     {
-        font_ = TTF_OpenFont(Engine::fontPath_, fontSize); // select and move font
-        if(!font_) throw std::runtime_error("Font not found! TTF_Error: " + std::string(TTF_GetError()));
-
         items_.clear();
         spacing_ = spacing;
     }
 
-    Menu::~Menu()
-    {
-        TTF_CloseFont(font_);
-    }
-
     void Menu::AddItem(const std::string& title, uint8_t index)
     {
-        const char* text_c = title.c_str();
-        int w, h;
-        TTF_SizeText(font_, text_c, &w, &h);
-        int x = Engine::windowWidth_ / 2 - w / 2;
+        int x = Engine::windowWidth_ / 2;
         int y = spacing_ * (index + 1);
-
-        items_[title] = MenuItem{MenuItemType::Item, title, index, SDL_Rect{x, y, w, h}, {}, 0};
+        SDL_Rect bounds = FC_GetBounds(font_, x, y, FC_AlignEnum::FC_ALIGN_CENTER, {1, 1}, "%s", title.c_str());
+        items_[title] = MenuItem{MenuItemType::Item, title, index, bounds, {}, 0};
     }
     void Menu::AddOption(const std::string& title, uint8_t index, const std::vector<std::string>& valueNames)
     {
-        const char* text_c = title.c_str();
-        int w, h;
-        TTF_SizeText(font_, text_c, &w, &h);
         int x = Engine::windowWidth_ / 5;
         int y = spacing_ * (index + 1);
-
-        items_[title] = MenuItem{MenuItemType::Option, title, index, SDL_Rect{x, y, w, h}, std::move(valueNames), 0};
+        SDL_Rect bounds = FC_GetBounds(font_, x, y, FC_AlignEnum::FC_ALIGN_CENTER, {1, 1}, "%s", title.c_str());
+        items_[title] = MenuItem{MenuItemType::Option, title, index, bounds, std::move(valueNames), 0};
     }
 
     bool Menu::IsMouseInside(int16_t x, int16_t y, const SDL_Rect& box) const
@@ -98,45 +84,36 @@ namespace hex
 
     void Menu::Draw(int16_t cursorX, int16_t cursorY) const
     {
+
         Palette::Color f = Palette::GetColor(Palette::Element::Foreground);
         Palette::Color c = Palette::GetColor(Palette::Element::A);
 
         uint8_t hover = MouseOverItemIndex(cursorX, cursorY);
         for(const auto& item : items_)
         {
-            SDL_Color color = {f.r, f.g, f.b};
-            if(item.second.index == hover) color = {c.r, c.g, c.b};
+            SDL_Color color = {f.r, f.g, f.b, 255};
+            if(item.second.index == hover) color = {c.r, c.g, c.b, 255};
+
             switch(item.second.type)
             {
                 case MenuItemType::Item: {
-                    const char* itemText_c = item.second.title.c_str();
-                    SDL_Surface* itemSurface = TTF_RenderText_Solid(font_, itemText_c, color);
-                    SDL_Texture* itemTexture = SDL_CreateTextureFromSurface(Engine::gRenderer_, itemSurface);
-                    SDL_RenderCopy(Engine::gRenderer_, itemTexture, NULL, &item.second.box);
-                    SDL_DestroyTexture(itemTexture);
-                    SDL_FreeSurface(itemSurface);
+                    FC_SetDefaultColor(font_, color);
+                    FC_DrawScale(font_, gRenderer_, item.second.box.x, item.second.box.y, {1, 1}, "%s",
+                                 item.second.title.c_str());
+
                     break;
                 }
                 case MenuItemType::Option: {
-                    const char* itemText_c = item.second.title.c_str();
-                    SDL_Surface* itemSurface = TTF_RenderText_Solid(font_, itemText_c, {f.r, f.g, f.b});
+                    FC_SetDefaultColor(font_, {f.r, f.g, f.b, 255});
+                    FC_DrawScale(font_, gRenderer_, item.second.box.x, item.second.box.y, {1, 1}, "%s",
+                                 item.second.title.c_str());
 
-                    const char* optionText_c = item.second.options.at(item.second.selected).c_str();
-                    int w, h;
-                    TTF_SizeText(font_, optionText_c, &w, &h);
                     int x = item.second.box.x + item.second.box.w + 20;
                     int y = item.second.box.y;
-                    SDL_Rect optionBox = {x, y, w, h};
-                    SDL_Surface* optionSurface = TTF_RenderText_Solid(font_, optionText_c, color);
+                    FC_SetDefaultColor(font_, color);
+                    FC_DrawScale(font_, gRenderer_, x, y, {1, 1}, "%s",
+                                 item.second.options.at(item.second.selected).c_str());
 
-                    SDL_Texture* ItemTexture = SDL_CreateTextureFromSurface(Engine::gRenderer_, itemSurface);
-                    SDL_Texture* optionTexture = SDL_CreateTextureFromSurface(Engine::gRenderer_, optionSurface);
-                    SDL_RenderCopy(Engine::gRenderer_, ItemTexture, NULL, &item.second.box);
-                    SDL_RenderCopy(Engine::gRenderer_, optionTexture, NULL, &optionBox);
-                    SDL_DestroyTexture(ItemTexture);
-                    SDL_DestroyTexture(optionTexture);
-                    SDL_FreeSurface(itemSurface);
-                    SDL_FreeSurface(optionSurface);
                     break;
                 }
                 default:

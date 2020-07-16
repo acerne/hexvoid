@@ -38,7 +38,7 @@ namespace hex
         gRenderer_ = SDL_CreateRenderer(gWindow_, -1, SDL_RENDERER_ACCELERATED);
 
         font_ = FC_CreateFont();
-        FC_LoadFont(font_, gRenderer_, fontPath_, 20, FC_MakeColor(255, 255, 255, 255), TTF_STYLE_NORMAL);
+        FC_LoadFont(font_, gRenderer_, fontPath_, 36, {255, 255, 255, 255}, TTF_STYLE_NORMAL);
     }
 
     void Engine::Terminate()

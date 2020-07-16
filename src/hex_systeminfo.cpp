@@ -91,10 +91,9 @@ namespace hex
             "Virtual memory:\n Available: %i MB\n Used: %i MB\n Game: %i MB\n\nPhysical memory:\n "
             "Available: %i MB\n Used: %i MB\n Game: %i MB";
 
-        FC_SetDefaultColor(Engine::font_, {255, 255, 255, 255});
-        FC_DrawScale(Engine::font_, Engine::gRenderer_, 5, 30, {0.5, 0.5}, formattedInfo, bToMb(totalVirtualMem),
-                     bToMb(virtualMemUsed), kbToMb(getAppVirtMem()), bToMb(totalPhysMem), bToMb(physMemUsed),
-                     kbToMb(getAppPhysMem()));
+        FC_SetDefaultColor(font_, {255, 255, 255, 255});
+        FC_DrawScale(font_, gRenderer_, 5, 30, {0.3, 0.3}, formattedInfo, bToMb(totalVirtualMem), bToMb(virtualMemUsed),
+                     kbToMb(getAppVirtMem()), bToMb(totalPhysMem), bToMb(physMemUsed), kbToMb(getAppPhysMem()));
     };
 
 } // namespace hex

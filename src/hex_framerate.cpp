@@ -25,11 +25,11 @@ namespace hex
     void Framerate::Draw()
     {
         if(fps_ < 30)
-            FC_SetDefaultColor(Engine::font_, {255, 0, 0, 255});
+            FC_SetDefaultColor(font_, {255, 0, 0, 255});
         else
-            FC_SetDefaultColor(Engine::font_, {0, 255, 0, 255});
+            FC_SetDefaultColor(font_, {0, 255, 0, 255});
 
-        FC_DrawScale(Engine::font_, Engine::gRenderer_, 5, 5, {0.5, 0.5}, "FPS %i", fps_);
+        FC_DrawScale(font_, gRenderer_, 5, 5, {0.3, 0.3}, "FPS %i", fps_);
     };
 
 } // namespace hex

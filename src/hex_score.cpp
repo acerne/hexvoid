@@ -47,8 +47,8 @@ namespace hex
     {
         const char* formattedScore = "Score: %i\nMoves: %i\nMoves left: %i";
 
-        FC_SetDefaultColor(Engine::font_, {255, 255, 255, 255});
-        FC_DrawScale(Engine::font_, Engine::gRenderer_, 5, 500, {1, 1}, formattedScore, score_, moves_, movesLeft_);
+        FC_SetDefaultColor(font_, {255, 255, 255, 255});
+        FC_DrawScale(font_, gRenderer_, 5, 500, {0.5, 0.5}, formattedScore, score_, moves_, movesLeft_);
     }
 
 } // namespace hex
