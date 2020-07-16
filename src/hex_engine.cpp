@@ -5,14 +5,20 @@
 
 namespace hex
 {
-    FC_Font* Engine::font_ = NULL;
-    SDL_Window* Engine::gWindow_ = NULL;
-    SDL_Surface* Engine::gSurface_ = NULL;
-    SDL_Surface* Engine::gBackground_ = NULL;
-    SDL_Renderer* Engine::gRenderer_ = NULL;
-    uint16_t Engine::windowWidth_ = 0;
-    uint16_t Engine::windowHeight_ = 0;
-    const char* Engine::fontPath_ = "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf";
+
+    FC_Font* Core::font_ = NULL;
+    SDL_Window* Core::gWindow_ = NULL;
+    SDL_Surface* Core::gSurface_ = NULL;
+    SDL_Surface* Core::gBackground_ = NULL;
+    SDL_Renderer* Core::gRenderer_ = NULL;
+    uint16_t Core::windowWidth_ = 0;
+    uint16_t Core::windowHeight_ = 0;
+    const char* Core::fontPath_ = "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf";
+
+    void Core::Err(int error)
+    {
+        if(error < 0) throw std::runtime_error("SDL failed: " + std::string(SDL_GetError()));
+    }
 
     void Engine::Initialize(const std::string& title, uint16_t windowWidth, uint16_t windowHeight)
     {
@@ -79,11 +85,6 @@ namespace hex
     void Engine::Display()
     {
         SDL_RenderPresent(gRenderer_);
-    }
-
-    void Engine::Err(int error)
-    {
-        if(error < 0) throw std::runtime_error("SDL failed: " + std::string(SDL_GetError()));
     }
 
 } // namespace hex

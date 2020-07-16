@@ -13,21 +13,9 @@
 
 namespace hex
 {
-    class Engine
+    class Core
     {
-    public:
-        static void EnableDebug();
-
-        static void Initialize(const std::string& title, uint16_t windowWidth, uint16_t windowHeight);
-        static void Terminate();
-
-        static void ChangeResolution(uint16_t windowWidth, uint16_t windowHeight);
-
-        static void Clear();
-        static void Display();
-
     protected:
-        Engine() {}
         static FC_Font* font_;
         static SDL_Window* gWindow_;
         static SDL_Surface* gSurface_;
@@ -40,7 +28,22 @@ namespace hex
         static void Err(int error);
     };
 
-    class Menu : public Engine
+    class Engine : public Core
+    {
+    public:
+        static void Initialize(const std::string& title, uint16_t windowWidth, uint16_t windowHeight);
+        static void Terminate();
+
+        static void ChangeResolution(uint16_t windowWidth, uint16_t windowHeight);
+
+        static void Clear();
+        static void Display();
+
+    protected:
+        Engine() {}
+    };
+
+    class Menu : public Core
     {
     public:
         Menu(uint16_t spacing, int fontSize);
@@ -79,7 +82,7 @@ namespace hex
         void NextOption(const std::string& itemName);
     };
 
-    class Palette : public Engine
+    class Palette : public Core
     {
     public:
         enum class Element
@@ -128,7 +131,7 @@ namespace hex
         static const std::map<std::string, Theme> themes_;
     };
 
-    class Randomizer : public Engine
+    class Randomizer : public Core
     {
     public:
         typedef std::pair<uint8_t, uint8_t> ValueAndWeight;
@@ -140,7 +143,7 @@ namespace hex
         Randomizer() {}
     };
 
-    class Hexagon : public Engine
+    class Hexagon : public Core
     {
     public:
         Hexagon(int16_t x, int16_t y, int16_t radius, uint8_t family) : x_(x), y_(y), radius_(radius), family_(family)
@@ -153,7 +156,6 @@ namespace hex
         };
 
         double Distance(int16_t x, int16_t y) const;
-
         std::array<std::array<int16_t, 6>, 2> GetVertices(Orientation orientation, int16_t radius) const;
 
         void Draw() const;
@@ -168,7 +170,7 @@ namespace hex
         Palette::Color GetHexagonColor() const;
     };
 
-    class Grid : public Engine
+    class Grid : public Core
     {
     public:
         Grid(int16_t size, int16_t hexRadius);
@@ -200,7 +202,7 @@ namespace hex
         Index GetClosestSelection(const Pixel& pixel) const;
     };
 
-    class Score : public Engine
+    class Score : public Core
     {
     public:
         static void Start();
@@ -220,7 +222,7 @@ namespace hex
         static uint16_t movesLeft_;
     };
 
-    class Framerate : public Engine
+    class Framerate : public Core
     {
     public:
         Framerate();
@@ -234,7 +236,7 @@ namespace hex
         uint16_t fps_;
     };
 
-    class SystemInfo : public Engine
+    class SystemInfo : public Core
     {
     public:
         static void Draw();
