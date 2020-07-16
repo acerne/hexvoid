@@ -9,6 +9,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
+#include "SDL_FontCache.h"
+
 namespace hex
 {
     class Engine
@@ -26,6 +28,7 @@ namespace hex
 
     protected:
         Engine() {}
+        static FC_Font* font_;
         static SDL_Window* gWindow_;
         static SDL_Surface* gSurface_;
         static SDL_Surface* gBackground_;
@@ -35,28 +38,6 @@ namespace hex
         static const char* fontPath_;
 
         static void Err(int error);
-    };
-
-    class Text : public Engine
-    {
-    public:
-        Text() {} // Remove this, fix text in static Score
-        Text(int fontSize, int16_t x, int16_t y, uint8_t lines = 1);
-        Text(int fontSize, uint8_t lines = 1) : Text(fontSize, 0, 0, lines){};
-        ~Text();
-
-        void Place(int16_t x, int16_t y);
-        void Set(const std::string& text, uint8_t line = 0);
-
-        void Draw() const;
-
-    private:
-        bool initialized_ = false;
-        TTF_Font* font_;
-        std::vector<std::string> text_;
-        uint8_t lines_;
-        int16_t x_;
-        int16_t y_;
     };
 
     class Menu : public Engine
@@ -229,7 +210,6 @@ namespace hex
         static size_t score_;
         static size_t moves_;
         static uint16_t movesLeft_;
-        static Text text_;
     };
 
     class Framerate : public Engine
@@ -244,18 +224,15 @@ namespace hex
         uint16_t frameCount_;
         uint32_t lastSecond_;
         uint16_t fps_;
-        Text text_ = Text(12);
     };
 
     class SystemInfo : public Engine
     {
     public:
-        SystemInfo();
-
-        void Draw();
+        static void Draw();
 
     private:
-        Text textInfo_ = Text(10, 8);
+        SystemInfo();
     };
 
 } // namespace hex

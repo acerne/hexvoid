@@ -8,7 +8,6 @@ namespace hex
         frameCount_ = 0;
         lastSecond_ = SDL_GetTicks();
         fps_ = 0;
-        text_.Place(5, 5);
     }
 
     void Framerate::Tick()
@@ -25,8 +24,8 @@ namespace hex
 
     void Framerate::Draw()
     {
-        text_.Set(std::to_string(fps_));
-        text_.Draw();
+        FC_SetDefaultColor(Engine::font_, {255, 0, 0, 255});
+        FC_DrawScale(Engine::font_, Engine::gRenderer_, 5, 5, {0.5, 0.5}, "FPS %i", fps_);
     };
 
 } // namespace hex

@@ -32,7 +32,6 @@ add_executable(${PROJECT_NAME}      src/main.cpp
                                     src/hex_randomizer.cpp
                                     src/hex_score.cpp
                                     src/hex_systeminfo.cpp
-                                    src/hex_text.cpp
                                     )
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${SDL2_INCLUDE_DIRS})

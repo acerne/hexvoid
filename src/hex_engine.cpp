@@ -5,6 +5,7 @@
 
 namespace hex
 {
+    FC_Font* Engine::font_ = NULL;
     SDL_Window* Engine::gWindow_ = NULL;
     SDL_Surface* Engine::gSurface_ = NULL;
     SDL_Surface* Engine::gBackground_ = NULL;
@@ -29,6 +30,9 @@ namespace hex
 
         gSurface_ = SDL_GetWindowSurface(gWindow_);
         gRenderer_ = SDL_CreateRenderer(gWindow_, -1, SDL_RENDERER_ACCELERATED);
+
+        font_ = FC_CreateFont();
+        FC_LoadFont(font_, gRenderer_, fontPath_, 20, FC_MakeColor(255, 255, 255, 255), TTF_STYLE_NORMAL);
     }
 
     void Engine::Terminate()
@@ -44,6 +48,8 @@ namespace hex
 
         SDL_DestroyWindow(gWindow_);
         gWindow_ = NULL;
+
+        FC_FreeFont(font_);
 
         TTF_Quit();
         SDL_Quit();

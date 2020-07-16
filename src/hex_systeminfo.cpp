@@ -64,11 +64,6 @@ namespace hex
         return kb / 1024;
     }
 
-    SystemInfo::SystemInfo()
-    {
-        textInfo_.Place(5, 30);
-    }
-
     void SystemInfo::Draw()
     {
         struct sysinfo memInfo;
@@ -92,17 +87,14 @@ namespace hex
         // Multiply in next statement to avoid int overflow on right hand side...
         physMemUsed *= memInfo.mem_unit;
 
-        textInfo_.Set("Virtual memory:", 0);
-        textInfo_.Set(" Available : " + std::to_string(bToMb(totalVirtualMem)) + " MB", 1);
-        textInfo_.Set(" Used: " + std::to_string(bToMb(virtualMemUsed)) + " MB", 2);
-        textInfo_.Set(" Game: " + std::to_string(kbToMb(getAppVirtMem())) + " MB", 3);
+        const char* formattedInfo =
+            "Virtual memory:\n Available: %i MB\n Used: %i MB\n Game: %i MB\n\nPhysical memory:\n "
+            "Available: %i MB\n Used: %i MB\n Game: %i MB";
 
-        textInfo_.Set("Physical memory:", 4);
-        textInfo_.Set(" Available : " + std::to_string(bToMb(totalPhysMem)) + " MB", 5);
-        textInfo_.Set(" Used: " + std::to_string(bToMb(physMemUsed)) + " MB", 6);
-        textInfo_.Set(" Game: " + std::to_string(kbToMb(getAppPhysMem())) + " MB", 7);
-
-        textInfo_.Draw();
+        FC_SetDefaultColor(Engine::font_, {255, 255, 255, 255});
+        FC_DrawScale(Engine::font_, Engine::gRenderer_, 5, 30, {0.5, 0.5}, formattedInfo, bToMb(totalVirtualMem),
+                     bToMb(virtualMemUsed), kbToMb(getAppVirtMem()), bToMb(totalPhysMem), bToMb(physMemUsed),
+                     kbToMb(getAppPhysMem()));
     };
 
 } // namespace hex

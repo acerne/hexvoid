@@ -64,7 +64,7 @@ namespace hex
             }
             else
             {
-                Score::TakeScore(1);
+                Score::TakeMoves(1);
 
                 int16_t q = std::get<0>(selected);
                 int16_t r = std::get<1>(selected);
@@ -97,7 +97,7 @@ namespace hex
             }
             else
             {
-                Score::TakeScore(1);
+                Score::TakeMoves(1);
 
                 int16_t q = std::get<0>(selected);
                 int16_t r = std::get<1>(selected);

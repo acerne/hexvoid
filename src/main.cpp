@@ -42,7 +42,6 @@ int main(int argc, char* args[])
     bool quit = false;
     int hoverIndex = 0;
     hex::Framerate fps;
-    hex::SystemInfo info;
     int16_t cursorX = 0;
     int16_t cursorY = 0;
 
@@ -211,7 +210,7 @@ int main(int argc, char* args[])
                 break;
         }
         fps.Draw();
-        info.Draw();
+        hex::SystemInfo::Draw();
         hex::Engine::Display();
     }
 
