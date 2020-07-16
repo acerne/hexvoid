@@ -14,10 +14,13 @@ find_package(SDL2 REQUIRED)
 find_package(SDL2_gfx REQUIRED)
 find_package(SDL2_ttf REQUIRED)
 
+add_library(FontCache STATIC lib/SDL_FontCache/SDL_FontCache.c)
+
 include_directories(include)
 include_directories(${SDL2_INCLUDE_DIRS})
 include_directories(${SDL2_GFX_INCLUDE_DIRS})
 include_directories(${SDL2_TTF_INCLUDE_DIRS})
+include_directories(lib/SDL_FontCache)
 
 add_executable(${PROJECT_NAME}      src/main.cpp 
                                     src/hex_engine.cpp
@@ -32,5 +35,6 @@ add_executable(${PROJECT_NAME}      src/main.cpp
                                     src/hex_text.cpp
                                     )
 
-target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} ${SDL2_GFX_LIBRARIES} ${SDL2_TTF_LIBRARIES})
+target_include_directories(${PROJECT_NAME} PUBLIC ${SDL2_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} FontCache ${SDL2_LIBRARIES} ${SDL2_GFX_LIBRARIES} ${SDL2_TTF_LIBRARIES} )
 

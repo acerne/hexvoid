@@ -1,3 +1,6 @@
 [submodule "lib/cmake/sdl2"]
 	path = lib/cmake/sdl2
 	url = https://gitlab.com/aminosbh/sdl2-cmake-modules.git
+[submodule "lib/SDL_FontCache"]
+	path = lib/SDL_FontCache
+	url = https://github.com/grimfang4/SDL_FontCache.git
