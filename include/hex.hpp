@@ -146,7 +146,15 @@ namespace hex
         Hexagon(int16_t x, int16_t y, int16_t radius, uint8_t family) : x_(x), y_(y), radius_(radius), family_(family)
         {}
 
+        enum class Orientation
+        {
+            Horizontal,
+            Vertical
+        };
+
         double Distance(int16_t x, int16_t y) const;
+
+        std::array<std::array<int16_t, 6>, 2> GetVertices(Orientation orientation, int16_t radius) const;
 
         void Draw() const;
         void DrawHighlight() const;

@@ -11,72 +11,78 @@ namespace hex
         return std::sqrt(std::pow(x_ - x, 2) + std::pow(y_ - y, 2));
     }
 
-    void Hexagon::Draw() const
+    std::array<std::array<int16_t, 6>, 2> Hexagon::GetVertices(Orientation orientation, int16_t radius) const
     {
-        int16_t vx[6], vy[6];
+        const int8_t X = 0;
+        const int8_t Y = 1;
+        std::array<std::array<int16_t, 6>, 2> vertices;
 
         const double sin30 = std::sin(30.0 * M_PI / 180.0);
         const double cos30 = std::cos(30.0 * M_PI / 180.0);
 
-        int16_t xOffset = cos30 * radius_;
-        int16_t yOffset = sin30 * radius_;
+        int16_t shortOffset = cos30 * radius;
+        int16_t longOffset = sin30 * radius;
 
-        vx[0] = x_;
-        vy[0] = y_ + radius_;
+        if(orientation == Orientation::Horizontal)
+        {
+            vertices[X][0] = x_;
+            vertices[Y][0] = y_ + radius;
 
-        vx[1] = x_ - xOffset;
-        vy[1] = y_ + yOffset;
+            vertices[X][1] = x_ - shortOffset;
+            vertices[Y][1] = y_ + longOffset;
 
-        vx[2] = x_ - xOffset;
-        vy[2] = y_ - yOffset;
+            vertices[X][2] = x_ - shortOffset;
+            vertices[Y][2] = y_ - longOffset;
 
-        vx[3] = x_;
-        vy[3] = y_ - radius_;
+            vertices[X][3] = x_;
+            vertices[Y][3] = y_ - radius;
 
-        vx[4] = x_ + xOffset;
-        vy[4] = y_ - yOffset;
+            vertices[X][4] = x_ + shortOffset;
+            vertices[Y][4] = y_ - longOffset;
 
-        vx[5] = x_ + xOffset;
-        vy[5] = y_ + yOffset;
+            vertices[X][5] = x_ + shortOffset;
+            vertices[Y][5] = y_ + longOffset;
+        }
+        else
+        {
+            vertices[X][0] = x_ + radius;
+            vertices[Y][0] = y_;
+
+            vertices[X][1] = x_ + longOffset;
+            vertices[Y][1] = y_ - shortOffset;
+
+            vertices[X][2] = x_ - longOffset;
+            vertices[Y][2] = y_ - shortOffset;
+
+            vertices[X][3] = x_ - radius;
+            vertices[Y][3] = y_;
+
+            vertices[X][4] = x_ - longOffset;
+            vertices[Y][4] = y_ + shortOffset;
+
+            vertices[X][5] = x_ + longOffset;
+            vertices[Y][5] = y_ + shortOffset;
+        }
+
+        return std::move(vertices);
+    }
+
+    void Hexagon::Draw() const
+    {
+        std::array<std::array<int16_t, 6>, 2> vertices = GetVertices(Orientation::Horizontal, radius_);
 
         Palette::Color c = GetHexagonColor();
         Palette::Color b = Palette::GetColor(Palette::Element::Background);
-        Err(filledPolygonRGBA(Engine::gRenderer_, vx, vy, 6, c.r, c.g, c.b, 255));
-        Err(polygonRGBA(Engine::gRenderer_, vx, vy, 6, b.r, b.g, b.b, 255));
+        Err(filledPolygonRGBA(Engine::gRenderer_, vertices[0].data(), vertices[1].data(), 6, c.r, c.g, c.b, 255));
+        Err(polygonRGBA(Engine::gRenderer_, vertices[0].data(), vertices[1].data(), 6, b.r, b.g, b.b, 255));
     }
 
     void Hexagon::DrawHighlight() const
     {
-        int16_t vx[6], vy[6];
-
-        int16_t overdraw = radius_ * 1.2;
-
-        const double sin30 = std::sin(30.0 * M_PI / 180.0);
-        const double cos30 = std::cos(30.0 * M_PI / 180.0);
-
-        int16_t xOffset = cos30 * overdraw;
-        int16_t yOffset = sin30 * overdraw;
-
-        vx[0] = x_;
-        vy[0] = y_ + overdraw;
-
-        vx[1] = x_ - xOffset;
-        vy[1] = y_ + yOffset;
-
-        vx[2] = x_ - xOffset;
-        vy[2] = y_ - yOffset;
-
-        vx[3] = x_;
-        vy[3] = y_ - overdraw;
-
-        vx[4] = x_ + xOffset;
-        vy[4] = y_ - yOffset;
-
-        vx[5] = x_ + xOffset;
-        vy[5] = y_ + yOffset;
+        std::array<std::array<int16_t, 6>, 2> vertices = GetVertices(Orientation::Horizontal, 1.2 * radius_);
 
         Palette::Color f = Palette::GetColor(Palette::Element::Foreground);
-        Err(filledPolygonRGBA(Engine::gRenderer_, vx, vy, 6, f.r, f.g, f.b, 255));
+        Err(filledPolygonRGBA(Engine::gRenderer_, vertices[0].data(), vertices[1].data(), 6, f.r, f.g, f.b, 255));
     }
 
     Palette::Color Hexagon::GetHexagonColor() const
