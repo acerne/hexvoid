@@ -17,6 +17,8 @@ int main(int argc, char* args[])
 
     hex::Engine::Initialize("Hexvoid", 800, 600);
 
+    hex::Logo logotype{};
+
     hex::Menu mainMenu(60);
     mainMenu.AddItem("New game", 1);
     mainMenu.AddItem("Options", 2);
@@ -195,7 +197,8 @@ int main(int argc, char* args[])
                 hex::Score::Draw();
                 break;
             case GameState::MainMenu:
-                mainMenu.Draw(cursorX, cursorY);
+                logotype.Draw();
+                // mainMenu.Draw(cursorX, cursorY);
                 break;
             case GameState::NewGameMenu:
                 newGameMenu.Draw(cursorX, cursorY);

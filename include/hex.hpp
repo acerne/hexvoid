@@ -168,6 +168,21 @@ namespace hex
         Palette::Color GetHexagonColor() const;
     };
 
+    class Math : public Core
+    {
+    public:
+        typedef std::tuple<int16_t, int16_t, int16_t> Index;
+        typedef std::pair<int16_t, int16_t> Pixel;
+
+        static Index PixelToIndex(const Pixel& pixel, int16_t radius, Math::Pixel center);
+        static Pixel IndexToPixel(const Index& index, int16_t radius, Math::Pixel center);
+        static Index RoundIndex(double q, double r, double s);
+        static int16_t IndexDistance(const Index& A, const Index& B);
+
+    private:
+        Math() {}
+    };
+
     class Grid : public Core
     {
     public:
@@ -181,23 +196,16 @@ namespace hex
         void Draw(int16_t cursorX, int16_t cursorY) const;
 
     private:
-        typedef std::tuple<int16_t, int16_t, int16_t> Index;
-        typedef std::pair<int16_t, int16_t> Pixel;
-
-        std::map<Index, Hexagon> elements_;
-        Pixel screenCenter_;
+        std::map<Math::Index, Hexagon> elements_;
+        Math::Pixel screenCenter_;
         int16_t gridSize_;
         int16_t hexRadius_;
         int16_t gridSpacing_;
 
-        bool CheckSolution(Index index);
-        void ShuffleSolution(Index index);
+        bool CheckSolution(Math::Index index);
+        void ShuffleSolution(Math::Index index);
 
-        Index PixelToIndex(const Pixel& pixel) const;
-        Pixel IndexToPixel(const Index& index) const;
-        Index Round(double q, double r, double s) const;
-        int16_t IndexDistance(const Index& A, const Index& B) const;
-        Index GetClosestSelection(const Pixel& pixel) const;
+        Math::Index GetClosestSelection(const Math::Pixel& pixel) const;
     };
 
     class Score : public Core
@@ -218,6 +226,44 @@ namespace hex
         static size_t score_;
         static size_t moves_;
         static uint16_t movesLeft_;
+    };
+
+    class Logo : public Core
+    {
+    public:
+        Logo();
+
+        enum class Character
+        {
+            H,
+            E,
+            X,
+            V,
+            O,
+            I,
+            D
+        };
+
+        class Symbol
+        {
+        public:
+            Symbol(Character character);
+
+            void Draw();
+
+        private:
+            std::map<Math::Index, Hexagon> elements_;
+            Math::Pixel center_;
+
+            void AddHexagon(Math::Index index);
+            void GenerateI();
+            void GenerateO();
+        };
+
+        void Draw();
+
+    private:
+        std::vector<Symbol> logotype_;
     };
 
     class Framerate : public Core

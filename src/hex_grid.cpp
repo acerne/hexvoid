@@ -36,8 +36,8 @@ namespace hex
             {
                 int16_t s = -q - r;
                 uint8_t family = Random(2, 5);
-                Index index{q, r, s};
-                Pixel pixel = IndexToPixel(index);
+                Math::Index index{q, r, s};
+                Math::Pixel pixel = Math::IndexToPixel(index, hexRadius_, screenCenter_);
                 elements_.emplace(index, Hexagon{pixel.first, pixel.second, hexRadius, family});
             }
         }
@@ -51,8 +51,8 @@ namespace hex
 
     void Grid::RotateClockwise(int16_t cursorX, int16_t cursorY)
     {
-        Index selected = PixelToIndex({cursorX, cursorY});
-        bool inside = IndexDistance({0, 0, 0}, selected) < (gridSize_ - 1) / 2 - 1;
+        Math::Index selected = Math::PixelToIndex({cursorX, cursorY}, hexRadius_, screenCenter_);
+        bool inside = Math::IndexDistance({0, 0, 0}, selected) < (gridSize_ - 1) / 2 - 1;
 
         if(inside)
         {
@@ -84,8 +84,8 @@ namespace hex
 
     void Grid::RotateCounterClockwise(int16_t cursorX, int16_t cursorY)
     {
-        Index selected = PixelToIndex({cursorX, cursorY});
-        bool inside = IndexDistance({0, 0, 0}, selected) < (gridSize_ - 1) / 2 - 1;
+        Math::Index selected = Math::PixelToIndex({cursorX, cursorY}, hexRadius_, screenCenter_);
+        bool inside = Math::IndexDistance({0, 0, 0}, selected) < (gridSize_ - 1) / 2 - 1;
 
         if(inside)
         {
@@ -117,19 +117,19 @@ namespace hex
 
     void Grid::Draw(int16_t cursorX, int16_t cursorY) const
     {
-        Index selected = PixelToIndex({cursorX, cursorY});
-        bool inside = IndexDistance({0, 0, 0}, selected) < (gridSize_ - 1) / 2 - 1;
+        Math::Index selected = Math::PixelToIndex({cursorX, cursorY}, hexRadius_, screenCenter_);
+        bool inside = Math::IndexDistance({0, 0, 0}, selected) < (gridSize_ - 1) / 2 - 1;
 
         int16_t q = std::get<0>(selected);
         int16_t r = std::get<1>(selected);
         int16_t s = std::get<2>(selected);
 
-        std::vector<Index> topmost;
+        std::vector<Math::Index> topmost;
         topmost.reserve(6);
 
         for(const auto& [index, hexagon] : elements_)
         {
-            if(inside && IndexDistance(index, selected) == 1)
+            if(inside && Math::IndexDistance(index, selected) == 1)
                 topmost.push_back(index);
             else
                 hexagon.Draw();
@@ -148,7 +148,7 @@ namespace hex
         }
     }
 
-    bool Grid::CheckSolution(Grid::Index index)
+    bool Grid::CheckSolution(Math::Index index)
     {
         int16_t q = std::get<0>(index);
         int16_t r = std::get<1>(index);
@@ -167,7 +167,7 @@ namespace hex
         return hit;
     }
 
-    void Grid::ShuffleSolution(Grid::Index index)
+    void Grid::ShuffleSolution(Math::Index index)
     {
         int16_t q = std::get<0>(index);
         int16_t r = std::get<1>(index);
@@ -182,30 +182,30 @@ namespace hex
         elements_.at({q + 1, r, s - 1}).family_ = Random(2, 5);
     }
 
-    Grid::Index Grid::PixelToIndex(const Grid::Pixel& pixel) const
+    Math::Index Math::PixelToIndex(const Math::Pixel& pixel, int16_t radius, Math::Pixel center)
     {
-        int16_t x = pixel.first - screenCenter_.first;
-        int16_t y = pixel.second - screenCenter_.second;
+        int16_t x = pixel.first - center.first;
+        int16_t y = pixel.second - center.second;
 
-        double q = (sqrt(3.0) / 3.0 * x - 1.0 / 3.0 * y) / hexRadius_;
-        double r = (2.0 / 3.0 * y) / hexRadius_;
+        double q = (sqrt(3.0) / 3.0 * x - 1.0 / 3.0 * y) / radius;
+        double r = (2.0 / 3.0 * y) / radius;
 
-        return Round(q, r, -q - r);
+        return RoundIndex(q, r, -q - r);
     }
 
-    Grid::Pixel Grid::IndexToPixel(const Grid::Index& index) const
+    Math::Pixel Math::IndexToPixel(const Math::Index& index, int16_t radius, Math::Pixel center)
     {
         int16_t q = std::get<0>(index);
         int16_t r = std::get<1>(index);
         int16_t s = std::get<2>(index);
 
-        int16_t x = screenCenter_.first + (q * sqrt(3.0) + r * sqrt(3.0) / 2.0) * hexRadius_;
-        int16_t y = screenCenter_.second + (3.0 / 2.0 * r) * hexRadius_;
+        int16_t x = center.first + (q * sqrt(3.0) + r * sqrt(3.0) / 2.0) * radius;
+        int16_t y = center.second + (3.0 / 2.0 * r) * radius;
 
         return {x, y};
     }
 
-    Grid::Index Grid::Round(double q, double r, double s) const
+    Math::Index Math::RoundIndex(double q, double r, double s)
     {
         int16_t rq = round(q);
         int16_t rr = round(r);
@@ -225,7 +225,7 @@ namespace hex
         return {rq, rr, rs};
     }
 
-    int16_t Grid::IndexDistance(const Index& A, const Index& B) const
+    int16_t Math::IndexDistance(const Index& A, const Index& B)
     {
         int16_t qA = std::get<0>(A);
         int16_t rA = std::get<1>(A);
@@ -238,11 +238,11 @@ namespace hex
         return (abs(qA - qB) + abs(rA - rB) + abs(sA - sB)) / 2;
     }
 
-    Grid::Index Grid::GetClosestSelection(const Grid::Pixel& pixel) const
+    Math::Index Grid::GetClosestSelection(const Math::Pixel& pixel) const
     {
-        Index hover = PixelToIndex(pixel);
+        Math::Index hover = Math::PixelToIndex(pixel, hexRadius_, screenCenter_);
 
-        while(IndexDistance({0, 0, 0}, hover) >= (gridSize_ - 1) / 2 - 1)
+        while(Math::IndexDistance({0, 0, 0}, hover) >= (gridSize_ - 1) / 2 - 1)
         {
             int16_t q = std::get<0>(hover);
             int16_t r = std::get<1>(hover);
