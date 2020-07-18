@@ -25,7 +25,6 @@ include_directories(lib/SDL_FontCache)
 add_executable(${PROJECT_NAME}      src/main.cpp 
                                     src/hex_engine.cpp
                                     src/hex_framerate.cpp
-                                    src/hex_grid.cpp
                                     src/hex_hexagon.cpp
                                     src/hex_logo.cpp
                                     src/hex_menu.cpp
@@ -33,6 +32,8 @@ add_executable(${PROJECT_NAME}      src/main.cpp
                                     src/hex_randomizer.cpp
                                     src/hex_score.cpp
                                     src/hex_systeminfo.cpp
+                                    src/hex_tiling_grid.cpp
+                                    src/hex_tiling_symbol.cpp
                                     )
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${SDL2_INCLUDE_DIRS})
