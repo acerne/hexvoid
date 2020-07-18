@@ -232,25 +232,44 @@ namespace hex
     class Logo : public Core
     {
     public:
-        Logo(Math::Pixel center, double hexRadius);
+        Logo(const std::string& title, Math::Pixel center, double hexRadius);
 
-        enum class Character
+        enum class Alphabet
         {
             SEPARATOR,
-            H,
+            A,
+            B,
+            C,
+            D,
             E,
-            X,
-            V,
-            O,
+            F,
+            G,
+            H,
             I,
-            D
+            J,
+            K,
+            L,
+            M,
+            N,
+            O,
+            P,
+            Q,
+            R,
+            S,
+            T,
+            U,
+            V,
+            W,
+            X,
+            Y,
+            Z
         };
 
         class Symbol
         {
         public:
-            Symbol(Character character, Math::Pixel center, double elementRadius);
-            Symbol(Character character, double elementRadius) : Symbol(character, {0, 0}, elementRadius) {}
+            Symbol(Alphabet character, Math::Pixel center, double elementRadius);
+            Symbol(Alphabet character, double elementRadius) : Symbol(character, {0, 0}, elementRadius) {}
 
             void SetPosition(Math::Pixel center);
             void Move(Math::Pixel movement);
@@ -281,6 +300,8 @@ namespace hex
     private:
         std::vector<Symbol> logotype_;
         double elementRadius_;
+
+        std::vector<Alphabet> ParseString(const std::string& title);
     };
 
     class Framerate : public Core
