@@ -24,10 +24,10 @@ namespace hex
         int16_t gridRadius = (size - 1) / 2;
         hexRadius_ = hexRadius;
 
-        elements_.clear();
+        tiles_.clear();
 
-        screenCenter_.first = Engine::windowWidth_ / 2; // TODO center as argument
-        screenCenter_.second = Engine::windowHeight_ / 2;
+        tileCenter_.first = Engine::windowWidth_ / 2; // TODO center as argument
+        tileCenter_.second = Engine::windowHeight_ / 2;
 
         for(int16_t q = -gridRadius + 1; q < gridRadius; q++)
         {
@@ -37,21 +37,21 @@ namespace hex
                 int16_t s = -q - r;
                 uint8_t family = Random(2, 5);
                 Math::Index index{q, r, s};
-                Math::Pixel pixel = Math::IndexToPixel(index, hexRadius, screenCenter_);
-                elements_.emplace(index, Hexagon{pixel.first, pixel.second, hexRadius, family});
+                Math::Pixel pixel = Math::IndexToPixel(index, hexRadius, tileCenter_);
+                tiles_.emplace(index, Hexagon{pixel.first, pixel.second, hexRadius, family});
             }
         }
     }
 
     void Grid::Randomize()
     {
-        for(auto& [index, hexagon] : elements_)
+        for(auto& [index, hexagon] : tiles_)
             hexagon.family_ = Random(2, 5);
     }
 
     void Grid::RotateClockwise(int16_t cursorX, int16_t cursorY)
     {
-        Math::Index selected = Math::PixelToIndex({cursorX, cursorY}, hexRadius_, screenCenter_);
+        Math::Index selected = Math::PixelToIndex({cursorX, cursorY}, hexRadius_, tileCenter_);
         bool inside = Math::IndexDistance({0, 0, 0}, selected) < (gridSize_ - 1) / 2 - 1;
 
         if(inside)
@@ -70,13 +70,13 @@ namespace hex
                 int16_t r = std::get<1>(selected);
                 int16_t s = std::get<2>(selected);
 
-                uint8_t swap = elements_.at({q + 1, r - 1, s}).family_;
-                elements_.at({q + 1, r - 1, s}).family_ = elements_.at({q, r - 1, s + 1}).family_;
-                elements_.at({q, r - 1, s + 1}).family_ = elements_.at({q - 1, r, s + 1}).family_;
-                elements_.at({q - 1, r, s + 1}).family_ = elements_.at({q - 1, r + 1, s}).family_;
-                elements_.at({q - 1, r + 1, s}).family_ = elements_.at({q, r + 1, s - 1}).family_;
-                elements_.at({q, r + 1, s - 1}).family_ = elements_.at({q + 1, r, s - 1}).family_;
-                elements_.at({q + 1, r, s - 1}).family_ = swap;
+                uint8_t swap = tiles_.at({q + 1, r - 1, s}).family_;
+                tiles_.at({q + 1, r - 1, s}).family_ = tiles_.at({q, r - 1, s + 1}).family_;
+                tiles_.at({q, r - 1, s + 1}).family_ = tiles_.at({q - 1, r, s + 1}).family_;
+                tiles_.at({q - 1, r, s + 1}).family_ = tiles_.at({q - 1, r + 1, s}).family_;
+                tiles_.at({q - 1, r + 1, s}).family_ = tiles_.at({q, r + 1, s - 1}).family_;
+                tiles_.at({q, r + 1, s - 1}).family_ = tiles_.at({q + 1, r, s - 1}).family_;
+                tiles_.at({q + 1, r, s - 1}).family_ = swap;
             }
             Score::RegisterMove();
         }
@@ -84,7 +84,7 @@ namespace hex
 
     void Grid::RotateCounterClockwise(int16_t cursorX, int16_t cursorY)
     {
-        Math::Index selected = Math::PixelToIndex({cursorX, cursorY}, hexRadius_, screenCenter_);
+        Math::Index selected = Math::PixelToIndex({cursorX, cursorY}, hexRadius_, tileCenter_);
         bool inside = Math::IndexDistance({0, 0, 0}, selected) < (gridSize_ - 1) / 2 - 1;
 
         if(inside)
@@ -103,13 +103,13 @@ namespace hex
                 int16_t r = std::get<1>(selected);
                 int16_t s = std::get<2>(selected);
 
-                uint8_t swap = elements_.at({q + 1, r - 1, s}).family_;
-                elements_.at({q + 1, r - 1, s}).family_ = elements_.at({q + 1, r, s - 1}).family_;
-                elements_.at({q + 1, r, s - 1}).family_ = elements_.at({q, r + 1, s - 1}).family_;
-                elements_.at({q, r + 1, s - 1}).family_ = elements_.at({q - 1, r + 1, s}).family_;
-                elements_.at({q - 1, r + 1, s}).family_ = elements_.at({q - 1, r, s + 1}).family_;
-                elements_.at({q - 1, r, s + 1}).family_ = elements_.at({q, r - 1, s + 1}).family_;
-                elements_.at({q, r - 1, s + 1}).family_ = swap;
+                uint8_t swap = tiles_.at({q + 1, r - 1, s}).family_;
+                tiles_.at({q + 1, r - 1, s}).family_ = tiles_.at({q + 1, r, s - 1}).family_;
+                tiles_.at({q + 1, r, s - 1}).family_ = tiles_.at({q, r + 1, s - 1}).family_;
+                tiles_.at({q, r + 1, s - 1}).family_ = tiles_.at({q - 1, r + 1, s}).family_;
+                tiles_.at({q - 1, r + 1, s}).family_ = tiles_.at({q - 1, r, s + 1}).family_;
+                tiles_.at({q - 1, r, s + 1}).family_ = tiles_.at({q, r - 1, s + 1}).family_;
+                tiles_.at({q, r - 1, s + 1}).family_ = swap;
             }
         }
         Score::RegisterMove();
@@ -117,7 +117,7 @@ namespace hex
 
     void Grid::Draw(int16_t cursorX, int16_t cursorY) const
     {
-        Math::Index selected = Math::PixelToIndex({cursorX, cursorY}, hexRadius_, screenCenter_);
+        Math::Index selected = Math::PixelToIndex({cursorX, cursorY}, hexRadius_, tileCenter_);
         bool inside = Math::IndexDistance({0, 0, 0}, selected) < (gridSize_ - 1) / 2 - 1;
 
         int16_t q = std::get<0>(selected);
@@ -127,7 +127,7 @@ namespace hex
         std::vector<Math::Index> topmost;
         topmost.reserve(6);
 
-        for(const auto& [index, hexagon] : elements_)
+        for(const auto& [index, hexagon] : tiles_)
         {
             if(inside && Math::IndexDistance(index, selected) == 1)
                 topmost.push_back(index);
@@ -139,11 +139,11 @@ namespace hex
         {
             for(auto& index : topmost)
             {
-                elements_.at(index).DrawHighlight();
+                tiles_.at(index).DrawHighlight();
             }
             for(auto& index : topmost)
             {
-                elements_.at(index).Draw();
+                tiles_.at(index).Draw();
             }
         }
     }
@@ -154,15 +154,15 @@ namespace hex
         int16_t r = std::get<1>(index);
         int16_t s = std::get<2>(index);
 
-        uint8_t reference = elements_.at(index).family_;
+        uint8_t reference = tiles_.at(index).family_;
 
         bool hit = true;
-        hit &= reference == elements_.at({q + 1, r - 1, s}).family_;
-        hit &= reference == elements_.at({q, r - 1, s + 1}).family_;
-        hit &= reference == elements_.at({q - 1, r, s + 1}).family_;
-        hit &= reference == elements_.at({q - 1, r + 1, s}).family_;
-        hit &= reference == elements_.at({q, r + 1, s - 1}).family_;
-        hit &= reference == elements_.at({q + 1, r, s - 1}).family_;
+        hit &= reference == tiles_.at({q + 1, r - 1, s}).family_;
+        hit &= reference == tiles_.at({q, r - 1, s + 1}).family_;
+        hit &= reference == tiles_.at({q - 1, r, s + 1}).family_;
+        hit &= reference == tiles_.at({q - 1, r + 1, s}).family_;
+        hit &= reference == tiles_.at({q, r + 1, s - 1}).family_;
+        hit &= reference == tiles_.at({q + 1, r, s - 1}).family_;
 
         return hit;
     }
@@ -173,13 +173,13 @@ namespace hex
         int16_t r = std::get<1>(index);
         int16_t s = std::get<2>(index);
 
-        elements_.at(index).family_ = Random(2, 5);
-        elements_.at({q + 1, r - 1, s}).family_ = Random(2, 5);
-        elements_.at({q, r - 1, s + 1}).family_ = Random(2, 5);
-        elements_.at({q - 1, r, s + 1}).family_ = Random(2, 5);
-        elements_.at({q - 1, r + 1, s}).family_ = Random(2, 5);
-        elements_.at({q, r + 1, s - 1}).family_ = Random(2, 5);
-        elements_.at({q + 1, r, s - 1}).family_ = Random(2, 5);
+        tiles_.at(index).family_ = Random(2, 5);
+        tiles_.at({q + 1, r - 1, s}).family_ = Random(2, 5);
+        tiles_.at({q, r - 1, s + 1}).family_ = Random(2, 5);
+        tiles_.at({q - 1, r, s + 1}).family_ = Random(2, 5);
+        tiles_.at({q - 1, r + 1, s}).family_ = Random(2, 5);
+        tiles_.at({q, r + 1, s - 1}).family_ = Random(2, 5);
+        tiles_.at({q + 1, r, s - 1}).family_ = Random(2, 5);
     }
 
     double Math::RadiusToApothem(double radius)
@@ -245,7 +245,7 @@ namespace hex
 
     Math::Index Grid::GetClosestSelection(const Math::Pixel& pixel) const
     {
-        Math::Index hover = Math::PixelToIndex(pixel, hexRadius_, screenCenter_);
+        Math::Index hover = Math::PixelToIndex(pixel, hexRadius_, tileCenter_);
 
         while(Math::IndexDistance({0, 0, 0}, hover) >= (gridSize_ - 1) / 2 - 1)
         {

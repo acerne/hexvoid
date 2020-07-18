@@ -8,13 +8,13 @@ namespace hex
     class Hexagon : public Core
     {
     public:
-        Hexagon(int16_t x, int16_t y, double radius, uint8_t family) : x_(x), y_(y), radius_(radius), family_(family) {}
-
         enum class Orientation
         {
             Horizontal,
             Vertical
         };
+
+        Hexagon(int16_t x, int16_t y, double radius, uint8_t family) : x_(x), y_(y), radius_(radius), family_(family) {}
 
         double Distance(int16_t x, int16_t y) const;
         std::array<std::array<int16_t, 6>, 2> GetVertices(Orientation orientation, double radius) const;
@@ -48,7 +48,20 @@ namespace hex
         Math() {}
     };
 
-    class Grid : public Core
+    class Tiling : public Core
+    {
+    public:
+        Tiling() {}
+
+    protected:
+        std::map<Math::Index, Hexagon> tiles_;
+        Math::Pixel tileCenter_;
+        double hexRadius_;
+
+    private:
+    };
+
+    class Grid : public Tiling
     {
     public:
         Grid(int16_t size, double hexRadius);
@@ -61,11 +74,7 @@ namespace hex
         void Draw(int16_t cursorX, int16_t cursorY) const;
 
     private:
-        std::map<Math::Index, Hexagon> elements_;
-        Math::Pixel screenCenter_;
         int16_t gridSize_;
-        double hexRadius_;
-        int16_t gridSpacing_;
 
         bool CheckSolution(Math::Index index);
         void ShuffleSolution(Math::Index index);
@@ -73,11 +82,9 @@ namespace hex
         Math::Index GetClosestSelection(const Math::Pixel& pixel) const;
     };
 
-    class Logo : public Core
+    class Symbol : public Tiling
     {
     public:
-        Logo(const std::string& title, Math::Pixel center, double hexRadius);
-
         enum class Alphabet
         {
             SEPARATOR,
@@ -109,35 +116,33 @@ namespace hex
             Z
         };
 
-        class Symbol
-        {
-        public:
-            Symbol(Alphabet character, Math::Pixel center, double elementRadius);
-            Symbol(Alphabet character, double elementRadius) : Symbol(character, {0, 0}, elementRadius) {}
+        Symbol(Alphabet character, Math::Pixel center, double elementRadius);
+        Symbol(Alphabet character, double elementRadius) : Symbol(character, {0, 0}, elementRadius) {}
 
-            void SetPosition(Math::Pixel center);
-            void Move(Math::Pixel movement);
+        void SetPosition(Math::Pixel center);
+        void Move(Math::Pixel movement);
 
-            Math::Pixel GetPosition() const;
-            int16_t CalculateBestSpacing(const Symbol& right) const;
+        Math::Pixel GetPosition() const;
+        int16_t CalculateBestSpacing(const Symbol& right) const;
 
-            void Draw() const;
+        void Draw() const;
 
-        private:
-            std::map<Math::Index, Hexagon> elements_;
-            Math::Pixel center_;
-            double elementRadius_;
+    private:
+        void AddHexagon(int16_t q, int16_t r);
+        void GenerateH();
+        void GenerateE();
+        void GenerateX();
+        void GenerateV();
+        void GenerateO();
+        void GenerateI();
+        void GenerateD();
+        void GenerateSeparator();
+    };
 
-            void AddHexagon(int16_t q, int16_t r);
-            void GenerateH();
-            void GenerateE();
-            void GenerateX();
-            void GenerateV();
-            void GenerateO();
-            void GenerateI();
-            void GenerateD();
-            void GenerateSeparator();
-        };
+    class Logo : public Core
+    {
+    public:
+        Logo(const std::string& title, Math::Pixel center, double hexRadius);
 
         void Draw() const;
 
@@ -145,7 +150,7 @@ namespace hex
         std::vector<Symbol> logotype_;
         double elementRadius_;
 
-        std::vector<Alphabet> ParseString(const std::string& title);
+        std::vector<Symbol::Alphabet> ParseString(const std::string& title);
     };
 
 } // namespace hex

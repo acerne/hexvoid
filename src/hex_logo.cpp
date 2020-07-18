@@ -10,7 +10,7 @@ namespace hex
     Logo::Logo(const std::string& title, Math::Pixel center, double hexRadius)
     {
         elementRadius_ = hexRadius;
-        std::vector<Alphabet> characters = ParseString(title);
+        std::vector<Symbol::Alphabet> characters = ParseString(title);
 
         logotype_.clear();
         for(const auto& character : characters)
@@ -36,64 +36,64 @@ namespace hex
         }
     }
 
-    std::vector<Logo::Alphabet> Logo::ParseString(const std::string& title)
+    std::vector<Symbol::Alphabet> Logo::ParseString(const std::string& title)
     {
-        std::vector<Alphabet> titleEnums;
+        std::vector<Symbol::Alphabet> titleEnums;
         for(const char& character : title)
         {
             char C = toupper(character);
             if(C == 'A')
-                titleEnums.push_back(Alphabet::A);
+                titleEnums.push_back(Symbol::Alphabet::A);
             else if(C == 'B')
-                titleEnums.push_back(Alphabet::B);
+                titleEnums.push_back(Symbol::Alphabet::B);
             else if(C == 'C')
-                titleEnums.push_back(Alphabet::C);
+                titleEnums.push_back(Symbol::Alphabet::C);
             else if(C == 'D')
-                titleEnums.push_back(Alphabet::D);
+                titleEnums.push_back(Symbol::Alphabet::D);
             else if(C == 'E')
-                titleEnums.push_back(Alphabet::E);
+                titleEnums.push_back(Symbol::Alphabet::E);
             else if(C == 'F')
-                titleEnums.push_back(Alphabet::F);
+                titleEnums.push_back(Symbol::Alphabet::F);
             else if(C == 'G')
-                titleEnums.push_back(Alphabet::G);
+                titleEnums.push_back(Symbol::Alphabet::G);
             else if(C == 'H')
-                titleEnums.push_back(Alphabet::H);
+                titleEnums.push_back(Symbol::Alphabet::H);
             else if(C == 'I')
-                titleEnums.push_back(Alphabet::I);
+                titleEnums.push_back(Symbol::Alphabet::I);
             else if(C == 'J')
-                titleEnums.push_back(Alphabet::J);
+                titleEnums.push_back(Symbol::Alphabet::J);
             else if(C == 'K')
-                titleEnums.push_back(Alphabet::K);
+                titleEnums.push_back(Symbol::Alphabet::K);
             else if(C == 'L')
-                titleEnums.push_back(Alphabet::L);
+                titleEnums.push_back(Symbol::Alphabet::L);
             else if(C == 'M')
-                titleEnums.push_back(Alphabet::M);
+                titleEnums.push_back(Symbol::Alphabet::M);
             else if(C == 'N')
-                titleEnums.push_back(Alphabet::N);
+                titleEnums.push_back(Symbol::Alphabet::N);
             else if(C == 'O')
-                titleEnums.push_back(Alphabet::O);
+                titleEnums.push_back(Symbol::Alphabet::O);
             else if(C == 'P')
-                titleEnums.push_back(Alphabet::P);
+                titleEnums.push_back(Symbol::Alphabet::P);
             else if(C == 'Q')
-                titleEnums.push_back(Alphabet::Q);
+                titleEnums.push_back(Symbol::Alphabet::Q);
             else if(C == 'R')
-                titleEnums.push_back(Alphabet::R);
+                titleEnums.push_back(Symbol::Alphabet::R);
             else if(C == 'S')
-                titleEnums.push_back(Alphabet::S);
+                titleEnums.push_back(Symbol::Alphabet::S);
             else if(C == 'T')
-                titleEnums.push_back(Alphabet::T);
+                titleEnums.push_back(Symbol::Alphabet::T);
             else if(C == 'U')
-                titleEnums.push_back(Alphabet::U);
+                titleEnums.push_back(Symbol::Alphabet::U);
             else if(C == 'V')
-                titleEnums.push_back(Alphabet::V);
+                titleEnums.push_back(Symbol::Alphabet::V);
             else if(C == 'W')
-                titleEnums.push_back(Alphabet::W);
+                titleEnums.push_back(Symbol::Alphabet::W);
             else if(C == 'X')
-                titleEnums.push_back(Alphabet::X);
+                titleEnums.push_back(Symbol::Alphabet::X);
             else if(C == 'Y')
-                titleEnums.push_back(Alphabet::Y);
+                titleEnums.push_back(Symbol::Alphabet::Y);
             else if(C == 'Z')
-                titleEnums.push_back(Alphabet::Z);
+                titleEnums.push_back(Symbol::Alphabet::Z);
         }
         return std::move(titleEnums);
     }
@@ -104,10 +104,10 @@ namespace hex
             symbol.Draw();
     }
 
-    Logo::Symbol::Symbol(Alphabet character, Math::Pixel center, double elementRadius)
+    Symbol::Symbol(Alphabet character, Math::Pixel center, double elementRadius)
     {
-        center_ = center;
-        elementRadius_ = elementRadius;
+        tileCenter_ = center;
+        hexRadius_ = elementRadius;
         switch(character)
         {
             case Alphabet::SEPARATOR:
@@ -140,44 +140,44 @@ namespace hex
         }
     }
 
-    void Logo::Symbol::SetPosition(Math::Pixel center)
+    void Symbol::SetPosition(Math::Pixel center)
     {
-        center_ = center;
-        for(auto& element : elements_)
+        tileCenter_ = center;
+        for(auto& element : tiles_)
         {
-            Math::Pixel pixel = Math::IndexToPixel(element.first, elementRadius_, center_);
+            Math::Pixel pixel = Math::IndexToPixel(element.first, hexRadius_, tileCenter_);
             element.second.x_ = pixel.first;
             element.second.y_ = pixel.second;
         }
     }
 
-    void Logo::Symbol::Move(Math::Pixel movement)
+    void Symbol::Move(Math::Pixel movement)
     {
-        center_.first += movement.first;
-        center_.second += movement.second;
-        for(auto& element : elements_)
+        tileCenter_.first += movement.first;
+        tileCenter_.second += movement.second;
+        for(auto& element : tiles_)
         {
-            Math::Pixel pixel = Math::IndexToPixel(element.first, elementRadius_, center_);
+            Math::Pixel pixel = Math::IndexToPixel(element.first, hexRadius_, tileCenter_);
             element.second.x_ = pixel.first;
             element.second.y_ = pixel.second;
         }
     }
 
-    Math::Pixel Logo::Symbol::GetPosition() const
+    Math::Pixel Symbol::GetPosition() const
     {
-        return center_;
+        return tileCenter_;
     }
 
-    int16_t Logo::Symbol::CalculateBestSpacing(const Symbol& right) const
+    int16_t Symbol::CalculateBestSpacing(const Symbol& right) const
     {
         // TODO: take in to account diagonal spacings as well
         int16_t spacing = 10;
         int16_t closest = 10;
-        for(const auto& hexA : elements_)
+        for(const auto& hexA : tiles_)
         {
             int16_t qA = std::get<0>(hexA.first);
             int16_t rA = std::get<1>(hexA.first);
-            for(const auto& hexB : right.elements_)
+            for(const auto& hexB : right.tiles_)
             {
                 int16_t rB = std::get<1>(hexB.first);
                 if(rA == rB)
@@ -191,20 +191,20 @@ namespace hex
         return spacing - closest + 2;
     }
 
-    void Logo::Symbol::Draw() const
+    void Symbol::Draw() const
     {
-        for(auto& element : elements_)
+        for(auto& element : tiles_)
             element.second.Draw();
     }
 
-    void Logo::Symbol::AddHexagon(int16_t q, int16_t r)
+    void Symbol::AddHexagon(int16_t q, int16_t r)
     {
         Math::Index index{q, r, -q - r};
-        Math::Pixel pixel = Math::IndexToPixel(index, elementRadius_, center_);
-        elements_.emplace(index, Hexagon{pixel.first, pixel.second, elementRadius_, 1});
+        Math::Pixel pixel = Math::IndexToPixel(index, hexRadius_, tileCenter_);
+        tiles_.emplace(index, Hexagon{pixel.first, pixel.second, hexRadius_, 1});
     }
 
-    void Logo::Symbol::GenerateH()
+    void Symbol::GenerateH()
     {
         AddHexagon(-1, -3);
         AddHexagon(0, -3);
@@ -243,7 +243,7 @@ namespace hex
         AddHexagon(0, 4);
     }
 
-    void Logo::Symbol::GenerateE()
+    void Symbol::GenerateE()
     {
         AddHexagon(-1, -3);
         AddHexagon(0, -3);
@@ -280,7 +280,7 @@ namespace hex
         AddHexagon(0, 4);
     }
 
-    void Logo::Symbol::GenerateX()
+    void Symbol::GenerateX()
     {
         AddHexagon(-1, -3);
         AddHexagon(0, -3);
@@ -313,7 +313,7 @@ namespace hex
         AddHexagon(0, 4);
     }
 
-    void Logo::Symbol::GenerateV()
+    void Symbol::GenerateV()
     {
         AddHexagon(-1, -3);
         AddHexagon(4, -3);
@@ -341,7 +341,7 @@ namespace hex
         AddHexagon(-2, 4);
     }
 
-    void Logo::Symbol::GenerateO()
+    void Symbol::GenerateO()
     {
         AddHexagon(0, -3);
         AddHexagon(1, -3);
@@ -377,7 +377,7 @@ namespace hex
         AddHexagon(-1, 4);
     }
 
-    void Logo::Symbol::GenerateI()
+    void Symbol::GenerateI()
     {
         AddHexagon(2, -3);
         AddHexagon(1, -3);
@@ -397,7 +397,7 @@ namespace hex
         AddHexagon(-2, 4);
     }
 
-    void Logo::Symbol::GenerateD()
+    void Symbol::GenerateD()
     {
         AddHexagon(-1, -3);
         AddHexagon(0, -3);
@@ -436,7 +436,7 @@ namespace hex
         AddHexagon(-1, 4);
     }
 
-    void Logo::Symbol::GenerateSeparator()
+    void Symbol::GenerateSeparator()
     {
 
         AddHexagon(2, -4);
