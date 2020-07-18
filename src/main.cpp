@@ -2,6 +2,7 @@
 #include <iostream>
 
 #include "hex.hpp"
+#include "hexagon.hpp"
 
 enum class GameState
 {
@@ -15,7 +16,6 @@ enum class GameState
 
 int main(int argc, char* args[])
 {
-    // hex::Engine::EnableDebug();
 
     hex::Engine::Initialize("Hexvoid", 800, 600);
 

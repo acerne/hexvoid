@@ -2,9 +2,7 @@
 #include <random>
 #include <stdexcept>
 
-#include <SDL2/SDL2_gfxPrimitives.h>
-
-#include "hex.hpp"
+#include "hexagon.hpp"
 
 namespace hex
 {
