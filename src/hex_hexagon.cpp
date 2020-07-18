@@ -73,8 +73,8 @@ namespace hex
 
         Palette::Color c = GetHexagonColor();
         Palette::Color b = Palette::GetColor(Palette::Element::Background);
-        Err(filledPolygonRGBA(Engine::gRenderer_, vertices[0].data(), vertices[1].data(), 6, c.r, c.g, c.b, 255));
-        Err(polygonRGBA(Engine::gRenderer_, vertices[0].data(), vertices[1].data(), 6, b.r, b.g, b.b, 255));
+        SDL(filledPolygonRGBA(Engine::gRenderer_, vertices[0].data(), vertices[1].data(), 6, c.r, c.g, c.b, 255));
+        SDL(polygonRGBA(Engine::gRenderer_, vertices[0].data(), vertices[1].data(), 6, b.r, b.g, b.b, 255));
     }
 
     void Hexagon::DrawHighlight() const
@@ -82,7 +82,7 @@ namespace hex
         std::array<std::array<int16_t, 6>, 2> vertices = GetVertices(Orientation::Horizontal, 1.2 * radius_);
 
         Palette::Color f = Palette::GetColor(Palette::Element::Foreground);
-        Err(filledPolygonRGBA(Engine::gRenderer_, vertices[0].data(), vertices[1].data(), 6, f.r, f.g, f.b, 255));
+        SDL(filledPolygonRGBA(Engine::gRenderer_, vertices[0].data(), vertices[1].data(), 6, f.r, f.g, f.b, 255));
     }
 
     Palette::Color Hexagon::GetHexagonColor() const

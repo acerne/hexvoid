@@ -15,7 +15,7 @@ namespace hex
     uint16_t Core::windowHeight_ = 0;
     const char* Core::fontPath_ = "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf";
 
-    void Core::Err(int error)
+    void Core::SDL(int error)
     {
         if(error < 0) throw std::runtime_error("SDL failed: " + std::string(SDL_GetError()));
     }
@@ -25,9 +25,9 @@ namespace hex
         windowWidth_ = windowWidth;
         windowHeight_ = windowHeight;
 
-        Err(SDL_Init(SDL_INIT_VIDEO));
+        SDL(SDL_Init(SDL_INIT_VIDEO));
 
-        Err(TTF_Init());
+        SDL(TTF_Init());
 
         gWindow_ = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth,
                                     windowHeight, SDL_WINDOW_SHOWN);
@@ -78,8 +78,8 @@ namespace hex
     void Engine::Clear()
     {
         Palette::Color c = Palette::GetColor(Palette::Element::Background);
-        Err(SDL_SetRenderDrawColor(gRenderer_, c.r, c.g, c.b, 255));
-        Err(SDL_RenderClear(gRenderer_));
+        SDL(SDL_SetRenderDrawColor(gRenderer_, c.r, c.g, c.b, 255));
+        SDL(SDL_RenderClear(gRenderer_));
     }
 
     void Engine::Display()

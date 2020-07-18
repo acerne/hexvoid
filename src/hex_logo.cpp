@@ -8,36 +8,42 @@
 
 namespace hex
 {
-    Logo::Logo()
+    Logo::Logo(Math::Pixel center, double hexRadius)
     {
-        elementRadius_ = 10;
-
-        int16_t y = windowHeight_ / 2;
+        elementRadius_ = hexRadius;
 
         logotype_.clear();
-        logotype_.push_back(Symbol(Character::H, {70, y}, elementRadius_));
-        logotype_.push_back(Symbol(Character::E, {100, y}, elementRadius_));
-        logotype_.push_back(Symbol(Character::X, {100, y}, elementRadius_));
-        logotype_.push_back(Symbol(Character::V, {100, y}, elementRadius_));
-        logotype_.push_back(Symbol(Character::O, {100, y}, elementRadius_));
-        logotype_.push_back(Symbol(Character::I, {100, y}, elementRadius_));
-        logotype_.push_back(Symbol(Character::D, {100, y}, elementRadius_));
+        logotype_.push_back(Symbol(Character::H, elementRadius_));
+        logotype_.push_back(Symbol(Character::E, elementRadius_));
+        logotype_.push_back(Symbol(Character::X, elementRadius_));
+        logotype_.push_back(Symbol(Character::V, elementRadius_));
+        logotype_.push_back(Symbol(Character::O, elementRadius_));
+        logotype_.push_back(Symbol(Character::I, elementRadius_));
+        logotype_.push_back(Symbol(Character::D, elementRadius_));
+
+        std::vector<int16_t> spacing(logotype_.size());
+        spacing.front() = 0;
+        for(int i = 1; i < logotype_.size(); i++)
+            spacing.at(i) = spacing.at(i - 1) + logotype_.at(i - 1).CalculateBestSpacing(logotype_.at(i));
+
+        int16_t totalSpacing = spacing.back();
+        double hexWidth = 2 * Math::RadiusToApothem(elementRadius_);
+        int16_t xOffset = center.first - totalSpacing * hexWidth / 2;
+        int16_t y = center.second;
+
+        logotype_.at(0).SetPosition({xOffset, y});
 
         int16_t distanceFromFirstSymbol = 0;
-        int16_t xFirstSymbol = logotype_.at(0).GetPosition().first;
-        double hexWidth = 2 * Math::RadiusToApothem(elementRadius_);
-        for(int i = 0; i < logotype_.size() - 1; i++)
+        for(int i = 0; i < logotype_.size(); i++)
         {
-            distanceFromFirstSymbol += logotype_.at(i).CalculateBestSpacing(logotype_.at(i + 1));
-            int16_t x = xFirstSymbol + distanceFromFirstSymbol * hexWidth;
-            // printf("#%i:%i = %i -> (%i,%i) / %i\n", i, i + 1, centerDistance, x, y,
-            //        x - logotype_.at(i).GetPosition().first);
-            logotype_.at(i + 1).SetPosition({x, y});
+            int16_t x = xOffset + spacing.at(i) * hexWidth;
+            logotype_.at(i).SetPosition({x, y});
         }
     }
 
     int16_t Logo::Symbol::CalculateBestSpacing(const Symbol& right) const
     {
+        // TODO: take in to account diagonal spacings as well
         int16_t spacing = 10;
         int16_t closest = 10;
         for(const auto& hexA : elements_)
@@ -70,6 +76,9 @@ namespace hex
         elementRadius_ = elementRadius;
         switch(character)
         {
+            case Character::SEPARATOR:
+                GenerateSeparator();
+                break;
             case Character::H:
                 GenerateH();
                 break;
@@ -319,8 +328,6 @@ namespace hex
         AddHexagon(1, -2);
         AddHexagon(0, -1);
         AddHexagon(1, -1);
-        AddHexagon(-1, 1);
-        AddHexagon(-1, 1);
         AddHexagon(0, 0);
         AddHexagon(-1, 0);
         AddHexagon(-1, 1);
@@ -370,6 +377,24 @@ namespace hex
         AddHexagon(-3, 4);
         AddHexagon(-2, 4);
         AddHexagon(-1, 4);
+    }
+
+    void Logo::Symbol::GenerateSeparator()
+    {
+
+        AddHexagon(2, -4);
+        AddHexagon(1, -3);
+        AddHexagon(2, -3);
+        AddHexagon(1, -2);
+        AddHexagon(0, -1);
+        AddHexagon(1, -1);
+        AddHexagon(0, 0);
+        AddHexagon(-1, 1);
+        AddHexagon(0, 1);
+        AddHexagon(-1, 2);
+        AddHexagon(-2, 3);
+        AddHexagon(-1, 3);
+        AddHexagon(-2, 4);
     }
 
 } // namespace hex

@@ -25,7 +25,7 @@ namespace hex
         static uint16_t windowHeight_;
         static const char* fontPath_;
 
-        static void Err(int error);
+        static void SDL(int error);
     };
 
     class Engine : public Core
@@ -232,10 +232,11 @@ namespace hex
     class Logo : public Core
     {
     public:
-        Logo();
+        Logo(Math::Pixel center, double hexRadius);
 
         enum class Character
         {
+            SEPARATOR,
             H,
             E,
             X,
@@ -249,6 +250,7 @@ namespace hex
         {
         public:
             Symbol(Character character, Math::Pixel center, double elementRadius);
+            Symbol(Character character, double elementRadius) : Symbol(character, {0, 0}, elementRadius) {}
 
             void SetPosition(Math::Pixel center);
             void Move(Math::Pixel movement);
@@ -271,6 +273,7 @@ namespace hex
             void GenerateO();
             void GenerateI();
             void GenerateD();
+            void GenerateSeparator();
         };
 
         void Draw() const;
