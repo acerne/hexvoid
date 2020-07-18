@@ -11,7 +11,7 @@ namespace hex
         return std::sqrt(std::pow(x_ - x, 2) + std::pow(y_ - y, 2));
     }
 
-    std::array<std::array<int16_t, 6>, 2> Hexagon::GetVertices(Orientation orientation, int16_t radius) const
+    std::array<std::array<int16_t, 6>, 2> Hexagon::GetVertices(Orientation orientation, double radius) const
     {
         const int8_t X = 0;
         const int8_t Y = 1;
@@ -89,6 +89,10 @@ namespace hex
     {
         switch(family_)
         {
+            case 0:
+                return Palette::GetColor(Palette::Element::Background);
+            case 1:
+                return Palette::GetColor(Palette::Element::Foreground);
             case 2:
                 return Palette::GetColor(Palette::Element::A);
             case 3:

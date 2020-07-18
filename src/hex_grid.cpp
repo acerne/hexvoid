@@ -16,7 +16,7 @@ namespace hex
         return distribution(generator);
     }
 
-    Grid::Grid(int16_t size, int16_t hexRadius)
+    Grid::Grid(int16_t size, double hexRadius)
     {
         if(!(size % 2)) throw std::runtime_error("Grid size must be an odd nubmer");
 
@@ -37,7 +37,7 @@ namespace hex
                 int16_t s = -q - r;
                 uint8_t family = Random(2, 5);
                 Math::Index index{q, r, s};
-                Math::Pixel pixel = Math::IndexToPixel(index, hexRadius_, screenCenter_);
+                Math::Pixel pixel = Math::IndexToPixel(index, hexRadius, screenCenter_);
                 elements_.emplace(index, Hexagon{pixel.first, pixel.second, hexRadius, family});
             }
         }
@@ -182,7 +182,12 @@ namespace hex
         elements_.at({q + 1, r, s - 1}).family_ = Random(2, 5);
     }
 
-    Math::Index Math::PixelToIndex(const Math::Pixel& pixel, int16_t radius, Math::Pixel center)
+    double Math::RadiusToApothem(double radius)
+    {
+        return sqrt(3) / 2 * radius;
+    }
+
+    Math::Index Math::PixelToIndex(const Math::Pixel& pixel, double radius, Math::Pixel center)
     {
         int16_t x = pixel.first - center.first;
         int16_t y = pixel.second - center.second;
@@ -193,7 +198,7 @@ namespace hex
         return RoundIndex(q, r, -q - r);
     }
 
-    Math::Pixel Math::IndexToPixel(const Math::Index& index, int16_t radius, Math::Pixel center)
+    Math::Pixel Math::IndexToPixel(const Math::Index& index, double radius, Math::Pixel center)
     {
         int16_t q = std::get<0>(index);
         int16_t r = std::get<1>(index);

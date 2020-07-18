@@ -1,14 +1,16 @@
+#include <chrono>
 #include <iostream>
 
 #include "hex.hpp"
 
 enum class GameState
 {
-    MainMenu,
-    NewGameMenu,
-    OptionsMenu,
-    Game,
-    GameOver
+    SPLASH_SCREEN,
+    MAIN_MENU,
+    NEW_GAME_MENU,
+    OPTIONS_MENU,
+    GAME,
+    GAME_OVER
 };
 
 int main(int argc, char* args[])
@@ -17,7 +19,10 @@ int main(int argc, char* args[])
 
     hex::Engine::Initialize("Hexvoid", 800, 600);
 
+    GameState state = GameState::SPLASH_SCREEN;
+
     hex::Logo logotype{};
+    int64_t splasScreenDuration = 3000;
 
     hex::Menu mainMenu(60);
     mainMenu.AddItem("New game", 1);
@@ -36,8 +41,6 @@ int main(int argc, char* args[])
     optionsMenu.AddItem("Apply", 4);
     optionsMenu.AddItem("Back", 6);
 
-    GameState state = GameState::MainMenu;
-
     hex::Grid grid(3);
 
     SDL_Event event;
@@ -46,6 +49,8 @@ int main(int argc, char* args[])
     hex::Framerate fps;
     int16_t cursorX = 0;
     int16_t cursorY = 0;
+
+    auto startTime = std::chrono::system_clock::now();
 
     while(!quit)
     {
@@ -58,7 +63,7 @@ int main(int argc, char* args[])
                     switch(event.key.keysym.sym)
                     {
                         case SDLK_ESCAPE:
-                            state = GameState::MainMenu;
+                            state = GameState::MAIN_MENU;
                             break;
                         case SDLK_UP:
                             break;
@@ -77,7 +82,7 @@ int main(int argc, char* args[])
                 case SDL_MOUSEBUTTONDOWN:
                     switch(state)
                     {
-                        case GameState::Game:
+                        case GameState::GAME:
                             switch(event.button.button)
                             {
                                 case SDL_BUTTON_LEFT:
@@ -90,17 +95,17 @@ int main(int argc, char* args[])
                                     break;
                             }
                             break;
-                        case GameState::MainMenu:
+                        case GameState::MAIN_MENU:
                             switch(event.button.button)
                             {
                                 case SDL_BUTTON_LEFT: {
                                     switch(mainMenu.Click(event.motion.x, event.motion.y))
                                     {
                                         case 1:
-                                            state = GameState::NewGameMenu;
+                                            state = GameState::NEW_GAME_MENU;
                                             break;
                                         case 2:
-                                            state = GameState::OptionsMenu;
+                                            state = GameState::OPTIONS_MENU;
                                             break;
                                         case 3:
                                             quit = true;
@@ -113,7 +118,7 @@ int main(int argc, char* args[])
                                     break;
                             }
                             break;
-                        case GameState::NewGameMenu:
+                        case GameState::NEW_GAME_MENU:
                             switch(event.button.button)
                             {
                                 case SDL_BUTTON_LEFT: {
@@ -123,11 +128,11 @@ int main(int argc, char* args[])
                                             std::string gridSize = newGameMenu.GetSelection("Grid size:");
                                             grid = hex::Grid(std::stoi(gridSize));
                                             hex::Score::Start();
-                                            state = GameState::Game;
+                                            state = GameState::GAME;
                                             break;
                                         }
                                         case 6:
-                                            state = GameState::MainMenu;
+                                            state = GameState::MAIN_MENU;
                                             break;
                                         default:
                                             break;
@@ -138,7 +143,7 @@ int main(int argc, char* args[])
                                     break;
                             }
                             break;
-                        case GameState::OptionsMenu:
+                        case GameState::OPTIONS_MENU:
                             switch(event.button.button)
                             {
                                 case SDL_BUTTON_LEFT: {
@@ -162,7 +167,7 @@ int main(int argc, char* args[])
                                             break;
                                         }
                                         case 6:
-                                            state = GameState::MainMenu;
+                                            state = GameState::MAIN_MENU;
                                             break;
                                         default:
                                             break;
@@ -173,7 +178,7 @@ int main(int argc, char* args[])
                                     break;
                             }
                             break;
-                        case GameState::GameOver:
+                        case GameState::GAME_OVER:
                             /* code */
                             break;
 
@@ -189,24 +194,33 @@ int main(int argc, char* args[])
             }
         }
 
+        if(state == GameState::SPLASH_SCREEN)
+        {
+            auto now = std::chrono::system_clock::now();
+            int64_t msElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime).count();
+            if(msElapsed > splasScreenDuration) state = GameState::MAIN_MENU;
+        }
+
         hex::Engine::Clear();
         switch(state)
         {
-            case GameState::Game:
+            case GameState::SPLASH_SCREEN:
+                logotype.Draw();
+                break;
+            case GameState::MAIN_MENU:
+                mainMenu.Draw(cursorX, cursorY);
+                break;
+            case GameState::NEW_GAME_MENU:
+                newGameMenu.Draw(cursorX, cursorY);
+                break;
+            case GameState::OPTIONS_MENU:
+                optionsMenu.Draw(cursorX, cursorY);
+                break;
+            case GameState::GAME:
                 grid.Draw(cursorX, cursorY);
                 hex::Score::Draw();
                 break;
-            case GameState::MainMenu:
-                logotype.Draw();
-                // mainMenu.Draw(cursorX, cursorY);
-                break;
-            case GameState::NewGameMenu:
-                newGameMenu.Draw(cursorX, cursorY);
-                break;
-            case GameState::OptionsMenu:
-                optionsMenu.Draw(cursorX, cursorY);
-                break;
-            case GameState::GameOver:
+            case GameState::GAME_OVER:
                 /* code */
                 break;
             default:

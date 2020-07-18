@@ -144,8 +144,7 @@ namespace hex
     class Hexagon : public Core
     {
     public:
-        Hexagon(int16_t x, int16_t y, int16_t radius, uint8_t family) : x_(x), y_(y), radius_(radius), family_(family)
-        {}
+        Hexagon(int16_t x, int16_t y, double radius, uint8_t family) : x_(x), y_(y), radius_(radius), family_(family) {}
 
         enum class Orientation
         {
@@ -154,14 +153,14 @@ namespace hex
         };
 
         double Distance(int16_t x, int16_t y) const;
-        std::array<std::array<int16_t, 6>, 2> GetVertices(Orientation orientation, int16_t radius) const;
+        std::array<std::array<int16_t, 6>, 2> GetVertices(Orientation orientation, double radius) const;
 
         void Draw() const;
         void DrawHighlight() const;
 
         int16_t x_;
         int16_t y_;
-        int16_t radius_;
+        double radius_;
         uint8_t family_;
 
     private:
@@ -174,8 +173,10 @@ namespace hex
         typedef std::tuple<int16_t, int16_t, int16_t> Index;
         typedef std::pair<int16_t, int16_t> Pixel;
 
-        static Index PixelToIndex(const Pixel& pixel, int16_t radius, Math::Pixel center);
-        static Pixel IndexToPixel(const Index& index, int16_t radius, Math::Pixel center);
+        static double RadiusToApothem(double radius);
+
+        static Index PixelToIndex(const Pixel& pixel, double radius, Math::Pixel center);
+        static Pixel IndexToPixel(const Index& index, double radius, Math::Pixel center);
         static Index RoundIndex(double q, double r, double s);
         static int16_t IndexDistance(const Index& A, const Index& B);
 
@@ -186,7 +187,7 @@ namespace hex
     class Grid : public Core
     {
     public:
-        Grid(int16_t size, int16_t hexRadius);
+        Grid(int16_t size, double hexRadius);
         Grid(int16_t size) : Grid(size, Engine::windowHeight_ / size / 1.5) {}
 
         void Randomize();
@@ -199,7 +200,7 @@ namespace hex
         std::map<Math::Index, Hexagon> elements_;
         Math::Pixel screenCenter_;
         int16_t gridSize_;
-        int16_t hexRadius_;
+        double hexRadius_;
         int16_t gridSpacing_;
 
         bool CheckSolution(Math::Index index);
@@ -247,23 +248,36 @@ namespace hex
         class Symbol
         {
         public:
-            Symbol(Character character);
+            Symbol(Character character, Math::Pixel center, double elementRadius);
 
-            void Draw();
+            void SetPosition(Math::Pixel center);
+            void Move(Math::Pixel movement);
+
+            Math::Pixel GetPosition() const;
+            int16_t CalculateBestSpacing(const Symbol& right) const;
+
+            void Draw() const;
 
         private:
             std::map<Math::Index, Hexagon> elements_;
             Math::Pixel center_;
+            double elementRadius_;
 
-            void AddHexagon(Math::Index index);
-            void GenerateI();
+            void AddHexagon(int16_t q, int16_t r);
+            void GenerateH();
+            void GenerateE();
+            void GenerateX();
+            void GenerateV();
             void GenerateO();
+            void GenerateI();
+            void GenerateD();
         };
 
-        void Draw();
+        void Draw() const;
 
     private:
         std::vector<Symbol> logotype_;
+        double elementRadius_;
     };
 
     class Framerate : public Core
