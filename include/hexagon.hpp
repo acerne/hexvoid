@@ -85,39 +85,8 @@ namespace hex
     class Symbol : public Tiling
     {
     public:
-        enum class Alphabet
-        {
-            SEPARATOR,
-            A,
-            B,
-            C,
-            D,
-            E,
-            F,
-            G,
-            H,
-            I,
-            J,
-            K,
-            L,
-            M,
-            N,
-            O,
-            P,
-            Q,
-            R,
-            S,
-            T,
-            U,
-            V,
-            W,
-            X,
-            Y,
-            Z
-        };
-
-        Symbol(Alphabet character, Math::Pixel center, double elementRadius);
-        Symbol(Alphabet character, double elementRadius) : Symbol(character, {0, 0}, elementRadius) {}
+        Symbol(char character, Math::Pixel center, double elementRadius);
+        Symbol(char character, double elementRadius) : Symbol(character, {0, 0}, elementRadius) {}
 
         void SetPosition(Math::Pixel center);
         void Move(Math::Pixel movement);
@@ -129,13 +98,34 @@ namespace hex
 
     private:
         void AddHexagon(int16_t q, int16_t r);
-        void GenerateH();
-        void GenerateE();
-        void GenerateX();
-        void GenerateV();
-        void GenerateO();
-        void GenerateI();
+        void AddHexagonRow(const std::vector<int16_t>& qVector, int16_t r);
+        void AddHexagonRow(int16_t qStart, int16_t qEnd, int16_t r);
+        void GenerateA();
+        void GenerateB();
+        void GenerateC();
         void GenerateD();
+        void GenerateE();
+        void GenerateF();
+        void GenerateG();
+        void GenerateH();
+        void GenerateI();
+        void GenerateJ();
+        void GenerateK();
+        void GenerateL();
+        void GenerateM();
+        void GenerateN();
+        void GenerateO();
+        void GenerateP();
+        void GenerateQ();
+        void GenerateR();
+        void GenerateS();
+        void GenerateT();
+        void GenerateU();
+        void GenerateV();
+        void GenerateW();
+        void GenerateX();
+        void GenerateY();
+        void GenerateZ();
         void GenerateSeparator();
     };
 
@@ -149,8 +139,6 @@ namespace hex
     private:
         std::vector<Symbol> logotype_;
         double elementRadius_;
-
-        std::vector<Symbol::Alphabet> ParseString(const std::string& title);
     };
 
 } // namespace hex

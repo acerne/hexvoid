@@ -7,40 +7,62 @@
 namespace hex
 {
 
-    Symbol::Symbol(Alphabet character, Math::Pixel center, double elementRadius)
+    Symbol::Symbol(char character, Math::Pixel center, double elementRadius)
     {
         tileCenter_ = center;
         hexRadius_ = elementRadius;
-        switch(character)
-        {
-            case Alphabet::SEPARATOR:
-                GenerateSeparator();
-                break;
-            case Alphabet::H:
-                GenerateH();
-                break;
-            case Alphabet::E:
-                GenerateE();
-                break;
-            case Alphabet::X:
-                GenerateX();
-                break;
-            case Alphabet::V:
-                GenerateV();
-                break;
-            case Alphabet::O:
-                GenerateO();
-                break;
-            case Alphabet::I:
-                GenerateI();
-                break;
-            case Alphabet::D:
-                GenerateD();
-                break;
-
-            default:
-                break;
-        }
+        if(character == 'A')
+            GenerateA();
+        else if(character == 'B')
+            GenerateB();
+        else if(character == 'C')
+            GenerateC();
+        else if(character == 'D')
+            GenerateD();
+        else if(character == 'E')
+            GenerateE();
+        else if(character == 'F')
+            GenerateF();
+        else if(character == 'G')
+            GenerateG();
+        else if(character == 'H')
+            GenerateH();
+        else if(character == 'I')
+            GenerateI();
+        else if(character == 'J')
+            GenerateJ();
+        else if(character == 'K')
+            GenerateK();
+        else if(character == 'L')
+            GenerateL();
+        else if(character == 'M')
+            GenerateM();
+        else if(character == 'N')
+            GenerateN();
+        else if(character == 'O')
+            GenerateO();
+        else if(character == 'P')
+            GenerateP();
+        else if(character == 'Q')
+            GenerateQ();
+        else if(character == 'R')
+            GenerateR();
+        else if(character == 'S')
+            GenerateS();
+        else if(character == 'T')
+            GenerateT();
+        else if(character == 'U')
+            GenerateU();
+        else if(character == 'V')
+            GenerateV();
+        else if(character == 'W')
+            GenerateW();
+        else if(character == 'X')
+            GenerateX();
+        else if(character == 'Y')
+            GenerateY();
+        else if(character == 'Z')
+            GenerateZ();
     }
 
     void Symbol::SetPosition(Math::Pixel center)
@@ -73,7 +95,7 @@ namespace hex
 
     int16_t Symbol::CalculateBestSpacing(const Symbol& right) const
     {
-        // TODO: take in to account diagonal spacings as well
+        // TODO: take in to account diagonal spacings as well - is it really needed?
         int16_t spacing = 10;
         int16_t closest = 10;
         for(const auto& hexA : tiles_)
@@ -107,236 +129,329 @@ namespace hex
         tiles_.emplace(index, Hexagon{pixel.first, pixel.second, hexRadius_, 1});
     }
 
-    void Symbol::GenerateH()
+    void Symbol::AddHexagonRow(const std::vector<int16_t>& qList, int16_t r)
     {
-        AddHexagon(-1, -3);
-        AddHexagon(0, -3);
-        AddHexagon(3, -3);
-        AddHexagon(4, -3);
-        AddHexagon(-1, -2);
-        AddHexagon(0, -2);
-        AddHexagon(2, -2);
-        AddHexagon(3, -2);
-        AddHexagon(-2, -1);
-        AddHexagon(-1, -1);
-        AddHexagon(2, -1);
-        AddHexagon(3, -1);
-        AddHexagon(-2, 0);
-        AddHexagon(-1, 0);
-        AddHexagon(0, 0);
-        AddHexagon(1, 0);
-        AddHexagon(2, 0);
-        AddHexagon(-3, 1);
-        AddHexagon(-2, 1);
-        AddHexagon(-1, 1);
-        AddHexagon(0, 1);
-        AddHexagon(1, 1);
-        AddHexagon(2, 1);
-        AddHexagon(-3, 2);
-        AddHexagon(-2, 2);
-        AddHexagon(0, 2);
-        AddHexagon(1, 2);
-        AddHexagon(-4, 3);
-        AddHexagon(-3, 3);
-        AddHexagon(0, 3);
-        AddHexagon(1, 3);
-        AddHexagon(-4, 4);
-        AddHexagon(-3, 4);
-        AddHexagon(-1, 4);
-        AddHexagon(0, 4);
+        for(const auto& q : qList)
+            AddHexagon(q, r);
     }
 
-    void Symbol::GenerateE()
+    void Symbol::AddHexagonRow(int16_t qStart, int16_t qEnd, int16_t r)
     {
-        AddHexagon(-1, -3);
-        AddHexagon(0, -3);
-        AddHexagon(1, -3);
-        AddHexagon(2, -3);
-        AddHexagon(3, -3);
-        AddHexagon(-1, -2);
-        AddHexagon(0, -2);
-        AddHexagon(1, -2);
-        AddHexagon(2, -2);
-        AddHexagon(3, -2);
-        AddHexagon(-2, -1);
-        AddHexagon(-1, -1);
-        AddHexagon(-2, 0);
-        AddHexagon(-1, 0);
-        AddHexagon(0, 0);
-        AddHexagon(1, 0);
-        AddHexagon(-3, 1);
-        AddHexagon(-2, 1);
-        AddHexagon(-1, 1);
-        AddHexagon(0, 1);
-        AddHexagon(1, 1);
-        AddHexagon(-3, 2);
-        AddHexagon(-2, 2);
-        AddHexagon(-4, 3);
-        AddHexagon(-3, 3);
-        AddHexagon(-2, 3);
-        AddHexagon(-1, 3);
-        AddHexagon(0, 3);
-        AddHexagon(-4, 4);
-        AddHexagon(-3, 4);
-        AddHexagon(-2, 4);
-        AddHexagon(-1, 4);
-        AddHexagon(0, 4);
+        for(int16_t q = qStart; q <= qEnd; q++)
+            AddHexagon(q, r);
     }
 
-    void Symbol::GenerateX()
+    void Symbol::GenerateA()
     {
-        AddHexagon(-1, -3);
-        AddHexagon(0, -3);
-        AddHexagon(3, -3);
-        AddHexagon(4, -3);
-        AddHexagon(-1, -2);
-        AddHexagon(0, -2);
-        AddHexagon(2, -2);
-        AddHexagon(3, -2);
-        AddHexagon(-1, -1);
-        AddHexagon(0, -1);
-        AddHexagon(1, -1);
-        AddHexagon(2, -1);
-        AddHexagon(-1, 0);
-        AddHexagon(0, 0);
-        AddHexagon(1, 0);
-        AddHexagon(-2, 1);
-        AddHexagon(-1, 1);
-        AddHexagon(0, 1);
-        AddHexagon(1, 1);
-        AddHexagon(-3, 2);
-        AddHexagon(-2, 2);
-        AddHexagon(0, 2);
-        AddHexagon(1, 2);
-        AddHexagon(-4, 3);
-        AddHexagon(-3, 3);
-        AddHexagon(0, 3);
-        AddHexagon(1, 3);
-        AddHexagon(-4, 4);
-        AddHexagon(0, 4);
+        AddHexagonRow({1, 2}, -3);
+        AddHexagonRow(0, 2, -2);
+        AddHexagonRow(-1, 2, -1);
+        AddHexagonRow({-2, -1, 1, 2}, 0);
+        AddHexagonRow({-3, -2, 1, 2}, 1);
+        AddHexagonRow(-3, 1, 2);
+        AddHexagonRow({-4, -3, 0, 1}, 3);
+        AddHexagonRow({-4, 0}, 4);
     }
 
-    void Symbol::GenerateV()
+    void Symbol::GenerateB()
     {
-        AddHexagon(-1, -3);
-        AddHexagon(4, -3);
-        AddHexagon(-2, -2);
-        AddHexagon(-1, -2);
-        AddHexagon(3, -2);
-        AddHexagon(4, -2);
-        AddHexagon(-2, -1);
-        AddHexagon(-1, -1);
-        AddHexagon(2, -1);
-        AddHexagon(3, -1);
-        AddHexagon(-2, 0);
-        AddHexagon(-1, 0);
-        AddHexagon(1, 0);
-        AddHexagon(2, 0);
-        AddHexagon(-2, 1);
-        AddHexagon(-1, 1);
-        AddHexagon(0, 1);
-        AddHexagon(1, 1);
-        AddHexagon(-2, 2);
-        AddHexagon(-1, 2);
-        AddHexagon(0, 2);
-        AddHexagon(-2, 3);
-        AddHexagon(-1, 3);
-        AddHexagon(-2, 4);
+        AddHexagonRow(-1, 3, -3);
+        AddHexagonRow(-1, 3, -2);
+        AddHexagonRow({-2, -1, 2, 3}, -1);
+        AddHexagonRow(-2, 2, 0);
+        AddHexagonRow(-3, 2, 1);
+        AddHexagonRow({-3, -2, 1, 2}, 2);
+        AddHexagonRow(-4, 1, 3);
+        AddHexagonRow(-4, 0, 4);
     }
 
-    void Symbol::GenerateO()
+    void Symbol::GenerateC()
     {
-        AddHexagon(0, -3);
-        AddHexagon(1, -3);
-        AddHexagon(2, -3);
-        AddHexagon(3, -3);
-        AddHexagon(-1, -2);
-        AddHexagon(0, -2);
-        AddHexagon(1, -2);
-        AddHexagon(2, -2);
-        AddHexagon(3, -2);
-        AddHexagon(-2, -1);
-        AddHexagon(-1, -1);
-        AddHexagon(2, -1);
-        AddHexagon(3, -1);
-        AddHexagon(-3, 0);
-        AddHexagon(-2, 0);
-        AddHexagon(2, 0);
-        AddHexagon(3, 0);
-        AddHexagon(-3, 1);
-        AddHexagon(-2, 1);
-        AddHexagon(1, 1);
-        AddHexagon(2, 1);
-        AddHexagon(-3, 2);
-        AddHexagon(-2, 2);
-        AddHexagon(0, 2);
-        AddHexagon(1, 2);
-        AddHexagon(-3, 3);
-        AddHexagon(-2, 3);
-        AddHexagon(-1, 3);
-        AddHexagon(0, 3);
-        AddHexagon(-3, 4);
-        AddHexagon(-2, 4);
-        AddHexagon(-1, 4);
-    }
-
-    void Symbol::GenerateI()
-    {
-        AddHexagon(2, -3);
-        AddHexagon(1, -3);
-        AddHexagon(0, -2);
-        AddHexagon(1, -2);
-        AddHexagon(0, -1);
-        AddHexagon(1, -1);
-        AddHexagon(0, 0);
-        AddHexagon(-1, 0);
-        AddHexagon(-1, 1);
-        AddHexagon(0, 1);
-        AddHexagon(-2, 2);
-        AddHexagon(-1, 2);
-        AddHexagon(-2, 3);
-        AddHexagon(-1, 3);
-        AddHexagon(-3, 4);
-        AddHexagon(-2, 4);
+        AddHexagonRow(0, 3, -3);
+        AddHexagonRow(-1, 3, -2);
+        AddHexagonRow({-2, -1}, -1);
+        AddHexagonRow({-3, -2}, 0);
+        AddHexagonRow({-3, -2}, 1);
+        AddHexagonRow({-3, -2}, 2);
+        AddHexagonRow(-3, 0, 3);
+        AddHexagonRow(-3, -1, 4);
     }
 
     void Symbol::GenerateD()
     {
-        AddHexagon(-1, -3);
-        AddHexagon(0, -3);
-        AddHexagon(1, -3);
-        AddHexagon(2, -3);
-        AddHexagon(3, -3);
-        AddHexagon(-1, -2);
-        AddHexagon(0, -2);
-        AddHexagon(1, -2);
-        AddHexagon(2, -2);
-        AddHexagon(3, -2);
-        AddHexagon(-2, -1);
-        AddHexagon(-1, -1);
-        AddHexagon(2, -1);
-        AddHexagon(3, -1);
-        AddHexagon(-2, 0);
-        AddHexagon(-1, 0);
-        AddHexagon(2, 0);
-        AddHexagon(3, 0);
-        AddHexagon(-3, 1);
-        AddHexagon(-2, 1);
-        AddHexagon(1, 1);
-        AddHexagon(2, 1);
-        AddHexagon(-3, 2);
-        AddHexagon(-2, 2);
-        AddHexagon(0, 2);
-        AddHexagon(1, 2);
-        AddHexagon(-4, 3);
-        AddHexagon(-3, 3);
-        AddHexagon(-2, 3);
-        AddHexagon(-1, 3);
-        AddHexagon(0, 3);
-        AddHexagon(-4, 4);
-        AddHexagon(-3, 4);
+        AddHexagonRow(-1, 3, -3);
+        AddHexagonRow(-1, 3, -2);
+        AddHexagonRow({-2, -1, 2, 3}, -1);
+        AddHexagonRow({-2, -1, 2, 3}, 0);
+        AddHexagonRow({-3, -2, 1, 2}, 1);
+        AddHexagonRow({-3, -2, 0, 1}, 2);
+        AddHexagonRow(-4, 0, 3);
+        AddHexagonRow(-4, -1, 4);
+    }
+
+    void Symbol::GenerateE()
+    {
+        AddHexagonRow(-1, 3, -3);
+        AddHexagonRow(-1, 3, -2);
+        AddHexagonRow({-2, -1}, -1);
+        AddHexagonRow(-2, 1, 0);
+        AddHexagonRow(-3, 1, 1);
+        AddHexagonRow({-3, -2}, 2);
+        AddHexagonRow(-4, 0, 3);
+        AddHexagonRow(-4, 0, 4);
+    }
+
+    void Symbol::GenerateF()
+    {
+        AddHexagonRow(-1, 3, -3);
+        AddHexagonRow(-1, 3, -2);
+        AddHexagonRow({-2, -1}, -1);
+        AddHexagonRow(-2, 1, 0);
+        AddHexagonRow(-3, 1, 1);
+        AddHexagonRow({-3, -2}, 2);
+        AddHexagonRow({-4, -3}, 3);
+        AddHexagonRow({-4, -3}, 4);
+    }
+
+    void Symbol::GenerateG()
+    {
+        AddHexagonRow(0, 3, -3);
+        AddHexagonRow(-1, 3, -2);
+        AddHexagonRow({-2, -1}, -1);
+        AddHexagonRow({-3, -2}, 0);
+        AddHexagonRow({-3, -2, 0, 1}, 1);
+        AddHexagonRow({-3, -2, 0, 1}, 2);
+        AddHexagonRow(-3, 0, 3);
+        AddHexagonRow(-3, -1, 4);
+    }
+
+    void Symbol::GenerateH()
+    {
+        AddHexagonRow({-1, 0, 3, 4}, -3);
+        AddHexagonRow({-1, 0, 2, 3}, -2);
+        AddHexagonRow({-2, -1, 2, 3}, -1);
+        AddHexagonRow(-2, 2, 0);
+        AddHexagonRow(-3, 2, 1);
+        AddHexagonRow({-3, -2, 0, 1}, 2);
+        AddHexagonRow({-4, -3, 0, 1}, 3);
+        AddHexagonRow({-4, -3, -1, 0}, 4);
+    }
+
+    void Symbol::GenerateI()
+    {
+        AddHexagonRow({2, 1}, -3);
+        AddHexagonRow({1, 2}, -2);
+        AddHexagonRow({0, 1}, -1);
+        AddHexagonRow({0, 1}, 0);
+        AddHexagonRow({-1, 0}, 1);
+        AddHexagonRow({-1, 0}, 2);
+        AddHexagonRow({-2, -1}, 3);
+        AddHexagonRow({-2, -1}, 4);
+    }
+
+    void Symbol::GenerateJ()
+    {
+        AddHexagonRow({2, 1}, -3);
+        AddHexagonRow({1, 2}, -2);
+        AddHexagonRow({0, 1}, -1);
+        AddHexagonRow({0, 1}, 0);
+        AddHexagonRow({-1, 0}, 1);
+        AddHexagonRow({-4, -3, -1, 0}, 2);
+        AddHexagonRow(-4, -1, 3);
+        AddHexagonRow(-4, -2, 4);
+    }
+
+    void Symbol::GenerateK()
+    {
+        AddHexagonRow({-1, 0, 3, 4}, -3);
+        AddHexagonRow({-1, 0, 2, 3}, -2);
+        AddHexagonRow({-2, -1, 1, 2}, -1);
+        AddHexagonRow(-2, 1, 0);
+        AddHexagonRow(-3, 0, 1);
+        AddHexagonRow(-3, 0, 2);
+        AddHexagonRow({-4, -3, -1, 0}, 3);
+        AddHexagonRow({-4, -3, -1, 0}, 4);
+    }
+
+    void Symbol::GenerateL()
+    {
+        AddHexagonRow({-1, 0}, -3);
+        AddHexagonRow({-1, 0}, -2);
+        AddHexagonRow({-2, -1}, -1);
+        AddHexagonRow({-2, -1}, 0);
+        AddHexagonRow({-3, -2}, 1);
+        AddHexagonRow({-3, -2}, 2);
+        AddHexagonRow(-4, 0, 3);
+        AddHexagonRow(-4, -1, 4);
+    }
+
+    void Symbol::GenerateM()
+    {
+        AddHexagonRow({-1, 0, 3, 4}, -3);
+        AddHexagonRow(-1, 3, -2);
+        AddHexagonRow(-2, 3, -1);
+        AddHexagonRow({-2, 0, 2}, 0);
+        AddHexagonRow({-3, -2, 1, 2}, 1);
+        AddHexagonRow({-3, -2, 0, 1}, 2);
+        AddHexagonRow({-4, -3, 0, 1}, 3);
+        AddHexagonRow({-4, 0}, 4);
+    }
+
+    void Symbol::GenerateN()
+    {
+
+        AddHexagonRow({-1, 0, 3, 4}, -3);
+        AddHexagonRow({-1, 0, 2, 3}, -2);
+        AddHexagonRow({-2, -1, 0, 2, 3}, -1);
+        AddHexagonRow({-2, -1, 0, 2}, 0);
+        AddHexagonRow({-3, -2, 0, 1, 2}, 1);
+        AddHexagonRow({-3, -2, 0, 1}, 2);
+        AddHexagonRow({-4, -3, 0, 1}, 3);
+        AddHexagonRow({-4, 0}, 4);
+    }
+
+    void Symbol::GenerateO()
+    {
+        AddHexagonRow(0, 3, -3);
+        AddHexagonRow(-1, 3, -2);
+        AddHexagonRow({-2, -1, 2, 3}, -1);
+        AddHexagonRow({-3, -2, 2, 3}, 0);
+        AddHexagonRow({-3, -2, 1, 2}, 1);
+        AddHexagonRow({-3, -2, 0, 1}, 2);
+        AddHexagonRow(-3, 0, 3);
+        AddHexagonRow(-3, -1, 4);
+    }
+
+    void Symbol::GenerateP()
+    {
+        AddHexagonRow(-1, 3, -3);
+        AddHexagonRow(-1, 3, -2);
+        AddHexagonRow({-2, -1, 2, 3}, -1);
+        AddHexagonRow({-2, 1, 2}, 0);
+        AddHexagonRow(-3, 1, 1);
+        AddHexagonRow({-3, -2}, 2);
+        AddHexagonRow({-4, -3}, 3);
+        AddHexagonRow({-4, -3}, 4);
+    }
+
+    void Symbol::GenerateQ()
+    {
+        AddHexagonRow(0, 3, -3);
+        AddHexagonRow(-1, 3, -2);
+        AddHexagonRow({-2, -1, 2, 3}, -1);
+        AddHexagonRow({-3, -2, 2, 3}, 0);
+        AddHexagonRow({-3, -2, 1, 2}, 1);
+        AddHexagonRow({-3, -2, 0, 1}, 2);
+        AddHexagonRow(-3, 0, 3);
+        AddHexagonRow(-3, 0, 4);
+    }
+
+    void Symbol::GenerateR()
+    {
+        AddHexagonRow(-1, 3, -3);
+        AddHexagonRow(-1, 3, -2);
+        AddHexagonRow({-2, -1, 2, 3}, -1);
+        AddHexagonRow({-2, 1, 2}, 0);
+        AddHexagonRow(-3, 1, 1);
+        AddHexagonRow(-3, 0, 2);
+        AddHexagonRow({-4, -3, -1, 0}, 3);
+        AddHexagonRow({-4, -3, -1, 0}, 4);
+    }
+
+    void Symbol::GenerateS()
+    {
+        AddHexagonRow(0, 3, -3);
+        AddHexagonRow(-1, 3, -2);
+        AddHexagonRow({-2, -1}, -1);
+        AddHexagonRow(-2, 1, 0);
+        AddHexagonRow(-2, 1, 1);
+        AddHexagonRow({0, 1}, 2);
+        AddHexagonRow(-4, 0, 3);
+        AddHexagonRow(-4, -1, 4);
+    }
+
+    void Symbol::GenerateT()
+    {
+        AddHexagonRow(-1, 4, -3);
+        AddHexagonRow(-1, 4, -2);
+        AddHexagonRow({0, 1}, -1);
+        AddHexagonRow({0, 1}, 0);
+        AddHexagonRow({-1, 0}, 1);
+        AddHexagonRow({-1, 0}, 2);
+        AddHexagonRow({-2, -1}, 3);
+        AddHexagonRow({-2, -1}, 4);
+    }
+
+    void Symbol::GenerateU()
+    {
+        AddHexagonRow({-1, 0, 3, 4}, -3);
+        AddHexagonRow({-1, 0, 2, 3}, -2);
+        AddHexagonRow({-2, -1, 2, 3}, -1);
+        AddHexagonRow({-2, -1, 1, 2}, 0);
+        AddHexagonRow({-3, -2, 1, 2}, 1);
+        AddHexagonRow({-3, -2, 0, 1}, 2);
+        AddHexagonRow(-3, 0, 3);
+        AddHexagonRow(-3, -1, 4);
+    }
+
+    void Symbol::GenerateV()
+    {
+        AddHexagonRow({-1, 4}, -3);
+        AddHexagonRow({-2, -1, 3, 4}, -2);
+        AddHexagonRow({-2, -1, 2, 3}, -1);
+        AddHexagonRow({-2, -1, 1, 2}, 0);
+        AddHexagonRow(-2, 1, 1);
+        AddHexagonRow(-2, 0, 2);
+        AddHexagonRow({-2, -1}, 3);
         AddHexagon(-2, 4);
-        AddHexagon(-1, 4);
+    }
+
+    void Symbol::GenerateW()
+    {
+        AddHexagonRow({-1, 0, 3, 4}, -3);
+        AddHexagonRow({-2, -1, 3, 4}, -2);
+        AddHexagonRow({-2, -1, 2, 3}, -1);
+        AddHexagonRow({-3, -2, 0, 2, 3}, 0);
+        AddHexagonRow({-3, -1, 0, 2}, 1);
+        AddHexagonRow(-4, 2, 2);
+        AddHexagonRow({-4, -3, 0, 1}, 3);
+        AddHexagonRow({-4, 0}, 4);
+    }
+
+    void Symbol::GenerateX()
+    {
+        AddHexagonRow({-1, 0, 3, 4}, -3);
+        AddHexagonRow({-1, 0, 2, 3}, -2);
+        AddHexagonRow(-1, 2, -1);
+        AddHexagonRow(-1, 1, 0);
+        AddHexagonRow(-2, 1, 1);
+        AddHexagonRow({-3, -2, 0, 1}, 2);
+        AddHexagonRow({-4, -3, 0, 1}, 3);
+        AddHexagonRow({-4, 0}, 4);
+    }
+
+    void Symbol::GenerateY()
+    {
+        AddHexagonRow({-1, 0, 3, 4}, -3);
+        AddHexagonRow({-1, 0, 2, 3}, -2);
+        AddHexagonRow(-1, 2, -1);
+        AddHexagonRow(-1, 1, 0);
+        AddHexagonRow({-1, 0}, 1);
+        AddHexagonRow({-2, -1}, 2);
+        AddHexagonRow({-3, -2}, 3);
+        AddHexagonRow({-4, -3}, 4);
+    }
+
+    void Symbol::GenerateZ()
+    {
+        AddHexagonRow(-1, 4, -3);
+        AddHexagonRow(-1, 3, -2);
+        AddHexagonRow({1, 2}, -1);
+        AddHexagonRow({0, 1}, 0);
+        AddHexagonRow({-1, 0}, 1);
+        AddHexagonRow({-2, -1}, 2);
+        AddHexagonRow(-3, 1, 3);
+        AddHexagonRow(-4, 0, 4);
     }
 
     void Symbol::GenerateSeparator()
