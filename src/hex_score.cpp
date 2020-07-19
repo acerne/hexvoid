@@ -14,6 +14,11 @@ namespace hex
         movesLeft_ = 10;
     }
 
+    bool Score::IsGameOver()
+    {
+        return movesLeft_ == 0;
+    }
+
     void Score::AddScore(uint16_t points)
     {
         score_ += points;

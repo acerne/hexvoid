@@ -22,7 +22,7 @@ int main(int argc, char* args[])
     GameState state = GameState::SPLASH_SCREEN;
 
     hex::Logo logotype{"HEXVOID", {400, 300}, 8};
-    hex::Logo gameOverScreen{"GAME OVER", {400, 300}, 8};
+    hex::Logo gameOver{"GAME OVER", {400, 300}, 6};
     int64_t splasScreenDuration = 3000;
 
     hex::Menu mainMenu(60);
@@ -94,6 +94,11 @@ int main(int argc, char* args[])
                                     break;
                                 default:
                                     break;
+                            }
+                            if(hex::Score::IsGameOver())
+                            {
+                                startTime = std::chrono::system_clock::now();
+                                state = GameState::GAME_OVER;
                             }
                             break;
                         case GameState::MAIN_MENU:
@@ -195,7 +200,7 @@ int main(int argc, char* args[])
             }
         }
 
-        if(state == GameState::SPLASH_SCREEN)
+        if(state == GameState::SPLASH_SCREEN || state == GameState::GAME_OVER)
         {
             auto now = std::chrono::system_clock::now();
             int64_t msElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime).count();
@@ -222,7 +227,7 @@ int main(int argc, char* args[])
                 hex::Score::Draw();
                 break;
             case GameState::GAME_OVER:
-                /* code */
+                gameOver.Draw();
                 break;
             default:
                 break;

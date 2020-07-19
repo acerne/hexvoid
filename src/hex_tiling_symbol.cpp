@@ -106,7 +106,7 @@ namespace hex
             int16_t rA = std::get<1>(hexA.first);
             if(right.isSpace)
             {
-                int16_t apart = spacing - qA;
+                int16_t apart = -1 + spacing - qA;
                 if(apart < closest) closest = apart;
             }
             else

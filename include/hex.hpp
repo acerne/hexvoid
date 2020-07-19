@@ -145,6 +145,7 @@ namespace hex
     {
     public:
         static void Start();
+        static bool IsGameOver();
 
         static void AddScore(uint16_t points);
         static void TakeScore(uint16_t points);
