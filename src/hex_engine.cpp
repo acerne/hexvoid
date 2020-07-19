@@ -13,12 +13,16 @@ namespace hex
     SDL_Renderer* Core::gRenderer_ = NULL;
     uint16_t Core::windowWidth_ = 0;
     uint16_t Core::windowHeight_ = 0;
+    bool Core::quit_ = false;
     const char* Core::fontPath_ = "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf";
 
     void Core::SDL(int error)
     {
         if(error < 0) throw std::runtime_error("SDL failed: " + std::string(SDL_GetError()));
     }
+
+    Engine::GameState Engine::state_;
+    std::thread Engine::inputThread_;
 
     void Engine::Initialize(const std::string& title, uint16_t windowWidth, uint16_t windowHeight)
     {
@@ -39,10 +43,16 @@ namespace hex
 
         font_ = FC_CreateFont();
         FC_LoadFont(font_, gRenderer_, fontPath_, 36, {255, 255, 255, 255}, TTF_STYLE_NORMAL);
+
+        inputThread_ = std::thread(Input::PollingThread);
+
+        state_ = GameState::MAIN_MENU;
     }
 
     void Engine::Terminate()
     {
+        inputThread_.join();
+
         SDL_FreeSurface(gSurface_);
         gSurface_ = NULL;
 
@@ -61,6 +71,16 @@ namespace hex
         SDL_Quit();
     }
 
+    Engine::GameState Engine::GetGameState()
+    {
+        return state_;
+    }
+
+    void Engine::SetGameState(Engine::GameState state)
+    {
+        state_ = state;
+    }
+
     void Engine::ChangeResolution(uint16_t windowWidth, uint16_t windowHeight)
     {
         int16_t xOffset = (windowWidth - windowWidth_) / 2;
@@ -77,6 +97,8 @@ namespace hex
 
     void Engine::Clear()
     {
+        if(quit_) Terminate();
+
         Palette::Color c = Palette::GetColor(Palette::Element::Background);
         SDL(SDL_SetRenderDrawColor(gRenderer_, c.r, c.g, c.b, 255));
         SDL(SDL_RenderClear(gRenderer_));

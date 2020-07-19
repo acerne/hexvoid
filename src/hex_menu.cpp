@@ -4,20 +4,137 @@
 
 namespace hex
 {
-    Menu::Menu(uint16_t spacing)
+
+    Menu::MenuList Menu::mainMenu_;
+    Menu::MenuList Menu::optionsMenu_;
+    Menu::MenuList Menu::newGameMenu_;
+
+    void Menu::Initialize()
     {
-        items_.clear();
-        spacing_ = spacing;
+        mainMenu_.AddItem("New game", 1);
+        mainMenu_.AddItem("Options", 2);
+        mainMenu_.AddItem("Exit", 3);
+
+        newGameMenu_.AddOption("Grid size:", 1, {"7", "9", "11"});
+        newGameMenu_.AddOption("Difficulty:", 2, {"Easy", "Medium", "Hard"});
+        newGameMenu_.AddItem("Start", 4);
+        newGameMenu_.AddItem("Back", 6);
+
+        optionsMenu_.AddOption("Resolution:", 0, {"800x600", "1280x720", "1600x900", "1920x1080"});
+        optionsMenu_.AddOption("Color theme:", 1, hex::Palette::GetThemeNames());
+        optionsMenu_.AddItem("Apply", 4);
+        optionsMenu_.AddItem("Back", 6);
     }
 
-    void Menu::AddItem(const std::string& title, uint8_t index)
+    void Menu::Update()
+    {
+        SDL_Event clickEvent = Input::GetClick();
+        switch(Engine::GetGameState())
+        {
+            case Engine::GameState::MAIN_MENU: {
+                if(clickEvent.type == SDL_MOUSEBUTTONDOWN)
+                {
+                    if(clickEvent.button.button == SDL_BUTTON_LEFT)
+                    {
+                        switch(mainMenu_.Click(clickEvent.motion.x, clickEvent.motion.y))
+                        {
+                            case 1:
+                                Engine::SetGameState(Engine::GameState::NEW_GAME_MENU);
+                                break;
+                            case 2:
+                                Engine::SetGameState(Engine::GameState::OPTIONS_MENU);
+                                break;
+                            case 3:
+                                quit_ = true;
+                            default:
+                                break;
+                        }
+                    }
+                }
+                break;
+            }
+            case Engine::GameState::NEW_GAME_MENU: {
+                if(clickEvent.type == SDL_MOUSEBUTTONDOWN)
+                {
+                    if(clickEvent.button.button == SDL_BUTTON_LEFT)
+                    {
+                        switch(newGameMenu_.Click(clickEvent.motion.x, clickEvent.motion.y))
+                        {
+                            case 4: {
+                                std::string gridSize = newGameMenu_.GetSelection("Grid size:");
+                                // grid = hex::Grid(std::stoi(gridSize));
+                                hex::Score::Start();
+                                Engine::SetGameState(Engine::GameState::GAME);
+                                break;
+                            }
+                            case 6:
+                                Engine::SetGameState(Engine::GameState::MAIN_MENU);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+                break;
+            }
+            case Engine::GameState::OPTIONS_MENU: {
+                if(clickEvent.type == SDL_MOUSEBUTTONDOWN)
+                {
+                    switch(optionsMenu_.Click(clickEvent.motion.x, clickEvent.motion.y))
+                    {
+                        case 1: {
+                            std::string theme = optionsMenu_.GetSelection("Color theme:");
+                            hex::Palette::ChangeTheme(theme);
+                            break;
+                        }
+                        case 4: {
+                            std::string resolution = optionsMenu_.GetSelection("Resolution:");
+                            int x = resolution.find("x");
+                            std::string resolutionX = resolution.substr(0, x);
+                            std::string resolutionY = resolution.substr(x + 1, resolution.length() - x - 1);
+                            hex::Engine::ChangeResolution(std::stoi(resolutionX), std::stoi(resolutionY));
+                            break;
+                        }
+                        case 6:
+                            Engine::SetGameState(Engine::GameState::MAIN_MENU);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                break;
+            }
+            default:
+                break;
+        }
+    }
+
+    void Menu::Draw()
+    {
+        switch(Engine::GetGameState())
+        {
+            case Engine::GameState::MAIN_MENU:
+                mainMenu_.Draw(Input::cursorX, Input::cursorY);
+                break;
+            case Engine::GameState::NEW_GAME_MENU:
+                newGameMenu_.Draw(Input::cursorX, Input::cursorY);
+                break;
+            case Engine::GameState::OPTIONS_MENU:
+                optionsMenu_.Draw(Input::cursorX, Input::cursorY);
+                break;
+            default:
+                break;
+        }
+    }
+
+    void Menu::MenuList::AddItem(const std::string& title, uint8_t index)
     {
         int x = Engine::windowWidth_ / 2;
         int y = spacing_ * (index + 1);
         SDL_Rect bounds = FC_GetBounds(font_, x, y, FC_AlignEnum::FC_ALIGN_CENTER, {1, 1}, "%s", title.c_str());
         items_[title] = MenuItem{MenuItemType::Item, title, index, bounds, {}, 0};
     }
-    void Menu::AddOption(const std::string& title, uint8_t index, const std::vector<std::string>& valueNames)
+    void Menu::MenuList::AddOption(const std::string& title, uint8_t index, const std::vector<std::string>& valueNames)
     {
         int x = Engine::windowWidth_ / 5;
         int y = spacing_ * (index + 1);
@@ -25,12 +142,12 @@ namespace hex
         items_[title] = MenuItem{MenuItemType::Option, title, index, bounds, std::move(valueNames), 0};
     }
 
-    bool Menu::IsMouseInside(int16_t x, int16_t y, const SDL_Rect& box) const
+    bool Menu::MenuList::IsMouseInside(int16_t x, int16_t y, const SDL_Rect& box) const
     {
         return (x > box.x && x < box.x + box.w && y > box.y && y < box.y + box.h);
     }
 
-    int8_t Menu::MouseOverItemIndex(int16_t cursorX, int16_t cursorY) const
+    int8_t Menu::MenuList::MouseOverItemIndex(int16_t cursorX, int16_t cursorY) const
     {
         for(const auto& item : items_)
         {
@@ -39,7 +156,7 @@ namespace hex
         return -1;
     }
 
-    std::string Menu::MouseOverItemName(int16_t cursorX, int16_t cursorY) const
+    std::string Menu::MenuList::MouseOverItemName(int16_t cursorX, int16_t cursorY) const
     {
         for(const auto& item : items_)
         {
@@ -48,13 +165,13 @@ namespace hex
         return "";
     }
 
-    void Menu::NextOption(const std::string& itemName)
+    void Menu::MenuList::NextOption(const std::string& itemName)
     {
         items_.at(itemName).selected++;
         if(items_.at(itemName).selected >= items_.at(itemName).options.size()) items_.at(itemName).selected = 0;
     }
 
-    int8_t Menu::Click(int16_t cursorX, int16_t cursorY)
+    int8_t Menu::MenuList::Click(int16_t cursorX, int16_t cursorY)
     {
         std::string selected = MouseOverItemName(cursorX, cursorY);
         if(selected.length() > 0)
@@ -77,12 +194,12 @@ namespace hex
         return -1;
     }
 
-    std::string Menu::GetSelection(const std::string& item) const
+    std::string Menu::MenuList::GetSelection(const std::string& item) const
     {
         return items_.at(item).options.at(items_.at(item).selected);
     }
 
-    void Menu::Draw(int16_t cursorX, int16_t cursorY) const
+    void Menu::MenuList::Draw(int16_t cursorX, int16_t cursorY) const
     {
 
         Palette::Color f = Palette::GetColor(Palette::Element::Foreground);
