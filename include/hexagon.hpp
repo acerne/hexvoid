@@ -42,7 +42,11 @@ namespace hex
         Tiling() {}
 
         void Randomize();
+        void Randomize(const std::vector<Index>& indices);
+        bool CheckEquality(const std::vector<Index>& indices);
+
         void Rotate(Index rotationCenter, int16_t rotationRadius, int16_t rotation);
+        std::tuple<bool, Index> GetHoveringIndex(Pixel cursor);
 
         static double RadiusToApothem(double radius);
 
@@ -80,16 +84,12 @@ namespace hex
         Grid(int16_t size) : Grid(size, Engine::windowHeight_ / size / 1.5) {}
         Grid() : Grid(9, Engine::windowHeight_ / 9 / 1.5) {}
 
-        void RotateClockwise(int16_t cursorX, int16_t cursorY);
-        void RotateCounterClockwise(int16_t cursorX, int16_t cursorY);
+        int16_t GetGridSize();
 
         void Draw(int16_t cursorX, int16_t cursorY) const;
 
     private:
         int16_t gridSize_;
-
-        bool CheckSolution(Index index);
-        void ShuffleSolution(Index index);
 
         Index GetClosestSelection(const Pixel& pixel) const;
     };
@@ -143,10 +143,10 @@ namespace hex
         void GenerateSeparator();
     };
 
-    class Logo : public Core
+    class Splash : public Core
     {
     public:
-        Logo(const std::string& title, Tiling::Pixel center, double hexRadius);
+        Splash(const std::string& title, Tiling::Pixel center, double hexRadius);
 
         void Draw() const;
 

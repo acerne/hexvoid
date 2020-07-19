@@ -25,14 +25,13 @@ include_directories(lib/SDL_FontCache)
 add_executable(${PROJECT_NAME}      src/main.cpp 
                                     src/hexvoid_game.cpp
                                     src/hex_engine.cpp
-                                    src/hex_framerate.cpp
                                     src/hex_hexagon.cpp
                                     src/hex_input.cpp
-                                    src/hex_logo.cpp
                                     src/hex_menu.cpp
                                     src/hex_palette.cpp
                                     src/hex_randomizer.cpp
                                     src/hex_score.cpp
+                                    src/hex_splash.cpp
                                     src/hex_systeminfo.cpp
                                     src/hex_tiling.cpp
                                     src/hex_tiling_grid.cpp

@@ -5,7 +5,6 @@
 
 namespace hex
 {
-
     uint16_t Input::cursorX = 0;
     uint16_t Input::cursorY = 0;
     std::mutex Input::clickMutex_;
@@ -18,30 +17,29 @@ namespace hex
     {
         SDL_Event event;
         while(!quit_)
+        {
             while(SDL_PollEvent(&event))
             {
                 switch(event.type)
                 {
                     case SDL_KEYDOWN:
-                        printf("Registered keypress\n");
                         AddKeypress(event);
                         break;
                     case SDL_MOUSEBUTTONDOWN:
-                        printf("Registered click\n");
                         AddClick(event);
                         break;
                     case SDL_MOUSEMOTION:
                         UpdateMouse(event);
                         break;
                     case SDL_QUIT:
-                        printf("Registered quit\n");
                         quit_ = true;
                         break;
                     default:
                         break;
                 }
-                std::this_thread::sleep_for(std::chrono::milliseconds(10));
             }
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
     }
 
     void Input::AddClick(const SDL_Event& event)

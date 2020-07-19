@@ -12,6 +12,12 @@ namespace hexvoid
         static void Update();
         static void Draw();
 
+        static void RotateClockwise(int16_t cursorX, int16_t cursorY);
+        static void RotateCounterClockwise(int16_t cursorX, int16_t cursorY);
+
+        static bool CheckSolution(hex::Tiling::Index index);
+        static void ShuffleSolution(hex::Tiling::Index index);
+
     private:
         Game() {}
 

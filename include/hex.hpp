@@ -225,27 +225,19 @@ namespace hex
         static uint16_t movesLeft_;
     };
 
-    class Framerate : public Core
-    {
-    public:
-        Framerate();
-
-        void Tick();
-        void Draw();
-
-    private:
-        uint16_t frameCount_;
-        uint32_t lastSecond_;
-        uint16_t fps_;
-    };
-
     class SystemInfo : public Core
     {
     public:
+        static void Update();
         static void Draw();
 
     private:
         SystemInfo();
+
+        static uint16_t frameCount_;
+        static uint32_t lastSecond_;
+        static uint16_t fps_;
+        static uint16_t ram_;
     };
 
 } // namespace hex

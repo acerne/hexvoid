@@ -2,7 +2,6 @@
 #include <iostream>
 
 #include "hex.hpp"
-#include "hexagon.hpp"
 #include "hexvoid.hpp"
 
 int main(int argc, char* args[])
@@ -12,20 +11,17 @@ int main(int argc, char* args[])
     hex::Menu::Initialize();
     hexvoid::Game::Initialize();
 
-    hex::Logo logotype{"HEXVOID", {400, 300}, 8};
-    hex::Logo gameOver{"GAME OVER", {400, 300}, 6};
+    hex::Splash logotype{"HEXVOID", {400, 300}, 8};
+    hex::Splash gameOver{"GAME OVER", {400, 300}, 6};
     int64_t splasScreenDuration = 3000;
-
-    hex::Framerate fps;
 
     auto startTime = std::chrono::system_clock::now();
 
     while(!hex::Engine::GetQuitFlag())
     {
-        fps.Tick();
-
         hex::Menu::Update();
         hexvoid::Game::Update();
+        hex::SystemInfo::Update();
 
         hex::Engine::Clear();
         // switch(state)
@@ -39,9 +35,8 @@ int main(int argc, char* args[])
         //     default:
         //         break;
         // }
-        fps.Draw();
-        hexvoid::Game::Draw();
         hex::Menu::Draw();
+        hexvoid::Game::Draw();
         hex::SystemInfo::Draw();
         hex::Engine::Display();
     }

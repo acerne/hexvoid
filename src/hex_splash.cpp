@@ -7,7 +7,7 @@
 namespace hex
 {
 
-    Logo::Logo(const std::string& title, Tiling::Pixel center, double hexRadius)
+    Splash::Splash(const std::string& title, Tiling::Pixel center, double hexRadius)
     {
         elementRadius_ = hexRadius;
 
@@ -33,7 +33,7 @@ namespace hex
         }
     }
 
-    void Logo::Draw() const
+    void Splash::Draw() const
     {
         for(auto& symbol : logotype_)
             symbol.Draw();

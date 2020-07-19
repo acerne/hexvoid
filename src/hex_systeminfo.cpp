@@ -5,6 +5,10 @@
 
 namespace hex
 {
+    uint16_t SystemInfo::frameCount_ = 0;
+    uint32_t SystemInfo::lastSecond_ = 0;
+    uint16_t SystemInfo::fps_ = 0;
+    uint16_t SystemInfo::ram_ = 0;
 
     int parseLine(char* line)
     {
@@ -18,26 +22,9 @@ namespace hex
         return i;
     }
 
-    int getAppVirtMem()
-    { // Note: this value is in KB!
-        FILE* file = fopen("/proc/self/status", "r");
-        int result = -1;
-        char line[128];
-
-        while(fgets(line, 128, file) != NULL)
-        {
-            if(strncmp(line, "VmSize:", 7) == 0)
-            {
-                result = parseLine(line);
-                break;
-            }
-        }
-        fclose(file);
-        return result;
-    }
-
     int getAppPhysMem()
-    { // Note: this value is in KB!
+    {
+        // Note: this value is in KB!
         FILE* file = fopen("/proc/self/status", "r");
         int result = -1;
         char line[128];
@@ -64,36 +51,34 @@ namespace hex
         return kb / 1024;
     }
 
+    void SystemInfo::Update()
+    {
+        uint32_t tick = SDL_GetTicks();
+        frameCount_++;
+        if(tick - lastSecond_ > 1000)
+        {
+            fps_ = frameCount_;
+            lastSecond_ = tick;
+            frameCount_ = 0;
+            ram_ = getAppPhysMem() / 1024;
+        }
+    };
+
     void SystemInfo::Draw()
     {
-        struct sysinfo memInfo;
+        if(fps_ < 30)
+            FC_SetDefaultColor(font_, {255, 0, 0, 255});
+        else
+            FC_SetDefaultColor(font_, {0, 255, 0, 255});
 
-        sysinfo(&memInfo);
-        long long totalVirtualMem = memInfo.totalram;
-        // Add other values in next statement to avoid int overflow on right hand side...
-        totalVirtualMem += memInfo.totalswap;
-        totalVirtualMem *= memInfo.mem_unit;
+        FC_DrawScale(font_, gRenderer_, 5, 5, {0.3, 0.3}, "FPS %i", fps_);
 
-        long long virtualMemUsed = memInfo.totalram - memInfo.freeram;
-        // Add other values in next statement to avoid int overflow on right hand side...
-        virtualMemUsed += memInfo.totalswap - memInfo.freeswap;
-        virtualMemUsed *= memInfo.mem_unit;
+        if(ram_ > 100)
+            FC_SetDefaultColor(font_, {255, 0, 0, 255});
+        else
+            FC_SetDefaultColor(font_, {0, 255, 0, 255});
 
-        long long totalPhysMem = memInfo.totalram;
-        // Multiply in next statement to avoid int overflow on right hand side...
-        totalPhysMem *= memInfo.mem_unit;
-
-        long long physMemUsed = memInfo.totalram - memInfo.freeram;
-        // Multiply in next statement to avoid int overflow on right hand side...
-        physMemUsed *= memInfo.mem_unit;
-
-        const char* formattedInfo =
-            "Virtual memory:\n Available: %i MB\n Used: %i MB\n Game: %i MB\n\nPhysical memory:\n "
-            "Available: %i MB\n Used: %i MB\n Game: %i MB";
-
-        FC_SetDefaultColor(font_, {255, 255, 255, 255});
-        FC_DrawScale(font_, gRenderer_, 5, 30, {0.3, 0.3}, formattedInfo, bToMb(totalVirtualMem), bToMb(virtualMemUsed),
-                     kbToMb(getAppVirtMem()), bToMb(totalPhysMem), bToMb(physMemUsed), kbToMb(getAppPhysMem()));
+        FC_DrawScale(font_, gRenderer_, 5, 30, {0.3, 0.3}, "RAM %i MB", ram_);
     };
 
 } // namespace hex

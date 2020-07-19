@@ -14,6 +14,22 @@ namespace hex
             hexagon.family_ = Randomizer::Random(2, 5);
     }
 
+    void Tiling::Randomize(const std::vector<Index>& indices)
+    {
+        for(const auto& index : indices)
+            tiles_.at(index).family_ = Randomizer::Random(2, 5);
+    }
+
+    bool Tiling::CheckEquality(const std::vector<Index>& indices)
+    {
+        bool allEqual = true;
+        uint8_t value = tiles_.at(indices.front()).family_;
+        for(const auto& index : indices)
+            allEqual &= (tiles_.at(index).family_ == value);
+
+        return allEqual;
+    }
+
     void Tiling::Rotate(Tiling::Index rotationCenter, int16_t rotationRadius, int16_t rotation)
     {
         std::map<Index, Hexagon> rotatedTiles;
@@ -36,6 +52,14 @@ namespace hex
             rotatedTiles.insert(std::move(tile));
         }
         tiles_.insert(rotatedTiles.begin(), rotatedTiles.end());
+    }
+
+    std::tuple<bool, Tiling::Index> Tiling::GetHoveringIndex(Tiling::Pixel pixel)
+    {
+        Index index = PixelToIndex(pixel, hexRadius_, tileCenter_);
+        bool isValid = tiles_.find(index) != tiles_.end();
+
+        return {isValid, index};
     }
 
     double Tiling::RadiusToApothem(double radius)

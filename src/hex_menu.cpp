@@ -136,6 +136,7 @@ namespace hex
         SDL_Rect bounds = FC_GetBounds(font_, x, y, FC_AlignEnum::FC_ALIGN_CENTER, {1, 1}, "%s", title.c_str());
         items_[title] = MenuItem{MenuItemType::Item, title, index, bounds, {}, 0};
     }
+
     void Menu::MenuList::AddOption(const std::string& title, uint8_t index, const std::vector<std::string>& valueNames)
     {
         int x = Engine::windowWidth_ / 5;

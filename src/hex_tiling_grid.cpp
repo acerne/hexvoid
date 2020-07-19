@@ -37,48 +37,9 @@ namespace hex
         }
     }
 
-    void Grid::RotateClockwise(int16_t cursorX, int16_t cursorY)
+    int16_t Grid::GetGridSize()
     {
-        Index selected = PixelToIndex({cursorX, cursorY}, hexRadius_, tileCenter_);
-        bool inside = IndexDistance({0, 0, 0}, selected) < (gridSize_ - 1) / 2 - 1;
-
-        if(inside)
-        {
-            if(CheckSolution(selected))
-            {
-                Score::AddScore(100);
-                Score::AddMoves(10);
-                ShuffleSolution(selected);
-            }
-            else
-            {
-                Score::TakeMoves(1);
-                Rotate(selected, 1, 1);
-            }
-            Score::RegisterMove();
-        }
-    }
-
-    void Grid::RotateCounterClockwise(int16_t cursorX, int16_t cursorY)
-    {
-        Index selected = PixelToIndex({cursorX, cursorY}, hexRadius_, tileCenter_);
-        bool inside = IndexDistance({0, 0, 0}, selected) < (gridSize_ - 1) / 2 - 1;
-
-        if(inside)
-        {
-            if(CheckSolution(selected))
-            {
-                Score::AddScore(100);
-                Score::AddMoves(10);
-                ShuffleSolution(selected);
-            }
-            else
-            {
-                Score::TakeMoves(1);
-                Rotate(selected, 1, -1);
-            }
-        }
-        Score::RegisterMove();
+        return gridSize_;
     }
 
     void Grid::Draw(int16_t cursorX, int16_t cursorY) const
@@ -112,40 +73,6 @@ namespace hex
                 tiles_.at(index).Draw();
             }
         }
-    }
-
-    bool Grid::CheckSolution(Tiling::Index index)
-    {
-        int16_t q = std::get<0>(index);
-        int16_t r = std::get<1>(index);
-        int16_t s = std::get<2>(index);
-
-        uint8_t reference = tiles_.at(index).family_;
-
-        bool hit = true;
-        hit &= reference == tiles_.at({q + 1, r - 1, s}).family_;
-        hit &= reference == tiles_.at({q, r - 1, s + 1}).family_;
-        hit &= reference == tiles_.at({q - 1, r, s + 1}).family_;
-        hit &= reference == tiles_.at({q - 1, r + 1, s}).family_;
-        hit &= reference == tiles_.at({q, r + 1, s - 1}).family_;
-        hit &= reference == tiles_.at({q + 1, r, s - 1}).family_;
-
-        return hit;
-    }
-
-    void Grid::ShuffleSolution(Tiling::Index index)
-    {
-        int16_t q = std::get<0>(index);
-        int16_t r = std::get<1>(index);
-        int16_t s = std::get<2>(index);
-
-        tiles_.at(index).family_ = Randomizer::Random(2, 5);
-        tiles_.at({q + 1, r - 1, s}).family_ = Randomizer::Random(2, 5);
-        tiles_.at({q, r - 1, s + 1}).family_ = Randomizer::Random(2, 5);
-        tiles_.at({q - 1, r, s + 1}).family_ = Randomizer::Random(2, 5);
-        tiles_.at({q - 1, r + 1, s}).family_ = Randomizer::Random(2, 5);
-        tiles_.at({q, r + 1, s - 1}).family_ = Randomizer::Random(2, 5);
-        tiles_.at({q + 1, r, s - 1}).family_ = Randomizer::Random(2, 5);
     }
 
 } // namespace hex
