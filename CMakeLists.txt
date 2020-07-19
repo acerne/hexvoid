@@ -32,6 +32,7 @@ add_executable(${PROJECT_NAME}      src/main.cpp
                                     src/hex_randomizer.cpp
                                     src/hex_score.cpp
                                     src/hex_systeminfo.cpp
+                                    src/hex_tiling.cpp
                                     src/hex_tiling_grid.cpp
                                     src/hex_tiling_symbol.cpp
                                     )

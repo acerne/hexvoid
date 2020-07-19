@@ -16,6 +16,8 @@ namespace hex
 
         Hexagon(int16_t x, int16_t y, double radius, uint8_t family) : x_(x), y_(y), radius_(radius), family_(family) {}
 
+        void Update(int16_t x, int16_t y);
+
         double Distance(int16_t x, int16_t y) const;
         std::array<std::array<int16_t, 6>, 2> GetVertices(Orientation orientation, double radius) const;
 
@@ -43,15 +45,32 @@ namespace hex
         static Pixel IndexToPixel(const Index& index, double radius, Math::Pixel center);
         static Index RoundIndex(double q, double r, double s);
         static int16_t IndexDistance(const Index& A, const Index& B);
+        static Index RotateIndex(const Index& index, int16_t rotation);
+        static void ValidateIndex(const Index& index);
 
     private:
         Math() {}
     };
 
+    inline Math::Index operator+(const Math::Index& A, const Math::Index& B)
+    {
+        return Math::Index(std::get<0>(A) + std::get<0>(B), std::get<1>(A) + std::get<1>(B),
+                           std::get<2>(A) + std::get<2>(B));
+    }
+
+    inline Math::Index operator-(const Math::Index& A, const Math::Index& B)
+    {
+        return Math::Index(std::get<0>(A) - std::get<0>(B), std::get<1>(A) - std::get<1>(B),
+                           std::get<2>(A) - std::get<2>(B));
+    }
+
     class Tiling : public Core
     {
     public:
         Tiling() {}
+
+        void Randomize();
+        void Rotate(Math::Index rotationCenter, int16_t rotationRadius, int16_t rotation);
 
     protected:
         std::map<Math::Index, Hexagon> tiles_;
@@ -67,7 +86,6 @@ namespace hex
         Grid(int16_t size, double hexRadius);
         Grid(int16_t size) : Grid(size, Engine::windowHeight_ / size / 1.5) {}
 
-        void Randomize();
         void RotateClockwise(int16_t cursorX, int16_t cursorY);
         void RotateCounterClockwise(int16_t cursorX, int16_t cursorY);
 
@@ -98,7 +116,7 @@ namespace hex
 
     private:
         void AddHexagon(int16_t q, int16_t r);
-        void AddHexagonRow(const std::vector<int16_t>& qVector, int16_t r);
+        void AddHexagonRow(const std::vector<int16_t>& qList, int16_t r);
         void AddHexagonRow(int16_t qStart, int16_t qEnd, int16_t r);
         void GenerateA();
         void GenerateB();

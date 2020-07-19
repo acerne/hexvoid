@@ -9,13 +9,6 @@
 namespace hex
 {
 
-    uint8_t Random(uint8_t min, uint8_t max)
-    {
-        static std::default_random_engine generator(time(0));
-        std::uniform_int_distribution<uint8_t> distribution(min, max);
-        return distribution(generator);
-    }
-
     Grid::Grid(int16_t size, double hexRadius)
     {
         if(!(size % 2)) throw std::runtime_error("Grid size must be an odd nubmer");
@@ -35,18 +28,13 @@ namespace hex
                 r <= std::min(gridRadius - 1, -q + gridRadius - 1); r++)
             {
                 int16_t s = -q - r;
-                uint8_t family = Random(2, 5);
+                uint8_t family = Randomizer::Random(2, 5);
                 Math::Index index{q, r, s};
+                Math::ValidateIndex(index);
                 Math::Pixel pixel = Math::IndexToPixel(index, hexRadius, tileCenter_);
                 tiles_.emplace(index, Hexagon{pixel.first, pixel.second, hexRadius, family});
             }
         }
-    }
-
-    void Grid::Randomize()
-    {
-        for(auto& [index, hexagon] : tiles_)
-            hexagon.family_ = Random(2, 5);
     }
 
     void Grid::RotateClockwise(int16_t cursorX, int16_t cursorY)
@@ -65,18 +53,7 @@ namespace hex
             else
             {
                 Score::TakeMoves(1);
-
-                int16_t q = std::get<0>(selected);
-                int16_t r = std::get<1>(selected);
-                int16_t s = std::get<2>(selected);
-
-                uint8_t swap = tiles_.at({q + 1, r - 1, s}).family_;
-                tiles_.at({q + 1, r - 1, s}).family_ = tiles_.at({q, r - 1, s + 1}).family_;
-                tiles_.at({q, r - 1, s + 1}).family_ = tiles_.at({q - 1, r, s + 1}).family_;
-                tiles_.at({q - 1, r, s + 1}).family_ = tiles_.at({q - 1, r + 1, s}).family_;
-                tiles_.at({q - 1, r + 1, s}).family_ = tiles_.at({q, r + 1, s - 1}).family_;
-                tiles_.at({q, r + 1, s - 1}).family_ = tiles_.at({q + 1, r, s - 1}).family_;
-                tiles_.at({q + 1, r, s - 1}).family_ = swap;
+                Rotate(selected, 1, 1);
             }
             Score::RegisterMove();
         }
@@ -98,18 +75,7 @@ namespace hex
             else
             {
                 Score::TakeMoves(1);
-
-                int16_t q = std::get<0>(selected);
-                int16_t r = std::get<1>(selected);
-                int16_t s = std::get<2>(selected);
-
-                uint8_t swap = tiles_.at({q + 1, r - 1, s}).family_;
-                tiles_.at({q + 1, r - 1, s}).family_ = tiles_.at({q + 1, r, s - 1}).family_;
-                tiles_.at({q + 1, r, s - 1}).family_ = tiles_.at({q, r + 1, s - 1}).family_;
-                tiles_.at({q, r + 1, s - 1}).family_ = tiles_.at({q - 1, r + 1, s}).family_;
-                tiles_.at({q - 1, r + 1, s}).family_ = tiles_.at({q - 1, r, s + 1}).family_;
-                tiles_.at({q - 1, r, s + 1}).family_ = tiles_.at({q, r - 1, s + 1}).family_;
-                tiles_.at({q, r - 1, s + 1}).family_ = swap;
+                Rotate(selected, 1, -1);
             }
         }
         Score::RegisterMove();
@@ -173,13 +139,13 @@ namespace hex
         int16_t r = std::get<1>(index);
         int16_t s = std::get<2>(index);
 
-        tiles_.at(index).family_ = Random(2, 5);
-        tiles_.at({q + 1, r - 1, s}).family_ = Random(2, 5);
-        tiles_.at({q, r - 1, s + 1}).family_ = Random(2, 5);
-        tiles_.at({q - 1, r, s + 1}).family_ = Random(2, 5);
-        tiles_.at({q - 1, r + 1, s}).family_ = Random(2, 5);
-        tiles_.at({q, r + 1, s - 1}).family_ = Random(2, 5);
-        tiles_.at({q + 1, r, s - 1}).family_ = Random(2, 5);
+        tiles_.at(index).family_ = Randomizer::Random(2, 5);
+        tiles_.at({q + 1, r - 1, s}).family_ = Randomizer::Random(2, 5);
+        tiles_.at({q, r - 1, s + 1}).family_ = Randomizer::Random(2, 5);
+        tiles_.at({q - 1, r, s + 1}).family_ = Randomizer::Random(2, 5);
+        tiles_.at({q - 1, r + 1, s}).family_ = Randomizer::Random(2, 5);
+        tiles_.at({q, r + 1, s - 1}).family_ = Randomizer::Random(2, 5);
+        tiles_.at({q + 1, r, s - 1}).family_ = Randomizer::Random(2, 5);
     }
 
     double Math::RadiusToApothem(double radius)
@@ -282,6 +248,40 @@ namespace hex
             std::get<2>(hover) = s;
         }
         return hover;
+    }
+
+    Math::Index Math::RotateIndex(const Index& index, int16_t rotation)
+    {
+        int16_t q = std::get<0>(index);
+        int16_t r = std::get<1>(index);
+        int16_t s = std::get<2>(index);
+        while(rotation > 0)
+        {
+            int16_t swap = q;
+            q = -r;
+            r = -s;
+            s = -swap;
+            rotation--;
+        }
+        while(rotation < 0)
+        {
+            int16_t swap = q;
+            q = -s;
+            s = -r;
+            r = -swap;
+            rotation++;
+        }
+        return {q, r, s};
+    }
+
+    void Math::ValidateIndex(const Index& index)
+    {
+        int16_t q = std::get<0>(index);
+        int16_t r = std::get<1>(index);
+        int16_t s = std::get<2>(index);
+        if(q + r + s != 0)
+            throw std::runtime_error("Invalid index state : q=" + std::to_string(q) + ", r=" + std::to_string(r)
+                                     + ", s=" + std::to_string(s));
     }
 
 } // namespace hex

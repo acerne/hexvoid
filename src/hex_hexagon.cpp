@@ -6,6 +6,13 @@
 
 namespace hex
 {
+
+    void Hexagon::Update(int16_t x, int16_t y)
+    {
+        x_ = x;
+        y_ = y;
+    }
+
     double Hexagon::Distance(int16_t x, int16_t y) const
     {
         return std::sqrt(std::pow(x_ - x, 2) + std::pow(y_ - y, 2));
