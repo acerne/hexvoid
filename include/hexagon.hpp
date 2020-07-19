@@ -78,6 +78,7 @@ namespace hex
     public:
         Grid(int16_t size, double hexRadius);
         Grid(int16_t size) : Grid(size, Engine::windowHeight_ / size / 1.5) {}
+        Grid() : Grid(9, Engine::windowHeight_ / 9 / 1.5) {}
 
         void RotateClockwise(int16_t cursorX, int16_t cursorY);
         void RotateCounterClockwise(int16_t cursorX, int16_t cursorY);

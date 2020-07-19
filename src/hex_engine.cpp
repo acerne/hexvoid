@@ -71,6 +71,11 @@ namespace hex
         SDL_Quit();
     }
 
+    bool Engine::GetQuitFlag()
+    {
+        return quit_;
+    }
+
     Engine::GameState Engine::GetGameState()
     {
         return state_;
@@ -97,8 +102,6 @@ namespace hex
 
     void Engine::Clear()
     {
-        if(quit_) Terminate();
-
         Palette::Color c = Palette::GetColor(Palette::Element::Background);
         SDL(SDL_SetRenderDrawColor(gRenderer_, c.r, c.g, c.b, 255));
         SDL(SDL_RenderClear(gRenderer_));

@@ -28,10 +28,10 @@ namespace hex
 
     void Menu::Update()
     {
-        SDL_Event clickEvent = Input::GetClick();
         switch(Engine::GetGameState())
         {
             case Engine::GameState::MAIN_MENU: {
+                SDL_Event clickEvent = Input::GetClick();
                 if(clickEvent.type == SDL_MOUSEBUTTONDOWN)
                 {
                     if(clickEvent.button.button == SDL_BUTTON_LEFT)
@@ -54,6 +54,7 @@ namespace hex
                 break;
             }
             case Engine::GameState::NEW_GAME_MENU: {
+                SDL_Event clickEvent = Input::GetClick();
                 if(clickEvent.type == SDL_MOUSEBUTTONDOWN)
                 {
                     if(clickEvent.button.button == SDL_BUTTON_LEFT)
@@ -78,6 +79,7 @@ namespace hex
                 break;
             }
             case Engine::GameState::OPTIONS_MENU: {
+                SDL_Event clickEvent = Input::GetClick();
                 if(clickEvent.type == SDL_MOUSEBUTTONDOWN)
                 {
                     switch(optionsMenu_.Click(clickEvent.motion.x, clickEvent.motion.y))

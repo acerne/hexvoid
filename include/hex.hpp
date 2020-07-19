@@ -50,6 +50,8 @@ namespace hex
         static void Initialize(const std::string& title, uint16_t windowWidth, uint16_t windowHeight);
         static void Terminate();
 
+        static bool GetQuitFlag();
+
         static GameState GetGameState();
         static void SetGameState(GameState state);
 

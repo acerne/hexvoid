@@ -23,6 +23,7 @@ include_directories(${SDL2_TTF_INCLUDE_DIRS})
 include_directories(lib/SDL_FontCache)
 
 add_executable(${PROJECT_NAME}      src/main.cpp 
+                                    src/hexvoid_game.cpp
                                     src/hex_engine.cpp
                                     src/hex_framerate.cpp
                                     src/hex_hexagon.cpp
