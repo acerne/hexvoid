@@ -7,7 +7,7 @@
 namespace hex
 {
 
-    Symbol::Symbol(char character, Math::Pixel center, double elementRadius)
+    Symbol::Symbol(char character, Tiling::Pixel center, double elementRadius)
     {
         tileCenter_ = center;
         hexRadius_ = elementRadius;
@@ -63,32 +63,34 @@ namespace hex
             GenerateY();
         else if(character == 'Z')
             GenerateZ();
+        else if(character == ' ')
+            isSpace = true;
     }
 
-    void Symbol::SetPosition(Math::Pixel center)
+    void Symbol::SetPosition(Tiling::Pixel center)
     {
         tileCenter_ = center;
         for(auto& element : tiles_)
         {
-            Math::Pixel pixel = Math::IndexToPixel(element.first, hexRadius_, tileCenter_);
+            Pixel pixel = IndexToPixel(element.first, hexRadius_, tileCenter_);
             element.second.x_ = pixel.first;
             element.second.y_ = pixel.second;
         }
     }
 
-    void Symbol::Move(Math::Pixel movement)
+    void Symbol::Move(Tiling::Pixel movement)
     {
         tileCenter_.first += movement.first;
         tileCenter_.second += movement.second;
         for(auto& element : tiles_)
         {
-            Math::Pixel pixel = Math::IndexToPixel(element.first, hexRadius_, tileCenter_);
+            Pixel pixel = IndexToPixel(element.first, hexRadius_, tileCenter_);
             element.second.x_ = pixel.first;
             element.second.y_ = pixel.second;
         }
     }
 
-    Math::Pixel Symbol::GetPosition() const
+    Tiling::Pixel Symbol::GetPosition() const
     {
         return tileCenter_;
     }
@@ -102,14 +104,22 @@ namespace hex
         {
             int16_t qA = std::get<0>(hexA.first);
             int16_t rA = std::get<1>(hexA.first);
-            for(const auto& hexB : right.tiles_)
+            if(right.isSpace)
             {
-                int16_t rB = std::get<1>(hexB.first);
-                if(rA == rB)
+                int16_t apart = spacing - qA;
+                if(apart < closest) closest = apart;
+            }
+            else
+            {
+                for(const auto& hexB : right.tiles_)
                 {
-                    int16_t qB = std::get<0>(hexB.first);
-                    int16_t apart = qB + spacing - qA;
-                    if(apart < closest) closest = apart;
+                    int16_t rB = std::get<1>(hexB.first);
+                    if(rA == rB)
+                    {
+                        int16_t qB = std::get<0>(hexB.first);
+                        int16_t apart = qB + spacing - qA;
+                        if(apart < closest) closest = apart;
+                    }
                 }
             }
         }
@@ -124,8 +134,8 @@ namespace hex
 
     void Symbol::AddHexagon(int16_t q, int16_t r)
     {
-        Math::Index index{q, r, -q - r};
-        Math::Pixel pixel = Math::IndexToPixel(index, hexRadius_, tileCenter_);
+        Index index{q, r, -q - r};
+        Pixel pixel = IndexToPixel(index, hexRadius_, tileCenter_);
         tiles_.emplace(index, Hexagon{pixel.first, pixel.second, hexRadius_, 1});
     }
 
@@ -456,7 +466,6 @@ namespace hex
 
     void Symbol::GenerateSeparator()
     {
-
         AddHexagon(2, -4);
         AddHexagon(1, -3);
         AddHexagon(2, -3);

@@ -7,7 +7,7 @@
 namespace hex
 {
 
-    Logo::Logo(const std::string& title, Math::Pixel center, double hexRadius)
+    Logo::Logo(const std::string& title, Tiling::Pixel center, double hexRadius)
     {
         elementRadius_ = hexRadius;
 
@@ -21,7 +21,7 @@ namespace hex
             spacing.at(i) = spacing.at(i - 1) + logotype_.at(i - 1).CalculateBestSpacing(logotype_.at(i));
 
         int16_t totalSpacing = spacing.back();
-        double hexWidth = 2 * Math::RadiusToApothem(elementRadius_);
+        double hexWidth = 2 * Tiling::RadiusToApothem(elementRadius_);
         int16_t xOffset = center.first - totalSpacing * hexWidth / 2;
         int16_t y = center.second;
 

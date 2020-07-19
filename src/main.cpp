@@ -22,6 +22,7 @@ int main(int argc, char* args[])
     GameState state = GameState::SPLASH_SCREEN;
 
     hex::Logo logotype{"HEXVOID", {400, 300}, 8};
+    hex::Logo gameOverScreen{"GAME OVER", {400, 300}, 8};
     int64_t splasScreenDuration = 3000;
 
     hex::Menu mainMenu(60);
