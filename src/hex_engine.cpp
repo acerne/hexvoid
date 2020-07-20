@@ -27,6 +27,7 @@ namespace hex
     bool Engine::drawingReady_ = true;
 
     Engine::GameState Engine::state_;
+
     std::thread Engine::inputThread_;
     std::thread Engine::displayThread_;
 
@@ -53,7 +54,7 @@ namespace hex
         inputThread_ = std::thread(Input::PollingThread);
         displayThread_ = std::thread(Engine::PresentingThread);
 
-        state_ = GameState::MAIN_MENU;
+        state_ = GameState::LOAD;
     }
 
     void Engine::Terminate()

@@ -11,12 +11,6 @@ int main(int argc, char* args[])
     hex::Menu::Initialize();
     hexvoid::Game::Initialize();
 
-    hex::Splash logotype{"HEXVOID", {400, 300}, 8};
-    hex::Splash gameOver{"GAME OVER", {400, 300}, 6};
-    int64_t splasScreenDuration = 3000;
-
-    auto startTime = std::chrono::system_clock::now();
-
     while(!hex::Engine::GetQuitFlag())
     {
         hex::Menu::Update();
@@ -24,17 +18,6 @@ int main(int argc, char* args[])
         hex::SystemInfo::Update();
 
         hex::Engine::WaitDisplay();
-        // switch(state)
-        // {
-        //     case GameState::SPLASH_SCREEN:
-        //         logotype.Draw();
-        //         break;
-        //     case GameState::GAME_OVER:
-        //         gameOver.Draw();
-        //         break;
-        //     default:
-        //         break;
-        // }
         hex::Menu::Draw();
         hexvoid::Game::Draw();
         hex::SystemInfo::Draw();

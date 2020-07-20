@@ -146,6 +146,7 @@ namespace hex
     class Splash : public Core
     {
     public:
+        Splash() {} // TODO: remove if not necessary
         Splash(const std::string& title, Tiling::Pixel center, double hexRadius);
 
         void Draw() const;

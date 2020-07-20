@@ -4,18 +4,35 @@ using namespace hex;
 
 namespace hexvoid
 {
-    Grid hexvoid::Game::gameGrid_;
+    Grid Game::gameGrid_;
+    Splash Game::titleSplash_;
+    Splash Game::gameOverSplash_;
+    std::chrono::system_clock::time_point Game::startTime_;
+    int64_t Game::splashDuration_ = 3000;
 
     void Game::Initialize()
     {
-        // Grid grid(3);
-        gameGrid_ = Grid(9);
+        gameGrid_ = Grid{9};
+        titleSplash_ = Splash{"HEXVOID", {400, 300}, 8};
+        gameOverSplash_ = Splash{"GAME OVER", {400, 300}, 8};
     }
 
     void Game::Update()
     {
         switch(Engine::GetGameState())
         {
+            case Engine::GameState::LOAD: {
+                startTime_ = std::chrono::system_clock::now();
+                Engine::SetGameState(Engine::GameState::SPLASH_SCREEN);
+                break;
+            }
+            case Engine::GameState::SPLASH_SCREEN:
+            case Engine::GameState::GAME_OVER: {
+                auto now = std::chrono::system_clock::now();
+                int64_t msElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime_).count();
+                if(msElapsed > splashDuration_) Engine::SetGameState(Engine::GameState::MAIN_MENU);
+                break;
+            }
             case Engine::GameState::GAME: {
                 SDL_Event clickEvent = Input::GetClick();
                 switch(clickEvent.button.button)
@@ -29,11 +46,11 @@ namespace hexvoid
                     default:
                         break;
                 }
-                // if(Score::IsGameOver())
-                // {
-                //     startTime = std::chrono::system_clock::now();
-                //     state = GameState::GAME_OVER;
-                // }
+                if(Score::IsGameOver())
+                {
+                    startTime_ = std::chrono::system_clock::now();
+                    Engine::SetGameState(Engine::GameState::GAME_OVER);
+                }
                 break;
             }
             default:
@@ -45,9 +62,15 @@ namespace hexvoid
     {
         switch(Engine::GetGameState())
         {
+            case Engine::GameState::SPLASH_SCREEN:
+                titleSplash_.Draw();
+                break;
             case Engine::GameState::GAME:
                 gameGrid_.Draw(Input::cursorX, Input::cursorY);
                 Score::Draw();
+                break;
+            case Engine::GameState::GAME_OVER:
+                gameOverSplash_.Draw();
                 break;
             default:
                 break;

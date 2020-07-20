@@ -39,6 +39,7 @@ namespace hex
     public:
         enum class GameState
         {
+            LOAD,
             SPLASH_SCREEN,
             MAIN_MENU,
             NEW_GAME_MENU,
