@@ -23,7 +23,7 @@ int main(int argc, char* args[])
         hexvoid::Game::Update();
         hex::SystemInfo::Update();
 
-        hex::Engine::Clear();
+        hex::Engine::WaitDisplay();
         // switch(state)
         // {
         //     case GameState::SPLASH_SCREEN:
@@ -38,7 +38,7 @@ int main(int argc, char* args[])
         hex::Menu::Draw();
         hexvoid::Game::Draw();
         hex::SystemInfo::Draw();
-        hex::Engine::Display();
+        hex::Engine::ReadyToDisplay();
     }
 
     hex::Engine::Terminate();

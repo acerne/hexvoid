@@ -21,8 +21,14 @@ namespace hex
         if(error < 0) throw std::runtime_error("SDL failed: " + std::string(SDL_GetError()));
     }
 
+    std::mutex Engine::renderMutex_;
+    std::condition_variable Engine::renderCondition_;
+    bool Engine::renderReady_ = false;
+    bool Engine::drawingReady_ = true;
+
     Engine::GameState Engine::state_;
     std::thread Engine::inputThread_;
+    std::thread Engine::displayThread_;
 
     void Engine::Initialize(const std::string& title, uint16_t windowWidth, uint16_t windowHeight)
     {
@@ -45,6 +51,7 @@ namespace hex
         FC_LoadFont(font_, gRenderer_, fontPath_, 36, {255, 255, 255, 255}, TTF_STYLE_NORMAL);
 
         inputThread_ = std::thread(Input::PollingThread);
+        displayThread_ = std::thread(Engine::PresentingThread);
 
         state_ = GameState::MAIN_MENU;
     }
@@ -52,6 +59,7 @@ namespace hex
     void Engine::Terminate()
     {
         inputThread_.join();
+        displayThread_.join();
 
         SDL_FreeSurface(gSurface_);
         gSurface_ = NULL;
@@ -100,16 +108,47 @@ namespace hex
         SDL_SetWindowSize(gWindow_, windowWidth, windowHeight_);
     }
 
-    void Engine::Clear()
+    void Engine::WaitDisplay()
     {
-        Palette::Color c = Palette::GetColor(Palette::Element::Background);
-        SDL(SDL_SetRenderDrawColor(gRenderer_, c.r, c.g, c.b, 255));
-        SDL(SDL_RenderClear(gRenderer_));
+        std::unique_lock<std::mutex> lock(renderMutex_);
+        while(!drawingReady_)
+            renderCondition_.wait(lock);
+
+        drawingReady_ = false;
     }
 
-    void Engine::Display()
+    void Engine::ReadyToDisplay()
     {
-        SDL_RenderPresent(gRenderer_);
+        std::unique_lock<std::mutex> lock(renderMutex_);
+        renderReady_ = true;
+        renderCondition_.notify_all();
+    }
+
+    void Engine::PresentingThread()
+    {
+        auto lastRender = std::chrono::system_clock::now();
+        int64_t usFrameDuration = 1e6 / 60;
+        while(!quit_)
+        {
+            std::unique_lock<std::mutex> lock(renderMutex_);
+            while(!renderReady_)
+                renderCondition_.wait(lock);
+
+            auto now = std::chrono::system_clock::now();
+            int64_t usElapsed = std::chrono::duration_cast<std::chrono::microseconds>(now - lastRender).count();
+            if(usElapsed < usFrameDuration)
+                std::this_thread::sleep_for(std::chrono::microseconds(usFrameDuration - usElapsed));
+
+            SDL_RenderPresent(gRenderer_);
+            lastRender = std::chrono::system_clock::now();
+            Palette::Color c = Palette::GetColor(Palette::Element::Background);
+            SDL(SDL_SetRenderDrawColor(gRenderer_, c.r, c.g, c.b, 255));
+            SDL(SDL_RenderClear(gRenderer_));
+
+            renderReady_ = false;
+            drawingReady_ = true;
+            renderCondition_.notify_all();
+        }
     }
 
 } // namespace hex

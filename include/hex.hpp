@@ -50,6 +50,8 @@ namespace hex
         static void Initialize(const std::string& title, uint16_t windowWidth, uint16_t windowHeight);
         static void Terminate();
 
+        static void PresentingThread();
+
         static bool GetQuitFlag();
 
         static GameState GetGameState();
@@ -57,15 +59,20 @@ namespace hex
 
         static void ChangeResolution(uint16_t windowWidth, uint16_t windowHeight);
 
-        static void Clear();
-        static void Display();
+        static void WaitDisplay();
+        static void ReadyToDisplay();
 
     private:
         Engine() {}
+        static std::mutex renderMutex_;
+        static std::condition_variable renderCondition_;
+        static bool renderReady_;
+        static bool drawingReady_;
 
         static GameState state_;
 
         static std::thread inputThread_;
+        static std::thread displayThread_;
     };
 
     class Input : public Core
