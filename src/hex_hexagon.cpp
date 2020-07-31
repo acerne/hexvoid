@@ -41,8 +41,18 @@ namespace hex
 
         Palette::Color c = GetHexagonColor();
         Palette::Color b = Palette::GetColor(Palette::Element::Background);
-        SDL(filledPolygonRGBA(Engine::gRenderer_, vertices[0].data(), vertices[1].data(), 6, c.r, c.g, c.b, 255));
-        SDL(polygonRGBA(Engine::gRenderer_, vertices[0].data(), vertices[1].data(), 6, b.r, b.g, b.b, 255));
+        SDL(filledPolygonRGBA(Engine::gRenderer_, vertices[0].data(), vertices[1].data(), 6, c.r, c.g, c.b, c.a));
+        SDL(polygonRGBA(Engine::gRenderer_, vertices[0].data(), vertices[1].data(), 6, b.r, b.g, b.b, b.a));
+    }
+
+    void Hexagon::Draw(Palette::Color color, double angle) const
+    {
+        std::array<std::array<int16_t, 6>, 2> vertices = GetVertices(angle, radius_);
+
+        Palette::Color b = Palette::GetColor(Palette::Element::Background);
+        SDL(filledPolygonRGBA(Engine::gRenderer_, vertices[0].data(), vertices[1].data(), 6, color.r, color.g, color.b,
+                              color.a));
+        SDL(polygonRGBA(Engine::gRenderer_, vertices[0].data(), vertices[1].data(), 6, b.r, b.g, b.b, b.a));
     }
 
     void Hexagon::DrawHighlight(double angle) const
@@ -50,7 +60,7 @@ namespace hex
         std::array<std::array<int16_t, 6>, 2> vertices = GetVertices(angle, 1.2 * radius_);
 
         Palette::Color f = Palette::GetColor(Palette::Element::Foreground);
-        SDL(filledPolygonRGBA(Engine::gRenderer_, vertices[0].data(), vertices[1].data(), 6, f.r, f.g, f.b, 255));
+        SDL(filledPolygonRGBA(Engine::gRenderer_, vertices[0].data(), vertices[1].data(), 6, f.r, f.g, f.b, f.a));
     }
 
     Palette::Color Hexagon::GetHexagonColor() const

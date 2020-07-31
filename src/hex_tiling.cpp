@@ -198,4 +198,9 @@ namespace hex
                                      + ", s=" + std::to_string(s));
     }
 
+    const std::map<Tiling::Index, Hexagon>& Tiling::GetTiles() const
+    {
+        return tiles_;
+    }
+
 } // namespace hex

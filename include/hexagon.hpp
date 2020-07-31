@@ -16,6 +16,7 @@ namespace hex
         std::array<std::array<int16_t, 6>, 2> GetVertices(double orientation, double radius) const;
 
         void Draw(double angle = 0) const;
+        void Draw(Palette::Color color, double angle = 0) const;
         void DrawHighlight(double angle = 0) const;
 
         int16_t x_;
@@ -51,6 +52,8 @@ namespace hex
         static int16_t IndexDistance(const Index& A, const Index& B);
         static Index RotateIndex(const Index& index, int16_t rotation);
         static void ValidateIndex(const Index& index);
+
+        const std::map<Index, Hexagon>& GetTiles() const;
 
     protected:
         std::map<Index, Hexagon> tiles_;
@@ -141,7 +144,7 @@ namespace hex
     class Splash : public Core
     {
     public:
-        Splash() {} // TODO: remove if not necessary
+        Splash() {} // TODO: find a way to remove
         Splash(const std::string& title, Tiling::Pixel center, double hexRadius);
 
         void Draw() const;
@@ -149,6 +152,23 @@ namespace hex
     private:
         std::vector<Symbol> logotype_;
         double elementRadius_;
+    };
+
+    class FadeOut : public Background
+    {
+    public:
+        FadeOut() {} // TODO: find a way to remove
+        FadeOut(int16_t size, double hexRadius, uint8_t maxAlpha);
+
+        void Initialize();
+
+        void UpdatePhysics();
+        void Draw();
+
+    private:
+        Grid grid_;
+        std::map<Tiling::Index, Palette::Color> colors_;
+        uint8_t maxAlpha_;
     };
 
 } // namespace hex

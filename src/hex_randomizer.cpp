@@ -35,4 +35,11 @@ namespace hex
         throw std::runtime_error("Randomizer found an unexpected end");
     }
 
+    bool Randomizer::Chance(uint32_t oneInA)
+    {
+        static std::default_random_engine generator(time(0));
+        std::uniform_int_distribution<uint32_t> distribution(1, oneInA);
+        return distribution(generator) == oneInA;
+    }
+
 } // namespace hex

@@ -18,8 +18,8 @@ int main(int argc, char* args[])
         hex::SystemInfo::Update();
 
         hex::Engine::WaitDisplay();
-        hex::Menu::Draw();
         hexvoid::Game::Draw();
+        hex::Menu::Draw();
         hex::SystemInfo::Draw();
         hex::Engine::ReadyToDisplay();
     }

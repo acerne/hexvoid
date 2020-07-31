@@ -43,6 +43,24 @@ namespace hex
         }
     }
 
+    Palette::Color Palette::RandomColor()
+    {
+        uint8_t randomIndex = Randomizer::Random(0, 3);
+        switch(randomIndex)
+        {
+            case 0:
+                return themes_.at(selectedTheme_).A;
+            case 1:
+                return themes_.at(selectedTheme_).B;
+            case 2:
+                return themes_.at(selectedTheme_).C;
+            case 3:
+                return themes_.at(selectedTheme_).D;
+            default:
+                throw std::runtime_error("Randomizer somehow failed");
+        }
+    }
+
     std::string Palette::GetThemeName()
     {
         return selectedTheme_;

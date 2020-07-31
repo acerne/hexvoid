@@ -24,6 +24,7 @@ include_directories(lib/SDL_FontCache)
 
 add_executable(${PROJECT_NAME}      src/main.cpp 
                                     src/hexvoid_game.cpp
+                                    src/hex_background.cpp
                                     src/hex_engine.cpp
                                     src/hex_hexagon.cpp
                                     src/hex_input.cpp

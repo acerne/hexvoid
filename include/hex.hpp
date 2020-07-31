@@ -99,6 +99,17 @@ namespace hex
         static std::queue<SDL_Event> keys_;
     };
 
+    class Background : public Core
+    {
+    public:
+        Background() {}
+
+        virtual void UpdatePhysics() = 0;
+        virtual void Draw() = 0;
+
+    private:
+    };
+
     class Menu : public Core
     {
     public:
@@ -166,16 +177,29 @@ namespace hex
 
         struct Color
         {
-            Color(uint8_t r, uint8_t g, uint8_t b) {}
+            Color(uint8_t r, uint8_t g, uint8_t b) : a(255) {}
+            Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {}
             Color(int32_t hexValue)
             {
-                r = ((hexValue >> 16) & 0xFF);
-                g = ((hexValue >> 8) & 0xFF);
-                b = ((hexValue)&0xFF);
+                if(hexValue > 0xFFFFFF)
+                {
+                    r = ((hexValue >> 24) & 0xFF);
+                    g = ((hexValue >> 16) & 0xFF);
+                    b = ((hexValue >> 8) & 0xFF);
+                    a = ((hexValue)&0xFF);
+                }
+                else
+                {
+                    r = ((hexValue >> 16) & 0xFF);
+                    g = ((hexValue >> 8) & 0xFF);
+                    b = ((hexValue)&0xFF);
+                    a = 255;
+                }
             }
             uint8_t r;
             uint8_t g;
             uint8_t b;
+            uint8_t a;
         };
 
         struct Theme
@@ -190,6 +214,7 @@ namespace hex
 
         static void ChangeTheme(const std::string& themeName);
         static Color GetColor(Element id);
+        static Color RandomColor();
         static std::string GetThemeName();
         static std::vector<std::string> GetThemeNames();
 
@@ -207,6 +232,7 @@ namespace hex
 
         static uint8_t Random(uint8_t min, uint8_t max);
         static uint8_t WeightedRandom(const std::vector<ValueAndWeight>& candidates);
+        static bool Chance(uint32_t oneInA);
 
     private:
         Randomizer() {}
