@@ -18,65 +18,26 @@ namespace hex
         return std::sqrt(std::pow(x_ - x, 2) + std::pow(y_ - y, 2));
     }
 
-    std::array<std::array<int16_t, 6>, 2> Hexagon::GetVertices(Orientation orientation, double radius) const
+    std::array<std::array<int16_t, 6>, 2> Hexagon::GetVertices(double orientation, double radius) const
     {
         const int8_t X = 0;
         const int8_t Y = 1;
         std::array<std::array<int16_t, 6>, 2> vertices;
 
-        const double sin30 = std::sin(30.0 * M_PI / 180.0);
-        const double cos30 = std::cos(30.0 * M_PI / 180.0);
-
-        int16_t shortOffset = cos30 * radius;
-        int16_t longOffset = sin30 * radius;
-
-        if(orientation == Orientation::Horizontal)
+        for(int i = 0; i < 6; i++)
         {
-            vertices[X][0] = x_;
-            vertices[Y][0] = y_ + radius;
+            double radAngle = (orientation + 30.0 + i * 60.0) * M_PI / 180.0;
 
-            vertices[X][1] = x_ - shortOffset;
-            vertices[Y][1] = y_ + longOffset;
-
-            vertices[X][2] = x_ - shortOffset;
-            vertices[Y][2] = y_ - longOffset;
-
-            vertices[X][3] = x_;
-            vertices[Y][3] = y_ - radius;
-
-            vertices[X][4] = x_ + shortOffset;
-            vertices[Y][4] = y_ - longOffset;
-
-            vertices[X][5] = x_ + shortOffset;
-            vertices[Y][5] = y_ + longOffset;
-        }
-        else
-        {
-            vertices[X][0] = x_ + radius;
-            vertices[Y][0] = y_;
-
-            vertices[X][1] = x_ + longOffset;
-            vertices[Y][1] = y_ - shortOffset;
-
-            vertices[X][2] = x_ - longOffset;
-            vertices[Y][2] = y_ - shortOffset;
-
-            vertices[X][3] = x_ - radius;
-            vertices[Y][3] = y_;
-
-            vertices[X][4] = x_ - longOffset;
-            vertices[Y][4] = y_ + shortOffset;
-
-            vertices[X][5] = x_ + longOffset;
-            vertices[Y][5] = y_ + shortOffset;
+            vertices[X][i] = std::cos(radAngle) * radius + x_;
+            vertices[Y][i] = std::sin(radAngle) * radius + y_;
         }
 
         return std::move(vertices);
     }
 
-    void Hexagon::Draw() const
+    void Hexagon::Draw(double angle) const
     {
-        std::array<std::array<int16_t, 6>, 2> vertices = GetVertices(Orientation::Horizontal, radius_);
+        std::array<std::array<int16_t, 6>, 2> vertices = GetVertices(angle, radius_);
 
         Palette::Color c = GetHexagonColor();
         Palette::Color b = Palette::GetColor(Palette::Element::Background);
@@ -84,9 +45,9 @@ namespace hex
         SDL(polygonRGBA(Engine::gRenderer_, vertices[0].data(), vertices[1].data(), 6, b.r, b.g, b.b, 255));
     }
 
-    void Hexagon::DrawHighlight() const
+    void Hexagon::DrawHighlight(double angle) const
     {
-        std::array<std::array<int16_t, 6>, 2> vertices = GetVertices(Orientation::Horizontal, 1.2 * radius_);
+        std::array<std::array<int16_t, 6>, 2> vertices = GetVertices(angle, 1.2 * radius_);
 
         Palette::Color f = Palette::GetColor(Palette::Element::Foreground);
         SDL(filledPolygonRGBA(Engine::gRenderer_, vertices[0].data(), vertices[1].data(), 6, f.r, f.g, f.b, 255));

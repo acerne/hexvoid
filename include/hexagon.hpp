@@ -8,26 +8,21 @@ namespace hex
     class Hexagon : public Core
     {
     public:
-        enum class Orientation
-        {
-            Horizontal,
-            Vertical
-        };
-
         Hexagon(int16_t x, int16_t y, double radius, uint8_t family) : x_(x), y_(y), radius_(radius), family_(family) {}
 
         void Update(int16_t x, int16_t y);
 
         double Distance(int16_t x, int16_t y) const;
-        std::array<std::array<int16_t, 6>, 2> GetVertices(Orientation orientation, double radius) const;
+        std::array<std::array<int16_t, 6>, 2> GetVertices(double orientation, double radius) const;
 
-        void Draw() const;
-        void DrawHighlight() const;
+        void Draw(double angle = 0) const;
+        void DrawHighlight(double angle = 0) const;
 
         int16_t x_;
         int16_t y_;
         double radius_;
         uint8_t family_;
+        double orientation_;
 
     private:
         Palette::Color GetHexagonColor() const;

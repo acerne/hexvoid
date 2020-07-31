@@ -44,6 +44,7 @@ namespace hex
 
     void Grid::Draw(int16_t cursorX, int16_t cursorY) const
     {
+
         Index selected = PixelToIndex({cursorX, cursorY}, hexRadius_, tileCenter_);
         bool inside = IndexDistance({0, 0, 0}, selected) < (gridSize_ - 1) / 2 - 1;
 
