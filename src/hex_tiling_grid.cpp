@@ -31,8 +31,8 @@ namespace hex
                 uint8_t family = Randomizer::Random(2, 5);
                 Index index{q, r, s};
                 ValidateIndex(index);
-                Pixel pixel = IndexToPixel(index, hexRadius, tileCenter_);
-                tiles_.emplace(index, Hexagon{pixel.first, pixel.second, hexRadius, family});
+                auto [x, y] = IndexToPixel(index, hexRadius, tileCenter_);
+                tiles_.emplace(index, Hexagon{x, y, hexRadius, family});
             }
         }
     }

@@ -128,15 +128,15 @@ namespace hex
 
     void Symbol::Draw() const
     {
-        for(auto& element : tiles_)
-            element.second.Draw();
+        for(const auto& [index, hexagon] : tiles_)
+            hexagon.Draw();
     }
 
     void Symbol::AddHexagon(int16_t q, int16_t r)
     {
         Index index{q, r, -q - r};
-        Pixel pixel = IndexToPixel(index, hexRadius_, tileCenter_);
-        tiles_.emplace(index, Hexagon{pixel.first, pixel.second, hexRadius_, 1});
+        auto [x, y] = IndexToPixel(index, hexRadius_, tileCenter_);
+        tiles_.emplace(index, Hexagon{x, y, hexRadius_, 1});
     }
 
     void Symbol::AddHexagonRow(const std::vector<int16_t>& qList, int16_t r)

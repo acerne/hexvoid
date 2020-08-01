@@ -6,19 +6,111 @@
 
 namespace hex
 {
-
-    void Hexagon::Update(int16_t x, int16_t y)
+    Hexagon::Hexagon(double x, double y, double radius, uint8_t family)
     {
         x_ = x;
         y_ = y;
+        radius_ = radius;
+        family_ = family;
+        orientation_ = 0;
+        UpdateVertices();
     }
 
-    double Hexagon::Distance(int16_t x, int16_t y) const
+    void Hexagon::Rotate(double angle)
+    {
+        orientation_ += angle;
+        while(orientation_ >= 360)
+            orientation_ -= 360;
+        while(orientation_ < 0)
+            orientation_ += 360;
+
+        UpdateVertices();
+    }
+
+    void Hexagon::Rotate(double pointX, double pointY, double angle)
+    {
+        orientation_ += angle;
+        while(orientation_ >= 360)
+            orientation_ -= 360;
+        while(orientation_ < 0)
+            orientation_ += 360;
+
+        double radAngle = angle * M_PI / 180;
+
+        double x = cos(radAngle) * (x_ - pointX) - sin(radAngle) * (y_ - pointY) + pointX;
+        double y = sin(radAngle) * (x_ - pointX) + cos(radAngle) * (y_ - pointY) + pointY;
+
+        x_ = x;
+        y_ = y;
+
+        UpdateVertices();
+    }
+
+    void Hexagon::RotateTo(double pointX, double pointY, double orientation)
+    {
+        orientation_ = orientation;
+        while(orientation_ >= 360)
+            orientation_ -= 360;
+        while(orientation_ < 0)
+            orientation_ += 360;
+
+        double radAngle = orientation_ * M_PI / 180.0;
+
+        double x = cos(radAngle) * (x_ - pointX) + sin(radAngle) * (y_ - pointY) + pointX;
+        double y = -sin(radAngle) * (x_ - pointX) + cos(radAngle) * (y_ - pointY) + pointY;
+
+        x_ = x;
+        y_ = y;
+
+        UpdateVertices();
+    }
+
+    // void Hexagon::Update(int16_t x, int16_t y, double orientation)
+    // {
+    //     x_ = x;
+    //     y_ = y;
+    //     orientation_ = orientation;
+    //     UpdateVertices();
+    // }
+
+    void Hexagon::Update(double x, double y)
+    {
+        x_ = x;
+        y_ = y;
+        UpdateVertices();
+    }
+
+    // void Hexagon::Update(double orientation)
+    // {
+    //     orientation_ = orientation;
+    //     UpdateVertices();
+    // }
+
+    void Hexagon::UpdateVertices()
+    {
+        const int8_t X = 0;
+        const int8_t Y = 1;
+
+        for(int i = 0; i < 6; i++)
+        {
+            double radAngle = (orientation_ + 30.0 + i * 60.0) * M_PI / 180.0;
+
+            vertices_[X][i] = std::cos(radAngle) * radius_ + x_;
+            vertices_[Y][i] = std::sin(radAngle) * radius_ + y_;
+        }
+    }
+
+    double Hexagon::Distance(double x, double y) const
     {
         return std::sqrt(std::pow(x_ - x, 2) + std::pow(y_ - y, 2));
     }
 
-    std::array<std::array<int16_t, 6>, 2> Hexagon::GetVertices(double orientation, double radius) const
+    std::array<std::array<int16_t, 6>, 2> Hexagon::GetVertices() const
+    {
+        return vertices_;
+    }
+
+    std::array<std::array<int16_t, 6>, 2> Hexagon::CalculateVertices(double orientation, double radius) const
     {
         const int8_t X = 0;
         const int8_t Y = 1;
@@ -35,29 +127,25 @@ namespace hex
         return std::move(vertices);
     }
 
-    void Hexagon::Draw(double angle) const
+    void Hexagon::Draw() const
     {
-        std::array<std::array<int16_t, 6>, 2> vertices = GetVertices(angle, radius_);
-
         Palette::Color c = GetHexagonColor();
         Palette::Color b = Palette::GetColor(Palette::Element::Background);
-        SDL(filledPolygonRGBA(Engine::gRenderer_, vertices[0].data(), vertices[1].data(), 6, c.r, c.g, c.b, c.a));
-        SDL(polygonRGBA(Engine::gRenderer_, vertices[0].data(), vertices[1].data(), 6, b.r, b.g, b.b, b.a));
+        SDL(filledPolygonRGBA(Engine::gRenderer_, vertices_[0].data(), vertices_[1].data(), 6, c.r, c.g, c.b, c.a));
+        SDL(polygonRGBA(Engine::gRenderer_, vertices_[0].data(), vertices_[1].data(), 6, b.r, b.g, b.b, b.a));
     }
 
-    void Hexagon::Draw(Palette::Color color, double angle) const
+    void Hexagon::Draw(Palette::Color color) const
     {
-        std::array<std::array<int16_t, 6>, 2> vertices = GetVertices(angle, radius_);
-
         Palette::Color b = Palette::GetColor(Palette::Element::Background);
-        SDL(filledPolygonRGBA(Engine::gRenderer_, vertices[0].data(), vertices[1].data(), 6, color.r, color.g, color.b,
-                              color.a));
-        SDL(polygonRGBA(Engine::gRenderer_, vertices[0].data(), vertices[1].data(), 6, b.r, b.g, b.b, b.a));
+        SDL(filledPolygonRGBA(Engine::gRenderer_, vertices_[0].data(), vertices_[1].data(), 6, color.r, color.g,
+                              color.b, color.a));
+        SDL(polygonRGBA(Engine::gRenderer_, vertices_[0].data(), vertices_[1].data(), 6, b.r, b.g, b.b, b.a));
     }
 
-    void Hexagon::DrawHighlight(double angle) const
+    void Hexagon::DrawHighlight() const
     {
-        std::array<std::array<int16_t, 6>, 2> vertices = GetVertices(angle, 1.2 * radius_);
+        std::array<std::array<int16_t, 6>, 2> vertices = CalculateVertices(orientation_, 1.2 * radius_);
 
         Palette::Color f = Palette::GetColor(Palette::Element::Foreground);
         SDL(filledPolygonRGBA(Engine::gRenderer_, vertices[0].data(), vertices[1].data(), 6, f.r, f.g, f.b, f.a));

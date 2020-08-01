@@ -13,10 +13,12 @@ int main(int argc, char* args[])
 
     while(!hex::Engine::GetQuitFlag())
     {
+        // Update phyiscs
         hex::Menu::Update();
         hexvoid::Game::Update();
         hex::SystemInfo::Update();
 
+        // Display
         hex::Engine::WaitDisplay();
         hexvoid::Game::Draw();
         hex::Menu::Draw();

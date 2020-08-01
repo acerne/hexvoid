@@ -1,5 +1,7 @@
 #pragma once
 
+#include <chrono>
+
 #include "hex.hpp"
 
 namespace hex
@@ -8,32 +10,41 @@ namespace hex
     class Hexagon : public Core
     {
     public:
-        Hexagon(int16_t x, int16_t y, double radius, uint8_t family) : x_(x), y_(y), radius_(radius), family_(family) {}
+        Hexagon(double x, double y, double radius, uint8_t family);
 
-        void Update(int16_t x, int16_t y);
+        void Rotate(double angle);
+        void Rotate(double pointX, double pointY, double angle);
+        void RotateTo(double pointX, double pointY, double orientation);
 
-        double Distance(int16_t x, int16_t y) const;
-        std::array<std::array<int16_t, 6>, 2> GetVertices(double orientation, double radius) const;
+        // void Update(int16_t x, int16_t y, double orientation);
+        void Update(double x, double y);
+        // void Update(double orientation);
 
-        void Draw(double angle = 0) const;
-        void Draw(Palette::Color color, double angle = 0) const;
-        void DrawHighlight(double angle = 0) const;
+        double Distance(double x, double y) const;
+        std::array<std::array<int16_t, 6>, 2> GetVertices() const;
+        std::array<std::array<int16_t, 6>, 2> CalculateVertices(double orientation, double radius) const;
 
-        int16_t x_;
-        int16_t y_;
+        void Draw() const;
+        void Draw(Palette::Color color) const;
+        void DrawHighlight() const;
+
+        double x_;
+        double y_;
         double radius_;
         uint8_t family_;
         double orientation_;
 
     private:
+        std::array<std::array<int16_t, 6>, 2> vertices_;
         Palette::Color GetHexagonColor() const;
+        void UpdateVertices();
     };
 
     class Tiling : public Core
     {
     public:
         typedef std::tuple<int16_t, int16_t, int16_t> Index;
-        typedef std::pair<int16_t, int16_t> Pixel;
+        typedef std::pair<double, double> Pixel;
 
         Tiling() {}
 
@@ -42,6 +53,7 @@ namespace hex
         bool CheckEquality(const std::vector<Index>& indices);
 
         void Rotate(Index rotationCenter, int16_t rotationRadius, int16_t rotation);
+        void RotateWithMotion(Index rotationCenter, int16_t rotationRadius, int16_t rotation);
         std::tuple<bool, Index> GetHoveringIndex(Pixel cursor);
 
         static double RadiusToApothem(double radius);
@@ -55,12 +67,24 @@ namespace hex
 
         const std::map<Index, Hexagon>& GetTiles() const;
 
+        void UpdatePhysics();
+
     protected:
         std::map<Index, Hexagon> tiles_;
         Pixel tileCenter_;
         double hexRadius_;
+        bool motionActive_ = false;
 
     private:
+        struct RotationMotion
+        {
+            Index rotationCenter;
+            uint16_t rotationRadius;
+            double angularSpeed;
+            std::chrono::system_clock::time_point lastTick;
+            double curentAngle;
+            double stopAngle;
+        } motion_;
     };
 
     inline Tiling::Index operator+(const Tiling::Index& A, const Tiling::Index& B)

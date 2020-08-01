@@ -17,7 +17,7 @@ namespace hexvoid
         gameGrid_ = Grid{9};
         titleSplash_ = Splash{"HEXVOID", {400, 300}, 8};
         gameOverSplash_ = Splash{"GAME OVER", {400, 300}, 8};
-        background_ = FadeIn(31, 20, 127);
+        background_ = FadeIn(11, 20, 127);
     }
 
     void Game::Update()
@@ -55,6 +55,7 @@ namespace hexvoid
                     startTime_ = std::chrono::system_clock::now();
                     Engine::SetGameState(Engine::GameState::GAME_OVER);
                 }
+                gameGrid_.UpdatePhysics();
                 break;
             }
             default:
@@ -99,7 +100,7 @@ namespace hexvoid
                 else
                 {
                     Score::TakeMoves(1);
-                    gameGrid_.Rotate(index, 1, 1);
+                    gameGrid_.RotateWithMotion(index, 1, 1);
                 }
                 Score::RegisterMove();
             }
@@ -123,7 +124,7 @@ namespace hexvoid
                 else
                 {
                     Score::TakeMoves(1);
-                    gameGrid_.Rotate(index, 1, -1);
+                    gameGrid_.RotateWithMotion(index, 1, -1);
                 }
                 Score::RegisterMove();
             }
