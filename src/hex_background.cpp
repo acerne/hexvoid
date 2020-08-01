@@ -45,4 +45,57 @@ namespace hex
         }
     }
 
+    FadeInFadeOut::FadeInFadeOut(int16_t size, double hexRadius)
+    {
+        grid_ = Grid(size, hexRadius);
+        colors_.clear();
+
+        for(const auto& [index, hexagon] : grid_.GetTiles())
+        {
+            Palette::Color randomColor = Palette::RandomColor();
+            if(Randomizer::Chance(5000))
+                randomColor.a = Randomizer::Random(0, 255);
+            else
+                randomColor.a = 127;
+
+            colors_.emplace(index, randomColor);
+        }
+    }
+
+    void FadeInFadeOut::UpdatePhysics()
+    {
+        for(auto& [index, color] : colors_)
+        {
+            if(color.a == 127)
+            {
+                if(Randomizer::Chance(5000))
+                {
+                    color = Palette::RandomColor();
+                    color.a = 128;
+                }
+            }
+            else
+                color.a++;
+        }
+    }
+
+    void FadeInFadeOut::Draw()
+    {
+        for(const auto& [index, hexagon] : grid_.GetTiles())
+        {
+            Palette::Color temp = colors_.at(index);
+
+            if(temp.a > 127)
+            {
+                temp.a = temp.a - 127;
+                hexagon.Draw(temp);
+            }
+            else if(temp.a < 127)
+            {
+                temp.a = 127 - temp.a;
+                hexagon.Draw(temp);
+            }
+        }
+    }
+
 } // namespace hex

@@ -171,4 +171,20 @@ namespace hex
         uint8_t maxAlpha_;
     };
 
+    class FadeInFadeOut : public Background
+    {
+    public:
+        FadeInFadeOut() {} // TODO: find a way to remove
+        FadeInFadeOut(int16_t size, double hexRadius);
+
+        void Initialize();
+
+        void UpdatePhysics();
+        void Draw();
+
+    private:
+        Grid grid_;
+        std::map<Tiling::Index, Palette::Color> colors_;
+    };
+
 } // namespace hex

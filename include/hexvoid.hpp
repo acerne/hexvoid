@@ -23,7 +23,7 @@ namespace hexvoid
         static hex::Grid gameGrid_;
         static hex::Splash titleSplash_;
         static hex::Splash gameOverSplash_;
-        static hex::FadeOut background_;
+        static hex::FadeInFadeOut background_;
 
         static std::chrono::system_clock::time_point startTime_;
         static int64_t splashDuration_;
