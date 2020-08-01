@@ -7,7 +7,7 @@ namespace hexvoid
     Grid Game::gameGrid_;
     Splash Game::titleSplash_;
     Splash Game::gameOverSplash_;
-    FadeInFadeOut Game::background_;
+    FadeIn Game::background_;
 
     std::chrono::system_clock::time_point Game::startTime_;
     int64_t Game::splashDuration_ = 3000;
@@ -17,7 +17,7 @@ namespace hexvoid
         gameGrid_ = Grid{9};
         titleSplash_ = Splash{"HEXVOID", {400, 300}, 8};
         gameOverSplash_ = Splash{"GAME OVER", {400, 300}, 8};
-        background_ = FadeInFadeOut(31, 20);
+        background_ = FadeIn(31, 20, 127);
     }
 
     void Game::Update()

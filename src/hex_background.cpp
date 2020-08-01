@@ -45,6 +45,48 @@ namespace hex
         }
     }
 
+    FadeIn::FadeIn(int16_t size, double hexRadius, uint8_t maxAlpha)
+    {
+        maxAlpha_ = maxAlpha;
+        grid_ = Grid(size, hexRadius);
+        colors_.clear();
+
+        for(const auto& [index, hexagon] : grid_.GetTiles())
+        {
+            Palette::Color randomColor = Palette::RandomColor();
+            if(Randomizer::Chance(100))
+                randomColor.a = Randomizer::Random(0, maxAlpha_);
+            else
+                randomColor.a = maxAlpha_;
+            colors_.emplace(index, randomColor);
+        }
+    }
+
+    void FadeIn::UpdatePhysics()
+    {
+        for(auto& [index, color] : colors_)
+        {
+            if(color.a >= maxAlpha_)
+            {
+                if(Randomizer::Chance(2000))
+                {
+                    color = Palette::RandomColor();
+                    color.a = 0;
+                }
+            }
+            else
+                color.a++;
+        }
+    }
+
+    void FadeIn::Draw()
+    {
+        for(const auto& [index, hexagon] : grid_.GetTiles())
+        {
+            if(colors_.at(index).a > 0 && colors_.at(index).a < maxAlpha_) hexagon.Draw(colors_.at(index));
+        }
+    }
+
     FadeInFadeOut::FadeInFadeOut(int16_t size, double hexRadius)
     {
         grid_ = Grid(size, hexRadius);
@@ -53,7 +95,7 @@ namespace hex
         for(const auto& [index, hexagon] : grid_.GetTiles())
         {
             Palette::Color randomColor = Palette::RandomColor();
-            if(Randomizer::Chance(5000))
+            if(Randomizer::Chance(100))
                 randomColor.a = Randomizer::Random(0, 255);
             else
                 randomColor.a = 127;
