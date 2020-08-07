@@ -100,7 +100,7 @@ namespace hexvoid
                 else
                 {
                     Score::TakeMoves(1);
-                    gameGrid_.RotateWithMotion(index, 1, 1);
+                    gameGrid_.RotateWithMotion(index, 1, -1);
                 }
                 Score::RegisterMove();
             }
@@ -124,7 +124,7 @@ namespace hexvoid
                 else
                 {
                     Score::TakeMoves(1);
-                    gameGrid_.RotateWithMotion(index, 1, -1);
+                    gameGrid_.RotateWithMotion(index, 1, 1);
                 }
                 Score::RegisterMove();
             }

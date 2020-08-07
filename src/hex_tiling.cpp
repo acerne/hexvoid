@@ -57,35 +57,15 @@ namespace hex
         }
     }
 
-    void Tiling::RotateWithMotion(Tiling::Index rotationCenter, int16_t rotationRadius, int16_t rotation)
+    void Tiling::RotateWithMotion(Tiling::Index rotationCenter, int16_t rotationRadius, int16_t rotationSteps)
     {
         if(!motionActive_)
         {
-            std::map<Index, Hexagon> rotatedTiles;
-            std::vector<Index> toBeRotated;
-
-            for(const auto& [index, hexagon] : tiles_)
-                if(IndexDistance(rotationCenter, index) <= rotationRadius) toBeRotated.push_back(index);
-
-            for(const auto& index : toBeRotated)
-            {
-                Index offset = index - rotationCenter;
-                Index rotated = RotateIndex(offset, rotation);
-                Index corrected = rotated + rotationCenter;
-                ValidateIndex(corrected);
-
-                auto tile = tiles_.extract(index);
-                tile.key() = corrected;
-                Pixel updated = IndexToPixel(tile.key(), hexRadius_, tileCenter_);
-                // tile.mapped().Update(updated.first, updated.second);
-                rotatedTiles.insert(std::move(tile));
-            }
-            tiles_.insert(rotatedTiles.begin(), rotatedTiles.end());
-
-            motion_.angularSpeed = 120;
+            motion_.angularSpeed = 180;
             motion_.rotationCenter = rotationCenter;
+            motion_.rotationSteps = rotationSteps;
             motion_.curentAngle = 0;
-            motion_.stopAngle = rotation * 60;
+            motion_.stopAngle = rotationSteps * 60;
             motion_.rotationRadius = rotationRadius;
             motion_.lastTick = std::chrono::system_clock::now();
             motionActive_ = true;
@@ -207,7 +187,7 @@ namespace hex
         int16_t q = std::get<0>(index);
         int16_t r = std::get<1>(index);
         int16_t s = std::get<2>(index);
-        while(rotation > 0)
+        while(rotation < 0)
         {
             int16_t swap = q;
             q = -r;
@@ -215,7 +195,7 @@ namespace hex
             s = -swap;
             rotation--;
         }
-        while(rotation < 0)
+        while(rotation > 0)
         {
             int16_t swap = q;
             q = -s;
@@ -264,20 +244,18 @@ namespace hex
         {
             std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
             int64_t elapsed = std::chrono::duration_cast<std::chrono::microseconds>(now - motion_.lastTick).count();
-            double angleDifference = motion_.angularSpeed * static_cast<double>(elapsed) / 1e6;
-            printf("%.0f, %.0f = %.0f\n", motion_.curentAngle, motion_.stopAngle,
-                   AngularDistance(motion_.curentAngle, motion_.stopAngle));
-            if(AngularDistance(motion_.curentAngle, motion_.stopAngle) < 0)
+
+            double angleDistance = AngularDistance(motion_.curentAngle, motion_.stopAngle);
+            double angleStep = copysign(motion_.angularSpeed * static_cast<double>(elapsed) / 1e6, angleDistance);
+            printf("%.3f, %.3f = %.3f; %.3f\n", motion_.curentAngle, motion_.stopAngle, angleStep, angleDistance);
+
+            if(abs(angleDistance) < angleStep) angleStep = abs(angleDistance);
+            motion_.curentAngle -= angleStep;
+
+            if(abs(motion_.curentAngle - motion_.stopAngle) < 1e-6)
             {
-                // if(motion_.curentAngle - angleDifference < motion_.stopAngle)
-                //     angleDifference = motion_.curentAngle - motion_.stopAngle;
-                motion_.curentAngle -= angleDifference;
-            }
-            else
-            {
-                // if(motion_.curentAngle + angleDifference > motion_.stopAngle)
-                //     angleDifference = motion_.stopAngle - motion_.curentAngle;
-                motion_.curentAngle += angleDifference;
+                motion_.curentAngle = motion_.stopAngle;
+                motionActive_ = false;
             }
             motion_.lastTick = now;
 
@@ -285,9 +263,32 @@ namespace hex
             double centerY = tiles_.at(motion_.rotationCenter).y_;
             for(auto& [index, hexagon] : tiles_)
                 if(IndexDistance(motion_.rotationCenter, index) <= motion_.rotationRadius)
-                    hexagon.Rotate(centerX, centerY, angleDifference);
+                    hexagon.Rotate(centerX, centerY, angleStep);
 
-            if(motion_.curentAngle == motion_.stopAngle) motionActive_ = false;
+            if(!motionActive_)
+            {
+                std::map<Index, Hexagon> rotatedTiles;
+                std::vector<Index> toBeRotated;
+
+                for(const auto& [index, hexagon] : tiles_)
+                    if(IndexDistance(motion_.rotationCenter, index) <= motion_.rotationRadius)
+                        toBeRotated.push_back(index);
+
+                for(const auto& index : toBeRotated)
+                {
+                    Index offset = index - motion_.rotationCenter;
+                    Index rotated = RotateIndex(offset, motion_.rotationSteps);
+                    Index corrected = rotated + motion_.rotationCenter;
+                    ValidateIndex(corrected);
+
+                    auto tile = tiles_.extract(index);
+                    tile.key() = corrected;
+                    Pixel updated = IndexToPixel(tile.key(), hexRadius_, tileCenter_);
+                    tile.mapped().Update(updated.first, updated.second);
+                    rotatedTiles.insert(std::move(tile));
+                }
+                tiles_.insert(rotatedTiles.begin(), rotatedTiles.end());
+            }
         }
     }
 

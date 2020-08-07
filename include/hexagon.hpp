@@ -53,7 +53,7 @@ namespace hex
         bool CheckEquality(const std::vector<Index>& indices);
 
         void Rotate(Index rotationCenter, int16_t rotationRadius, int16_t rotation);
-        void RotateWithMotion(Index rotationCenter, int16_t rotationRadius, int16_t rotation);
+        void RotateWithMotion(Index rotationCenter, int16_t rotationRadius, int16_t rotationSteps);
         std::tuple<bool, Index> GetHoveringIndex(Pixel cursor);
 
         static double RadiusToApothem(double radius);
@@ -76,9 +76,10 @@ namespace hex
         bool motionActive_ = false;
 
     private:
-        struct RotationMotion
+        struct RotatingMotion
         {
             Index rotationCenter;
+            int16_t rotationSteps;
             uint16_t rotationRadius;
             double angularSpeed;
             std::chrono::system_clock::time_point lastTick;
