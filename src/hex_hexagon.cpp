@@ -65,26 +65,12 @@ namespace hex
         UpdateVertices();
     }
 
-    // void Hexagon::Update(int16_t x, int16_t y, double orientation)
-    // {
-    //     x_ = x;
-    //     y_ = y;
-    //     orientation_ = orientation;
-    //     UpdateVertices();
-    // }
-
     void Hexagon::Update(double x, double y)
     {
         x_ = x;
         y_ = y;
         UpdateVertices();
     }
-
-    // void Hexagon::Update(double orientation)
-    // {
-    //     orientation_ = orientation;
-    //     UpdateVertices();
-    // }
 
     void Hexagon::UpdateVertices()
     {

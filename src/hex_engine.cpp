@@ -16,6 +16,8 @@ namespace hex
     bool Core::quit_ = false;
     const char* Core::fontPath_ = "/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf";
 
+    bool Core::animationActive_ = false;
+
     void Core::SDL(int error)
     {
         if(error < 0) throw std::runtime_error("SDL failed: " + std::string(SDL_GetError()));
@@ -93,6 +95,7 @@ namespace hex
     void Engine::SetGameState(Engine::GameState state)
     {
         state_ = state;
+        animationActive_ = false;
     }
 
     void Engine::ChangeResolution(uint16_t windowWidth, uint16_t windowHeight)

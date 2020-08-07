@@ -16,9 +16,7 @@ namespace hex
         void Rotate(double pointX, double pointY, double angle);
         void RotateTo(double pointX, double pointY, double orientation);
 
-        // void Update(int16_t x, int16_t y, double orientation);
         void Update(double x, double y);
-        // void Update(double orientation);
 
         double Distance(double x, double y) const;
         std::array<std::array<int16_t, 6>, 2> GetVertices() const;
@@ -73,7 +71,6 @@ namespace hex
         std::map<Index, Hexagon> tiles_;
         Pixel tileCenter_;
         double hexRadius_;
-        bool motionActive_ = false;
 
     private:
         struct RotatingMotion

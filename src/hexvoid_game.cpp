@@ -17,7 +17,7 @@ namespace hexvoid
         gameGrid_ = Grid{9};
         titleSplash_ = Splash{"HEXVOID", {400, 300}, 8};
         gameOverSplash_ = Splash{"GAME OVER", {400, 300}, 8};
-        background_ = FadeIn(11, 20, 127);
+        background_ = FadeIn(31, 20, 127);
     }
 
     void Game::Update()

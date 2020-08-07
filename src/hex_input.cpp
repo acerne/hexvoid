@@ -65,7 +65,7 @@ namespace hex
     {
         std::lock_guard<std::mutex> guard(clickMutex_);
         SDL_Event returnEvent{};
-        if(!clicks_.empty())
+        if(!clicks_.empty() && !animationActive_)
         {
             returnEvent = clicks_.front();
             clicks_.pop();
@@ -77,7 +77,7 @@ namespace hex
     {
         std::lock_guard<std::mutex> guard(keyMutex_);
         SDL_Event returnEvent{};
-        if(!keys_.empty())
+        if(!keys_.empty() && !animationActive_)
         {
             returnEvent = keys_.front();
             keys_.pop();

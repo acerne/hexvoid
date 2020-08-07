@@ -31,6 +31,8 @@ namespace hex
         static bool quit_;
         static const char* fontPath_;
 
+        static bool animationActive_;
+
         static void SDL(int error);
     };
 
