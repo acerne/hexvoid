@@ -26,6 +26,12 @@ namespace hex
         void Draw(Palette::Color color) const;
         void DrawHighlight() const;
 
+        uint8_t GetFamily();
+        void SetFamily(uint8_t family);
+        double GetX();
+        double GetY();
+
+    private:
         double x_;
         double y_;
         double radius_;

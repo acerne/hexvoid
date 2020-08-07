@@ -13,7 +13,7 @@ namespace hex
 
         logotype_.clear();
         for(const char& character : title)
-            logotype_.push_back(Symbol{character, elementRadius_});
+            logotype_.push_back(Symbol{character, center, elementRadius_});
 
         std::vector<int16_t> spacing(logotype_.size());
         spacing.front() = 0;
@@ -22,13 +22,13 @@ namespace hex
 
         int16_t totalSpacing = spacing.back();
         double hexWidth = 2 * Tiling::RadiusToApothem(elementRadius_);
-        int16_t xOffset = center.first - totalSpacing * hexWidth / 2;
-        int16_t y = center.second;
+        double xOffset = center.first - totalSpacing * hexWidth / 2;
+        double y = center.second;
 
         int16_t distanceFromFirstSymbol = 0;
         for(int i = 0; i < logotype_.size(); i++)
         {
-            int16_t x = xOffset + spacing.at(i) * hexWidth;
+            double x = xOffset + spacing.at(i) * hexWidth;
             logotype_.at(i).SetPosition({x, y});
         }
     }

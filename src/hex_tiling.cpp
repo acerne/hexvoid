@@ -11,21 +11,21 @@ namespace hex
     void Tiling::Randomize()
     {
         for(auto& [index, hexagon] : tiles_)
-            hexagon.family_ = Randomizer::Random(2, 5);
+            hexagon.SetFamily(Randomizer::Random(2, 5));
     }
 
     void Tiling::Randomize(const std::vector<Index>& indices)
     {
         for(const auto& index : indices)
-            tiles_.at(index).family_ = Randomizer::Random(2, 5);
+            tiles_.at(index).SetFamily(Randomizer::Random(2, 5));
     }
 
     bool Tiling::CheckEquality(const std::vector<Index>& indices)
     {
         bool allEqual = true;
-        uint8_t value = tiles_.at(indices.front()).family_;
+        uint8_t value = tiles_.at(indices.front()).GetFamily();
         for(const auto& index : indices)
-            allEqual &= (tiles_.at(index).family_ == value);
+            allEqual &= (tiles_.at(index).GetFamily() == value);
 
         return allEqual;
     }
@@ -241,7 +241,6 @@ namespace hex
 
             double angleDistance = AngularDistance(motion_.curentAngle, motion_.stopAngle);
             double angleStep = copysign(motion_.angularSpeed * static_cast<double>(elapsed) / 1e6, angleDistance);
-            printf("%.3f, %.3f = %.3f; %.3f\n", motion_.curentAngle, motion_.stopAngle, angleStep, angleDistance);
 
             if(abs(angleDistance) < angleStep) angleStep = abs(angleDistance);
             motion_.curentAngle -= angleStep;
@@ -253,8 +252,8 @@ namespace hex
             }
             motion_.lastTick = now;
 
-            double centerX = tiles_.at(motion_.rotationCenter).x_;
-            double centerY = tiles_.at(motion_.rotationCenter).y_;
+            double centerX = tiles_.at(motion_.rotationCenter).GetX();
+            double centerY = tiles_.at(motion_.rotationCenter).GetY();
             for(auto& [index, hexagon] : tiles_)
                 if(IndexDistance(motion_.rotationCenter, index) <= motion_.rotationRadius)
                     hexagon.Rotate(centerX, centerY, angleStep);

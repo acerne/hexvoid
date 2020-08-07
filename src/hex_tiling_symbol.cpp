@@ -70,11 +70,10 @@ namespace hex
     void Symbol::SetPosition(Tiling::Pixel center)
     {
         tileCenter_ = center;
-        for(auto& element : tiles_)
+        for(auto& [index, hexagon] : tiles_)
         {
-            Pixel pixel = IndexToPixel(element.first, hexRadius_, tileCenter_);
-            element.second.x_ = pixel.first;
-            element.second.y_ = pixel.second;
+            auto [x, y] = IndexToPixel(index, hexRadius_, tileCenter_);
+            hexagon.Update(x, y);
         }
     }
 
@@ -82,11 +81,10 @@ namespace hex
     {
         tileCenter_.first += movement.first;
         tileCenter_.second += movement.second;
-        for(auto& element : tiles_)
+        for(auto& [index, hexagon] : tiles_)
         {
-            Pixel pixel = IndexToPixel(element.first, hexRadius_, tileCenter_);
-            element.second.x_ = pixel.first;
-            element.second.y_ = pixel.second;
+            auto [x, y] = IndexToPixel(index, hexRadius_, tileCenter_);
+            hexagon.Update(x, y);
         }
     }
 

@@ -159,4 +159,24 @@ namespace hex
         throw std::runtime_error("Hexagon color not specified");
     }
 
+    uint8_t Hexagon::GetFamily()
+    {
+        return family_;
+    }
+
+    void Hexagon::SetFamily(uint8_t family)
+    {
+        family_ = family;
+    }
+
+    double Hexagon::GetX()
+    {
+        return x_;
+    }
+
+    double Hexagon::GetY()
+    {
+        return y_;
+    }
+
 } // namespace hex
