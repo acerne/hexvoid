@@ -1,5 +1,5 @@
 
-#include "hexagon.hpp"
+#include "hexbackground.hpp"
 
 namespace hex
 {
@@ -188,6 +188,148 @@ namespace hex
             else if(temp.a < 127)
             {
                 temp.a = 127 - temp.a;
+                hexagon.Draw(temp);
+            }
+        }
+    }
+
+    Snakes::Snakes(int16_t sizeX, int16_t sizeY, double hexRadius)
+    {
+        grid_ = RectangularGrid(sizeX, sizeY, hexRadius);
+        colors_.clear();
+
+        for(const auto& [index, hexagon] : grid_.GetTiles())
+        {
+            Palette::Color randomColor = Palette::RandomColor();
+            if(Randomizer::Chance(100))
+                randomColor.a = Randomizer::Random(0, 32);
+            else
+                randomColor.a = 0;
+
+            colors_.emplace(index, randomColor);
+        }
+    }
+
+    void Snakes::UpdatePhysics()
+    {
+        for(auto& [index, color] : colors_)
+        {
+            if(color.a == 32)
+            {
+                uint8_t direction = Randomizer::Random(0, 5);
+                switch(direction)
+                {
+                    case 0: {
+                        Tiling::Index neighbour = index + Tiling::Index{0, 1, -1};
+                        if(colors_.find(neighbour) != colors_.end())
+                        {
+                            if(colors_.at(neighbour).a == 0)
+                            {
+                                colors_.at(neighbour) = color;
+                                colors_.at(neighbour).a = 1;
+                                break;
+                            }
+                        }
+                    }
+                    case 1: {
+                        Tiling::Index neighbour = index + Tiling::Index{0, -1, 1};
+                        if(colors_.find(neighbour) != colors_.end())
+                        {
+                            if(colors_.at(neighbour).a == 0)
+                            {
+                                colors_.at(neighbour) = color;
+                                colors_.at(neighbour).a = 1;
+                                break;
+                            }
+                        }
+                    }
+                    case 2: {
+                        Tiling::Index neighbour = index + Tiling::Index{1, 0, -1};
+                        if(colors_.find(neighbour) != colors_.end())
+                        {
+                            if(colors_.at(neighbour).a == 0)
+                            {
+                                colors_.at(neighbour) = color;
+                                colors_.at(neighbour).a = 1;
+                                break;
+                            }
+                        }
+                    }
+                    case 3: {
+                        Tiling::Index neighbour = index + Tiling::Index{-1, 0, 1};
+                        if(colors_.find(neighbour) != colors_.end())
+                        {
+                            if(colors_.at(neighbour).a == 0)
+                            {
+                                colors_.at(neighbour) = color;
+                                colors_.at(neighbour).a = 1;
+                                break;
+                            }
+                        }
+                    }
+                    case 4: {
+                        Tiling::Index neighbour = index + Tiling::Index(1, -1, 0);
+                        if(colors_.find(neighbour) != colors_.end())
+                        {
+                            if(colors_.at(neighbour).a == 0)
+                            {
+                                colors_.at(neighbour) = color;
+                                colors_.at(neighbour).a = 1;
+                                break;
+                            }
+                        }
+                    }
+                    case 5: {
+                        Tiling::Index neighbour = index + Tiling::Index{-1, 1, 0};
+                        if(colors_.find(neighbour) != colors_.end())
+                        {
+                            if(colors_.at(neighbour).a == 0)
+                            {
+                                colors_.at(neighbour) = color;
+                                colors_.at(neighbour).a = 1;
+                                break;
+                            }
+                        }
+                    }
+                    default:
+                        break;
+                }
+                color.a++;
+            }
+            else if(color.a == 0)
+            {
+                if(Randomizer::Chance(10000))
+                {
+                    color = Palette::RandomColor();
+                    color.a = 1;
+                }
+            }
+            else
+                color.a++;
+        }
+    }
+
+    void Snakes::Draw()
+    {
+        for(const auto& [index, hexagon] : grid_.GetTiles())
+        {
+            Palette::Color temp = colors_.at(index);
+
+            if(temp.a > 127)
+            {
+                if(temp.a < 192)
+                {
+                    temp.a = 127;
+                    hexagon.Draw(temp);
+                }
+                else
+                {
+                    temp.a = 127 - (temp.a - 192);
+                    hexagon.Draw(temp);
+                }
+            }
+            else if(temp.a > 0)
+            {
                 hexagon.Draw(temp);
             }
         }

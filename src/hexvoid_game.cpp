@@ -7,7 +7,7 @@ namespace hexvoid
     HexagonalGrid Game::gameGrid_;
     Splash Game::titleSplash_;
     Splash Game::gameOverSplash_;
-    Twinkle Game::background_;
+    Snakes Game::background_;
 
     std::chrono::system_clock::time_point Game::startTime_;
     int64_t Game::splashDuration_ = 3000;
@@ -17,7 +17,7 @@ namespace hexvoid
         gameGrid_ = HexagonalGrid{9};
         titleSplash_ = Splash{"HEXVOID", {400, 300}, 8};
         gameOverSplash_ = Splash{"GAME OVER", {400, 300}, 8};
-        background_ = Twinkle(21, 15, 20);
+        background_ = Snakes(21, 15, 20);
     }
 
     void Game::Update()

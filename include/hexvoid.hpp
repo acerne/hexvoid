@@ -2,6 +2,7 @@
 
 #include "hex.hpp"
 #include "hexagon.hpp"
+#include "hexbackground.hpp"
 
 namespace hexvoid
 {
@@ -23,7 +24,7 @@ namespace hexvoid
         static hex::HexagonalGrid gameGrid_;
         static hex::Splash titleSplash_;
         static hex::Splash gameOverSplash_;
-        static hex::Twinkle background_;
+        static hex::Snakes background_;
 
         static std::chrono::system_clock::time_point startTime_;
         static int64_t splashDuration_;
