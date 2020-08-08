@@ -9,7 +9,7 @@
 namespace hex
 {
 
-    Grid::Grid(int16_t size, double hexRadius)
+    HexagonalGrid::HexagonalGrid(int16_t size, double hexRadius)
     {
         if(!(size % 2)) throw std::runtime_error("Grid size must be an odd nubmer");
 
@@ -37,12 +37,12 @@ namespace hex
         }
     }
 
-    int16_t Grid::GetGridSize()
+    int16_t HexagonalGrid::GetGridSize()
     {
         return gridSize_;
     }
 
-    void Grid::Draw(int16_t cursorX, int16_t cursorY) const
+    void HexagonalGrid::Draw(int16_t cursorX, int16_t cursorY) const
     {
 
         Index selected = PixelToIndex({cursorX, cursorY}, hexRadius_, tileCenter_);

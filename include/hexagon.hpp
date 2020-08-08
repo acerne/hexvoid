@@ -103,12 +103,12 @@ namespace hex
                              std::get<2>(A) - std::get<2>(B));
     }
 
-    class Grid : public Tiling
+    class HexagonalGrid : public Tiling
     {
     public:
-        Grid(int16_t size, double hexRadius);
-        Grid(int16_t size) : Grid(size, Engine::windowHeight_ / size / 1.5) {}
-        Grid() : Grid(9, Engine::windowHeight_ / 9 / 1.5) {}
+        HexagonalGrid(int16_t size, double hexRadius);
+        HexagonalGrid(int16_t size) : HexagonalGrid(size, Engine::windowHeight_ / size / 1.5) {}
+        HexagonalGrid() : HexagonalGrid(9, Engine::windowHeight_ / 9 / 1.5) {}
 
         int16_t GetGridSize();
 
@@ -118,6 +118,19 @@ namespace hex
         int16_t gridSize_;
 
         Index GetClosestSelection(const Pixel& pixel) const;
+    };
+
+    class RectangularGrid : public Tiling
+    {
+    public:
+        RectangularGrid(int16_t sizeX, int16_t sizeY, double hexRadius);
+        RectangularGrid() : RectangularGrid(11, 7, Engine::windowHeight_ / 9 / 1.5) {}
+
+        void Draw() const;
+
+    private:
+        int16_t gridSizeX_;
+        int16_t gridSizeY_;
     };
 
     class Symbol : public Tiling
@@ -194,7 +207,7 @@ namespace hex
         void Draw();
 
     private:
-        Grid grid_;
+        HexagonalGrid grid_;
         std::map<Tiling::Index, Palette::Color> colors_;
         uint8_t maxAlpha_;
     };
@@ -211,7 +224,7 @@ namespace hex
         void Draw();
 
     private:
-        Grid grid_;
+        HexagonalGrid grid_;
         std::map<Tiling::Index, Palette::Color> colors_;
         uint8_t maxAlpha_;
     };
@@ -228,7 +241,7 @@ namespace hex
         void Draw();
 
     private:
-        Grid grid_;
+        HexagonalGrid grid_;
         std::map<Tiling::Index, Palette::Color> colors_;
     };
 

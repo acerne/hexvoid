@@ -35,7 +35,8 @@ add_executable(${PROJECT_NAME}      src/main.cpp
                                     src/hex_splash.cpp
                                     src/hex_systeminfo.cpp
                                     src/hex_tiling.cpp
-                                    src/hex_tiling_grid.cpp
+                                    src/hex_tiling_hexagonal_grid.cpp
+                                    src/hex_tiling_rectangular_grid.cpp
                                     src/hex_tiling_symbol.cpp
                                     )
 

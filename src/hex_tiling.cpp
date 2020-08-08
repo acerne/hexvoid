@@ -135,7 +135,7 @@ namespace hex
         return (abs(qA - qB) + abs(rA - rB) + abs(sA - sB)) / 2;
     }
 
-    Tiling::Index Grid::GetClosestSelection(const Tiling::Pixel& pixel) const
+    Tiling::Index HexagonalGrid::GetClosestSelection(const Tiling::Pixel& pixel) const // TODO: Move to Tiling
     {
         Index hover = PixelToIndex(pixel, hexRadius_, tileCenter_);
 
