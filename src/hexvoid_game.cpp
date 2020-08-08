@@ -4,20 +4,20 @@ using namespace hex;
 
 namespace hexvoid
 {
-    Grid Game::gameGrid_;
+    HexagonalGrid Game::gameGrid_;
     Splash Game::titleSplash_;
     Splash Game::gameOverSplash_;
-    FadeIn Game::background_;
+    Twinkle Game::background_;
 
     std::chrono::system_clock::time_point Game::startTime_;
     int64_t Game::splashDuration_ = 3000;
 
     void Game::Initialize()
     {
-        gameGrid_ = Grid{9};
+        gameGrid_ = HexagonalGrid{9};
         titleSplash_ = Splash{"HEXVOID", {400, 300}, 8};
         gameOverSplash_ = Splash{"GAME OVER", {400, 300}, 8};
-        background_ = FadeIn(31, 20, 127);
+        background_ = Twinkle(21, 15, 20);
     }
 
     void Game::Update()

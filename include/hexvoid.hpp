@@ -20,10 +20,10 @@ namespace hexvoid
 
     private:
         Game() {}
-        static hex::Grid gameGrid_;
+        static hex::HexagonalGrid gameGrid_;
         static hex::Splash titleSplash_;
         static hex::Splash gameOverSplash_;
-        static hex::FadeIn background_;
+        static hex::Twinkle background_;
 
         static std::chrono::system_clock::time_point startTime_;
         static int64_t splashDuration_;

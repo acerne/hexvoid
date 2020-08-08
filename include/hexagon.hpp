@@ -199,7 +199,7 @@ namespace hex
     {
     public:
         FadeOut() {} // TODO: find a way to remove
-        FadeOut(int16_t size, double hexRadius, uint8_t maxAlpha);
+        FadeOut(int16_t sizeX, int16_t sizeY, double hexRadius, uint8_t maxAlpha);
 
         void Initialize();
 
@@ -207,7 +207,7 @@ namespace hex
         void Draw();
 
     private:
-        HexagonalGrid grid_;
+        RectangularGrid grid_;
         std::map<Tiling::Index, Palette::Color> colors_;
         uint8_t maxAlpha_;
     };
@@ -216,7 +216,7 @@ namespace hex
     {
     public:
         FadeIn() {} // TODO: find a way to remove
-        FadeIn(int16_t size, double hexRadius, uint8_t maxAlpha);
+        FadeIn(int16_t sizeX, int16_t sizeY, double hexRadius, uint8_t maxAlpha);
 
         void Initialize();
 
@@ -224,7 +224,7 @@ namespace hex
         void Draw();
 
     private:
-        HexagonalGrid grid_;
+        RectangularGrid grid_;
         std::map<Tiling::Index, Palette::Color> colors_;
         uint8_t maxAlpha_;
     };
@@ -233,7 +233,7 @@ namespace hex
     {
     public:
         FadeInFadeOut() {} // TODO: find a way to remove
-        FadeInFadeOut(int16_t size, double hexRadius);
+        FadeInFadeOut(int16_t sizeX, int16_t sizeY, double hexRadius);
 
         void Initialize();
 
@@ -241,7 +241,24 @@ namespace hex
         void Draw();
 
     private:
-        HexagonalGrid grid_;
+        RectangularGrid grid_;
+        std::map<Tiling::Index, Palette::Color> colors_;
+    };
+
+    class Twinkle : public Background
+    {
+    public:
+        Twinkle() {} // TODO: find a way to remove
+        Twinkle(int16_t sizeX, int16_t sizeY, double hexRadius);
+
+        void Initialize();
+
+        void UpdatePhysics();
+        void Draw();
+
+    private:
+        RectangularGrid grid_;
+        int8_t flashDivider = 4;
         std::map<Tiling::Index, Palette::Color> colors_;
     };
 
