@@ -11,6 +11,8 @@ It's made in c++17 using the most basic tools available - SDL2. Why SDL2? Strict
 
 Goal of the game is to join same color hexagons together using rotation. When all the neighbours of a given hexagon are the same color, score is increased and hexagons are randomized. To make it a bit difficult, player has limited number of moves.  
 
+![screenshot](doc/screenshot.png)
+
 ### Controls
 
 Left click - rotate clockwise  
